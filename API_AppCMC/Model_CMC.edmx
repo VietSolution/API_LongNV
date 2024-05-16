@@ -1,0 +1,847 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="Model_CMCBacNinhModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="tblDieuPhoiTrangThaiVC">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDDieuPhoi" Type="bigint" />
+          <Property Name="IDDMTrangThaiVanChuyen" Type="bigint" />
+          <Property Name="DateCreate" Type="datetime" />
+          <Property Name="IDUserCreate" Type="bigint" />
+          <Property Name="NgayGioThucHien" Type="datetime" />
+          <Property Name="NoiDung" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="tblDieuPhoiVanChuyen">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CodeChuyen" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="NgayDongHang" Type="datetime" />
+          <Property Name="NgayTraHang" Type="datetime" />
+          <Property Name="IDDiemDi" Type="bigint" />
+          <Property Name="IDDiemDen" Type="bigint" />
+          <Property Name="SoPL" Type="float" />
+          <Property Name="SoKhoi" Type="float" />
+          <Property Name="SoKG" Type="float" />
+          <Property Name="IDDMXeOto" Type="bigint" />
+          <Property Name="IDLaiXe" Type="bigint" />
+          <Property Name="IDCreateUser" Type="bigint" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="STT" Type="int" />
+          <Property Name="EnumThueXeOrXeMinh" Type="int" />
+          <Property Name="BienSoXe" Type="nvarchar" MaxLength="250" />
+          <Property Name="LaiXe" Type="nvarchar" MaxLength="250" />
+          <Property Name="DTLaiXe" Type="nvarchar" MaxLength="250" />
+          <Property Name="IDDMCustomerTranport" Type="bigint" />
+          <Property Name="IDDMCustomer" Type="bigint" />
+          <Property Name="IDDMHangHoa" Type="bigint" />
+          <Property Name="FlagHangVe" Type="bit" />
+          <Property Name="ThoiGianVe" Type="datetime" />
+          <Property Name="SoGioCho" Type="bigint" />
+          <Property Name="SoCaLuu" Type="bigint" />
+          <Property Name="CodeDieuVan" Type="nvarchar" MaxLength="250" />
+          <Property Name="IDDMLoaiXe" Type="bigint" />
+          <Property Name="EnumTrangThaiDieuPhoi" Type="int" />
+          <Property Name="FlagDaDieuPhoi" Type="bit" />
+          <Property Name="GhiChu" Type="nvarchar(max)" />
+          <Property Name="IDUserDieuPhoi" Type="bigint" />
+          <Property Name="IDTrangThaiVanChuyen" Type="bigint" />
+          <Property Name="STTDieuPhoi" Type="int" />
+          <Property Name="VeBenBai" Type="bigint" />
+          <Property Name="PhatSinhKhac" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="tblDMDoor">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EnumTypeOfDoor" Type="int" />
+          <Property Name="IDQuocGia" Type="bigint" />
+          <Property Name="IDCity" Type="bigint" />
+          <Property Name="Code" Type="nvarchar" MaxLength="50" />
+          <Property Name="NameVI" Type="nvarchar" MaxLength="250" />
+          <Property Name="NameEN" Type="nvarchar" MaxLength="250" />
+          <Property Name="AddressVI" Type="nvarchar" MaxLength="250" />
+          <Property Name="AddressEN" Type="nvarchar" MaxLength="250" />
+          <Property Name="Phone" Type="nvarchar" MaxLength="100" />
+          <Property Name="Fax" Type="nvarchar" MaxLength="100" />
+          <Property Name="Email" Type="nvarchar" MaxLength="50" />
+          <Property Name="Website" Type="nvarchar" MaxLength="50" />
+          <Property Name="Rating" Type="int" />
+          <Property Name="Note" Type="nvarchar" MaxLength="250" />
+          <Property Name="TaxCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="MaxMoneyDebit" Type="float" />
+          <Property Name="PaymentPeriod" Type="int" />
+          <Property Name="FlagFavorite" Type="bit" />
+          <Property Name="IDBank" Type="bigint" />
+          <Property Name="BankAccountNumber" Type="nvarchar" MaxLength="150" />
+          <Property Name="BankBranchName" Type="nvarchar" MaxLength="150" />
+          <Property Name="BankAddress" Type="nvarchar" MaxLength="150" />
+          <Property Name="SoDuVND" Type="float" />
+          <Property Name="SoDuUSD" Type="float" />
+          <Property Name="PhanTramPhaiThuChi" Type="float" />
+          <Property Name="IDCustomer" Type="bigint" />
+        </EntityType>
+        <EntityType Name="tblDMHangHoa">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NameVI" Type="nvarchar(max)" />
+          <Property Name="NameEN" Type="nvarchar(max)" />
+          <Property Name="Code" Type="nvarchar(max)" />
+          <Property Name="FlagFavorite" Type="bit" />
+        </EntityType>
+        <EntityType Name="tblNhanSu">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDChucVu" Type="bigint" />
+          <Property Name="IDPhongBan" Type="bigint" />
+          <Property Name="IDVanPhong" Type="bigint" />
+          <Property Name="MANHANSU" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="MST" Type="nvarchar" MaxLength="50" />
+          <Property Name="HoTenVI" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="HoTenEN" Type="nvarchar" MaxLength="50" />
+          <Property Name="NamSinh" Type="date" Nullable="false" />
+          <Property Name="GioiTinh" Type="int" />
+          <Property Name="QueQuan" Type="nvarchar" MaxLength="250" />
+          <Property Name="DiaChiThuongTru" Type="nvarchar" MaxLength="250" />
+          <Property Name="DiaChiHienTai" Type="nvarchar" MaxLength="250" />
+          <Property Name="SoCMT" Type="nvarchar" MaxLength="50" />
+          <Property Name="NoiCapCMT" Type="nvarchar" MaxLength="200" />
+          <Property Name="NgayCapCMT" Type="date" />
+          <Property Name="SoHoChieu" Type="nvarchar" MaxLength="50" />
+          <Property Name="NoiCapHoChieu" Type="nvarchar" MaxLength="200" />
+          <Property Name="NgayCapHoChieu" Type="date" />
+          <Property Name="NgayHetHanHoChieu" Type="date" />
+          <Property Name="NgayKyHopDong" Type="date" />
+          <Property Name="PictureNV" Type="image" />
+          <Property Name="SoTaiKhoanNH" Type="nvarchar" MaxLength="50" />
+          <Property Name="DiDong" Type="nvarchar" MaxLength="20" />
+          <Property Name="Email" Type="nvarchar" MaxLength="50" />
+          <Property Name="SoTruong" Type="nvarchar" MaxLength="250" />
+          <Property Name="EnumTinhTrangHonNhan" Type="int" />
+          <Property Name="EnumNhomMau" Type="int" />
+          <Property Name="ChieuCao" Type="float" />
+          <Property Name="CanNang" Type="float" />
+          <Property Name="LUONGCOBAN" Type="bigint" />
+          <Property Name="GhiChu" Type="nvarchar(max)" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="EditDate" Type="datetime" />
+          <Property Name="SoBangLai" Type="nvarchar" MaxLength="50" />
+          <Property Name="NgayHetHanBangLai" Type="datetime" />
+          <Property Name="FlagIsManager" Type="bit" />
+          <Property Name="SoHopDong" Type="nvarchar" MaxLength="200" />
+          <Property Name="SoDuVND" Type="float" />
+          <Property Name="HanMucTamUng" Type="float" />
+          <Property Name="FlagDelete" Type="bit" />
+          <Property Name="IDUserDelete" Type="bigint" />
+          <Property Name="DateDelete" Type="datetime" />
+          <Property Name="LoaiBang" Type="nvarchar" MaxLength="50" />
+          <Property Name="FlagDriver" Type="bit" />
+        </EntityType>
+        <EntityType Name="tblSysUser">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Password" Type="nvarchar" MaxLength="50" />
+          <Property Name="IDNhanVien" Type="bigint" />
+          <Property Name="IDGroupUser" Type="bigint" />
+          <Property Name="Active" Type="bit" />
+          <Property Name="GhiChu" Type="nvarchar" MaxLength="250" />
+          <Property Name="Fixed" Type="bit" />
+          <Property Name="Permission" Type="nvarchar(max)" />
+          <Property Name="StatusLogin" Type="bit" />
+        </EntityType>
+        <Association Name="FK_tblDieuPhoiTrangThaiVC_tblDieuPhoiVanChuyen">
+          <End Role="tblDieuPhoiVanChuyen" Type="Self.tblDieuPhoiVanChuyen" Multiplicity="0..1" />
+          <End Role="tblDieuPhoiTrangThaiVC" Type="Self.tblDieuPhoiTrangThaiVC" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblDieuPhoiVanChuyen">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblDieuPhoiTrangThaiVC">
+              <PropertyRef Name="IDDieuPhoi" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblDieuPhoiTrangThaiVC_tblSysUser">
+          <End Role="tblSysUser" Type="Self.tblSysUser" Multiplicity="0..1" />
+          <End Role="tblDieuPhoiTrangThaiVC" Type="Self.tblDieuPhoiTrangThaiVC" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblSysUser">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblDieuPhoiTrangThaiVC">
+              <PropertyRef Name="IDUserCreate" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblDieuPhoiVanChuyen_tblSysUser">
+          <End Role="tblSysUser" Type="Self.tblSysUser" Multiplicity="0..1" />
+          <End Role="tblDieuPhoiVanChuyen" Type="Self.tblDieuPhoiVanChuyen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblSysUser">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblDieuPhoiVanChuyen">
+              <PropertyRef Name="IDUserDieuPhoi" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblSysUser_tblNhanSu">
+          <End Role="tblNhanSu" Type="Self.tblNhanSu" Multiplicity="0..1" />
+          <End Role="tblSysUser" Type="Self.tblSysUser" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblNhanSu">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblSysUser">
+              <PropertyRef Name="IDNhanVien" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblVanChuyenKeHoach_tblDMDoor">
+          <End Role="tblDMDoor" Type="Self.tblDMDoor" Multiplicity="0..1" />
+          <End Role="tblDieuPhoiVanChuyen" Type="Self.tblDieuPhoiVanChuyen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblDMDoor">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblDieuPhoiVanChuyen">
+              <PropertyRef Name="IDDiemDi" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblVanChuyenKeHoach_tblDMDoor1">
+          <End Role="tblDMDoor" Type="Self.tblDMDoor" Multiplicity="0..1" />
+          <End Role="tblDieuPhoiVanChuyen" Type="Self.tblDieuPhoiVanChuyen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblDMDoor">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblDieuPhoiVanChuyen">
+              <PropertyRef Name="IDDiemDen" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblVanChuyenKeHoach_tblDMHangHoa">
+          <End Role="tblDMHangHoa" Type="Self.tblDMHangHoa" Multiplicity="0..1" />
+          <End Role="tblDieuPhoiVanChuyen" Type="Self.tblDieuPhoiVanChuyen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblDMHangHoa">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblDieuPhoiVanChuyen">
+              <PropertyRef Name="IDDMHangHoa" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblVanChuyenKeHoach_tblNhanSu">
+          <End Role="tblNhanSu" Type="Self.tblNhanSu" Multiplicity="0..1" />
+          <End Role="tblDieuPhoiVanChuyen" Type="Self.tblDieuPhoiVanChuyen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblNhanSu">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblDieuPhoiVanChuyen">
+              <PropertyRef Name="IDLaiXe" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblVanChuyenKeHoach_tblSysUser">
+          <End Role="tblSysUser" Type="Self.tblSysUser" Multiplicity="0..1" />
+          <End Role="tblDieuPhoiVanChuyen" Type="Self.tblDieuPhoiVanChuyen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblSysUser">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblDieuPhoiVanChuyen">
+              <PropertyRef Name="IDCreateUser" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Model_CMCBacNinhModelStoreContainer">
+          <EntitySet Name="tblDieuPhoiTrangThaiVC" EntityType="Self.tblDieuPhoiTrangThaiVC" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblDieuPhoiVanChuyen" EntityType="Self.tblDieuPhoiVanChuyen" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblDMDoor" EntityType="Self.tblDMDoor" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblDMHangHoa" EntityType="Self.tblDMHangHoa" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblNhanSu" EntityType="Self.tblNhanSu" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblSysUser" EntityType="Self.tblSysUser" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_tblDieuPhoiTrangThaiVC_tblDieuPhoiVanChuyen" Association="Self.FK_tblDieuPhoiTrangThaiVC_tblDieuPhoiVanChuyen">
+            <End Role="tblDieuPhoiVanChuyen" EntitySet="tblDieuPhoiVanChuyen" />
+            <End Role="tblDieuPhoiTrangThaiVC" EntitySet="tblDieuPhoiTrangThaiVC" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblDieuPhoiTrangThaiVC_tblSysUser" Association="Self.FK_tblDieuPhoiTrangThaiVC_tblSysUser">
+            <End Role="tblSysUser" EntitySet="tblSysUser" />
+            <End Role="tblDieuPhoiTrangThaiVC" EntitySet="tblDieuPhoiTrangThaiVC" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblDieuPhoiVanChuyen_tblSysUser" Association="Self.FK_tblDieuPhoiVanChuyen_tblSysUser">
+            <End Role="tblSysUser" EntitySet="tblSysUser" />
+            <End Role="tblDieuPhoiVanChuyen" EntitySet="tblDieuPhoiVanChuyen" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblSysUser_tblNhanSu" Association="Self.FK_tblSysUser_tblNhanSu">
+            <End Role="tblNhanSu" EntitySet="tblNhanSu" />
+            <End Role="tblSysUser" EntitySet="tblSysUser" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblVanChuyenKeHoach_tblDMDoor" Association="Self.FK_tblVanChuyenKeHoach_tblDMDoor">
+            <End Role="tblDMDoor" EntitySet="tblDMDoor" />
+            <End Role="tblDieuPhoiVanChuyen" EntitySet="tblDieuPhoiVanChuyen" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblVanChuyenKeHoach_tblDMDoor1" Association="Self.FK_tblVanChuyenKeHoach_tblDMDoor1">
+            <End Role="tblDMDoor" EntitySet="tblDMDoor" />
+            <End Role="tblDieuPhoiVanChuyen" EntitySet="tblDieuPhoiVanChuyen" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblVanChuyenKeHoach_tblDMHangHoa" Association="Self.FK_tblVanChuyenKeHoach_tblDMHangHoa">
+            <End Role="tblDMHangHoa" EntitySet="tblDMHangHoa" />
+            <End Role="tblDieuPhoiVanChuyen" EntitySet="tblDieuPhoiVanChuyen" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblVanChuyenKeHoach_tblNhanSu" Association="Self.FK_tblVanChuyenKeHoach_tblNhanSu">
+            <End Role="tblNhanSu" EntitySet="tblNhanSu" />
+            <End Role="tblDieuPhoiVanChuyen" EntitySet="tblDieuPhoiVanChuyen" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblVanChuyenKeHoach_tblSysUser" Association="Self.FK_tblVanChuyenKeHoach_tblSysUser">
+            <End Role="tblSysUser" EntitySet="tblSysUser" />
+            <End Role="tblDieuPhoiVanChuyen" EntitySet="tblDieuPhoiVanChuyen" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Model_CMCBacNinhModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="tblDieuPhoiTrangThaiVC">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDDieuPhoi" Type="Int64" />
+          <Property Name="IDDMTrangThaiVanChuyen" Type="Int64" />
+          <Property Name="DateCreate" Type="DateTime" Precision="3" />
+          <Property Name="IDUserCreate" Type="Int64" />
+          <Property Name="NgayGioThucHien" Type="DateTime" Precision="3" />
+          <Property Name="NoiDung" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="tblDieuPhoiVanChuyen" Relationship="Self.FK_tblDieuPhoiTrangThaiVC_tblDieuPhoiVanChuyen" FromRole="tblDieuPhoiTrangThaiVC" ToRole="tblDieuPhoiVanChuyen" />
+          <NavigationProperty Name="tblSysUser" Relationship="Self.FK_tblDieuPhoiTrangThaiVC_tblSysUser" FromRole="tblDieuPhoiTrangThaiVC" ToRole="tblSysUser" />
+        </EntityType>
+        <EntityType Name="tblDieuPhoiVanChuyen">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodeChuyen" Type="String" MaxLength="250" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NgayDongHang" Type="DateTime" Precision="3" />
+          <Property Name="NgayTraHang" Type="DateTime" Precision="3" />
+          <Property Name="IDDiemDi" Type="Int64" />
+          <Property Name="IDDiemDen" Type="Int64" />
+          <Property Name="SoPL" Type="Double" />
+          <Property Name="SoKhoi" Type="Double" />
+          <Property Name="SoKG" Type="Double" />
+          <Property Name="IDDMXeOto" Type="Int64" />
+          <Property Name="IDLaiXe" Type="Int64" />
+          <Property Name="IDCreateUser" Type="Int64" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="STT" Type="Int32" />
+          <Property Name="EnumThueXeOrXeMinh" Type="Int32" />
+          <Property Name="BienSoXe" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="LaiXe" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="DTLaiXe" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="IDDMCustomerTranport" Type="Int64" />
+          <Property Name="IDDMCustomer" Type="Int64" />
+          <Property Name="IDDMHangHoa" Type="Int64" />
+          <Property Name="FlagHangVe" Type="Boolean" />
+          <Property Name="ThoiGianVe" Type="DateTime" Precision="3" />
+          <Property Name="SoGioCho" Type="Int64" />
+          <Property Name="SoCaLuu" Type="Int64" />
+          <Property Name="CodeDieuVan" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="IDDMLoaiXe" Type="Int64" />
+          <Property Name="EnumTrangThaiDieuPhoi" Type="Int32" />
+          <Property Name="FlagDaDieuPhoi" Type="Boolean" />
+          <Property Name="GhiChu" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IDUserDieuPhoi" Type="Int64" />
+          <Property Name="IDTrangThaiVanChuyen" Type="Int64" />
+          <Property Name="STTDieuPhoi" Type="Int32" />
+          <Property Name="VeBenBai" Type="Int64" />
+          <Property Name="PhatSinhKhac" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="tblDieuPhoiTrangThaiVCs" Relationship="Self.FK_tblDieuPhoiTrangThaiVC_tblDieuPhoiVanChuyen" FromRole="tblDieuPhoiVanChuyen" ToRole="tblDieuPhoiTrangThaiVC" />
+          <NavigationProperty Name="tblSysUser" Relationship="Self.FK_tblDieuPhoiVanChuyen_tblSysUser" FromRole="tblDieuPhoiVanChuyen" ToRole="tblSysUser" />
+          <NavigationProperty Name="tblDMDoor" Relationship="Self.FK_tblVanChuyenKeHoach_tblDMDoor" FromRole="tblDieuPhoiVanChuyen" ToRole="tblDMDoor" />
+          <NavigationProperty Name="tblDMDoor1" Relationship="Self.FK_tblVanChuyenKeHoach_tblDMDoor1" FromRole="tblDieuPhoiVanChuyen" ToRole="tblDMDoor" />
+          <NavigationProperty Name="tblDMHangHoa" Relationship="Self.FK_tblVanChuyenKeHoach_tblDMHangHoa" FromRole="tblDieuPhoiVanChuyen" ToRole="tblDMHangHoa" />
+          <NavigationProperty Name="tblNhanSu" Relationship="Self.FK_tblVanChuyenKeHoach_tblNhanSu" FromRole="tblDieuPhoiVanChuyen" ToRole="tblNhanSu" />
+          <NavigationProperty Name="tblSysUser1" Relationship="Self.FK_tblVanChuyenKeHoach_tblSysUser" FromRole="tblDieuPhoiVanChuyen" ToRole="tblSysUser" />
+        </EntityType>
+        <EntityType Name="tblDMDoor">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EnumTypeOfDoor" Type="Int32" />
+          <Property Name="IDQuocGia" Type="Int64" />
+          <Property Name="IDCity" Type="Int64" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="NameVI" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="NameEN" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="AddressVI" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="AddressEN" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Fax" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Website" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Rating" Type="Int32" />
+          <Property Name="Note" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="TaxCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MaxMoneyDebit" Type="Double" />
+          <Property Name="PaymentPeriod" Type="Int32" />
+          <Property Name="FlagFavorite" Type="Boolean" />
+          <Property Name="IDBank" Type="Int64" />
+          <Property Name="BankAccountNumber" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="BankBranchName" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="BankAddress" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="SoDuVND" Type="Double" />
+          <Property Name="SoDuUSD" Type="Double" />
+          <Property Name="PhanTramPhaiThuChi" Type="Double" />
+          <Property Name="IDCustomer" Type="Int64" />
+          <NavigationProperty Name="tblDieuPhoiVanChuyens" Relationship="Self.FK_tblVanChuyenKeHoach_tblDMDoor" FromRole="tblDMDoor" ToRole="tblDieuPhoiVanChuyen" />
+          <NavigationProperty Name="tblDieuPhoiVanChuyens1" Relationship="Self.FK_tblVanChuyenKeHoach_tblDMDoor1" FromRole="tblDMDoor" ToRole="tblDieuPhoiVanChuyen" />
+        </EntityType>
+        <EntityType Name="tblDMHangHoa">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NameVI" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="NameEN" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Code" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FlagFavorite" Type="Boolean" />
+          <NavigationProperty Name="tblDieuPhoiVanChuyens" Relationship="Self.FK_tblVanChuyenKeHoach_tblDMHangHoa" FromRole="tblDMHangHoa" ToRole="tblDieuPhoiVanChuyen" />
+        </EntityType>
+        <EntityType Name="tblNhanSu">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDChucVu" Type="Int64" />
+          <Property Name="IDPhongBan" Type="Int64" />
+          <Property Name="IDVanPhong" Type="Int64" />
+          <Property Name="MANHANSU" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MST" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="HoTenVI" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="HoTenEN" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="NamSinh" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="GioiTinh" Type="Int32" />
+          <Property Name="QueQuan" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="DiaChiThuongTru" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="DiaChiHienTai" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="SoCMT" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="NoiCapCMT" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="NgayCapCMT" Type="DateTime" Precision="0" />
+          <Property Name="SoHoChieu" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="NoiCapHoChieu" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="NgayCapHoChieu" Type="DateTime" Precision="0" />
+          <Property Name="NgayHetHanHoChieu" Type="DateTime" Precision="0" />
+          <Property Name="NgayKyHopDong" Type="DateTime" Precision="0" />
+          <Property Name="PictureNV" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="SoTaiKhoanNH" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DiDong" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SoTruong" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="EnumTinhTrangHonNhan" Type="Int32" />
+          <Property Name="EnumNhomMau" Type="Int32" />
+          <Property Name="ChieuCao" Type="Double" />
+          <Property Name="CanNang" Type="Double" />
+          <Property Name="LUONGCOBAN" Type="Int64" />
+          <Property Name="GhiChu" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <Property Name="SoBangLai" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="NgayHetHanBangLai" Type="DateTime" Precision="3" />
+          <Property Name="FlagIsManager" Type="Boolean" />
+          <Property Name="SoHopDong" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="SoDuVND" Type="Double" />
+          <Property Name="HanMucTamUng" Type="Double" />
+          <Property Name="FlagDelete" Type="Boolean" />
+          <Property Name="IDUserDelete" Type="Int64" />
+          <Property Name="DateDelete" Type="DateTime" Precision="3" />
+          <Property Name="LoaiBang" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FlagDriver" Type="Boolean" />
+          <NavigationProperty Name="tblDieuPhoiVanChuyens" Relationship="Self.FK_tblVanChuyenKeHoach_tblNhanSu" FromRole="tblNhanSu" ToRole="tblDieuPhoiVanChuyen" />
+          <NavigationProperty Name="tblSysUsers" Relationship="Self.FK_tblSysUser_tblNhanSu" FromRole="tblNhanSu" ToRole="tblSysUser" />
+        </EntityType>
+        <EntityType Name="tblSysUser">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IDNhanVien" Type="Int64" />
+          <Property Name="IDGroupUser" Type="Int64" />
+          <Property Name="Active" Type="Boolean" />
+          <Property Name="GhiChu" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Fixed" Type="Boolean" />
+          <Property Name="Permission" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="StatusLogin" Type="Boolean" />
+          <NavigationProperty Name="tblDieuPhoiTrangThaiVCs" Relationship="Self.FK_tblDieuPhoiTrangThaiVC_tblSysUser" FromRole="tblSysUser" ToRole="tblDieuPhoiTrangThaiVC" />
+          <NavigationProperty Name="tblDieuPhoiVanChuyens" Relationship="Self.FK_tblDieuPhoiVanChuyen_tblSysUser" FromRole="tblSysUser" ToRole="tblDieuPhoiVanChuyen" />
+          <NavigationProperty Name="tblDieuPhoiVanChuyens1" Relationship="Self.FK_tblVanChuyenKeHoach_tblSysUser" FromRole="tblSysUser" ToRole="tblDieuPhoiVanChuyen" />
+          <NavigationProperty Name="tblNhanSu" Relationship="Self.FK_tblSysUser_tblNhanSu" FromRole="tblSysUser" ToRole="tblNhanSu" />
+        </EntityType>
+        <Association Name="FK_tblDieuPhoiTrangThaiVC_tblDieuPhoiVanChuyen">
+          <End Role="tblDieuPhoiVanChuyen" Type="Self.tblDieuPhoiVanChuyen" Multiplicity="0..1" />
+          <End Role="tblDieuPhoiTrangThaiVC" Type="Self.tblDieuPhoiTrangThaiVC" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblDieuPhoiVanChuyen">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblDieuPhoiTrangThaiVC">
+              <PropertyRef Name="IDDieuPhoi" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblDieuPhoiTrangThaiVC_tblSysUser">
+          <End Role="tblSysUser" Type="Self.tblSysUser" Multiplicity="0..1" />
+          <End Role="tblDieuPhoiTrangThaiVC" Type="Self.tblDieuPhoiTrangThaiVC" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblSysUser">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblDieuPhoiTrangThaiVC">
+              <PropertyRef Name="IDUserCreate" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblDieuPhoiVanChuyen_tblSysUser">
+          <End Role="tblSysUser" Type="Self.tblSysUser" Multiplicity="0..1" />
+          <End Role="tblDieuPhoiVanChuyen" Type="Self.tblDieuPhoiVanChuyen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblSysUser">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblDieuPhoiVanChuyen">
+              <PropertyRef Name="IDUserDieuPhoi" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblVanChuyenKeHoach_tblDMDoor">
+          <End Role="tblDMDoor" Type="Self.tblDMDoor" Multiplicity="0..1" />
+          <End Role="tblDieuPhoiVanChuyen" Type="Self.tblDieuPhoiVanChuyen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblDMDoor">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblDieuPhoiVanChuyen">
+              <PropertyRef Name="IDDiemDi" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblVanChuyenKeHoach_tblDMDoor1">
+          <End Role="tblDMDoor" Type="Self.tblDMDoor" Multiplicity="0..1" />
+          <End Role="tblDieuPhoiVanChuyen" Type="Self.tblDieuPhoiVanChuyen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblDMDoor">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblDieuPhoiVanChuyen">
+              <PropertyRef Name="IDDiemDen" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblVanChuyenKeHoach_tblDMHangHoa">
+          <End Role="tblDMHangHoa" Type="Self.tblDMHangHoa" Multiplicity="0..1" />
+          <End Role="tblDieuPhoiVanChuyen" Type="Self.tblDieuPhoiVanChuyen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblDMHangHoa">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblDieuPhoiVanChuyen">
+              <PropertyRef Name="IDDMHangHoa" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblVanChuyenKeHoach_tblNhanSu">
+          <End Role="tblNhanSu" Type="Self.tblNhanSu" Multiplicity="0..1" />
+          <End Role="tblDieuPhoiVanChuyen" Type="Self.tblDieuPhoiVanChuyen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblNhanSu">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblDieuPhoiVanChuyen">
+              <PropertyRef Name="IDLaiXe" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblVanChuyenKeHoach_tblSysUser">
+          <End Role="tblSysUser" Type="Self.tblSysUser" Multiplicity="0..1" />
+          <End Role="tblDieuPhoiVanChuyen" Type="Self.tblDieuPhoiVanChuyen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblSysUser">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblDieuPhoiVanChuyen">
+              <PropertyRef Name="IDCreateUser" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblSysUser_tblNhanSu">
+          <End Role="tblNhanSu" Type="Self.tblNhanSu" Multiplicity="0..1" />
+          <End Role="tblSysUser" Type="Self.tblSysUser" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblNhanSu">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblSysUser">
+              <PropertyRef Name="IDNhanVien" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Model_CMCBacNinhEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="tblDieuPhoiTrangThaiVCs" EntityType="Self.tblDieuPhoiTrangThaiVC" />
+          <EntitySet Name="tblDieuPhoiVanChuyens" EntityType="Self.tblDieuPhoiVanChuyen" />
+          <EntitySet Name="tblDMDoors" EntityType="Self.tblDMDoor" />
+          <EntitySet Name="tblDMHangHoas" EntityType="Self.tblDMHangHoa" />
+          <EntitySet Name="tblNhanSus" EntityType="Self.tblNhanSu" />
+          <EntitySet Name="tblSysUsers" EntityType="Self.tblSysUser" />
+          <AssociationSet Name="FK_tblDieuPhoiTrangThaiVC_tblDieuPhoiVanChuyen" Association="Self.FK_tblDieuPhoiTrangThaiVC_tblDieuPhoiVanChuyen">
+            <End Role="tblDieuPhoiVanChuyen" EntitySet="tblDieuPhoiVanChuyens" />
+            <End Role="tblDieuPhoiTrangThaiVC" EntitySet="tblDieuPhoiTrangThaiVCs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblDieuPhoiTrangThaiVC_tblSysUser" Association="Self.FK_tblDieuPhoiTrangThaiVC_tblSysUser">
+            <End Role="tblSysUser" EntitySet="tblSysUsers" />
+            <End Role="tblDieuPhoiTrangThaiVC" EntitySet="tblDieuPhoiTrangThaiVCs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblDieuPhoiVanChuyen_tblSysUser" Association="Self.FK_tblDieuPhoiVanChuyen_tblSysUser">
+            <End Role="tblSysUser" EntitySet="tblSysUsers" />
+            <End Role="tblDieuPhoiVanChuyen" EntitySet="tblDieuPhoiVanChuyens" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblVanChuyenKeHoach_tblDMDoor" Association="Self.FK_tblVanChuyenKeHoach_tblDMDoor">
+            <End Role="tblDMDoor" EntitySet="tblDMDoors" />
+            <End Role="tblDieuPhoiVanChuyen" EntitySet="tblDieuPhoiVanChuyens" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblVanChuyenKeHoach_tblDMDoor1" Association="Self.FK_tblVanChuyenKeHoach_tblDMDoor1">
+            <End Role="tblDMDoor" EntitySet="tblDMDoors" />
+            <End Role="tblDieuPhoiVanChuyen" EntitySet="tblDieuPhoiVanChuyens" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblVanChuyenKeHoach_tblDMHangHoa" Association="Self.FK_tblVanChuyenKeHoach_tblDMHangHoa">
+            <End Role="tblDMHangHoa" EntitySet="tblDMHangHoas" />
+            <End Role="tblDieuPhoiVanChuyen" EntitySet="tblDieuPhoiVanChuyens" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblVanChuyenKeHoach_tblNhanSu" Association="Self.FK_tblVanChuyenKeHoach_tblNhanSu">
+            <End Role="tblNhanSu" EntitySet="tblNhanSus" />
+            <End Role="tblDieuPhoiVanChuyen" EntitySet="tblDieuPhoiVanChuyens" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblVanChuyenKeHoach_tblSysUser" Association="Self.FK_tblVanChuyenKeHoach_tblSysUser">
+            <End Role="tblSysUser" EntitySet="tblSysUsers" />
+            <End Role="tblDieuPhoiVanChuyen" EntitySet="tblDieuPhoiVanChuyens" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblSysUser_tblNhanSu" Association="Self.FK_tblSysUser_tblNhanSu">
+            <End Role="tblNhanSu" EntitySet="tblNhanSus" />
+            <End Role="tblSysUser" EntitySet="tblSysUsers" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="Model_CMCBacNinhModelStoreContainer" CdmEntityContainer="Model_CMCBacNinhEntities">
+          <EntitySetMapping Name="tblDieuPhoiTrangThaiVCs">
+            <EntityTypeMapping TypeName="Model_CMCBacNinhModel.tblDieuPhoiTrangThaiVC">
+              <MappingFragment StoreEntitySet="tblDieuPhoiTrangThaiVC">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="IDDieuPhoi" ColumnName="IDDieuPhoi" />
+                <ScalarProperty Name="IDDMTrangThaiVanChuyen" ColumnName="IDDMTrangThaiVanChuyen" />
+                <ScalarProperty Name="DateCreate" ColumnName="DateCreate" />
+                <ScalarProperty Name="IDUserCreate" ColumnName="IDUserCreate" />
+                <ScalarProperty Name="NgayGioThucHien" ColumnName="NgayGioThucHien" />
+                <ScalarProperty Name="NoiDung" ColumnName="NoiDung" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblDieuPhoiVanChuyens">
+            <EntityTypeMapping TypeName="Model_CMCBacNinhModel.tblDieuPhoiVanChuyen">
+              <MappingFragment StoreEntitySet="tblDieuPhoiVanChuyen">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="CodeChuyen" ColumnName="CodeChuyen" />
+                <ScalarProperty Name="NgayDongHang" ColumnName="NgayDongHang" />
+                <ScalarProperty Name="NgayTraHang" ColumnName="NgayTraHang" />
+                <ScalarProperty Name="IDDiemDi" ColumnName="IDDiemDi" />
+                <ScalarProperty Name="IDDiemDen" ColumnName="IDDiemDen" />
+                <ScalarProperty Name="SoPL" ColumnName="SoPL" />
+                <ScalarProperty Name="SoKhoi" ColumnName="SoKhoi" />
+                <ScalarProperty Name="SoKG" ColumnName="SoKG" />
+                <ScalarProperty Name="IDDMXeOto" ColumnName="IDDMXeOto" />
+                <ScalarProperty Name="IDLaiXe" ColumnName="IDLaiXe" />
+                <ScalarProperty Name="IDCreateUser" ColumnName="IDCreateUser" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="STT" ColumnName="STT" />
+                <ScalarProperty Name="EnumThueXeOrXeMinh" ColumnName="EnumThueXeOrXeMinh" />
+                <ScalarProperty Name="BienSoXe" ColumnName="BienSoXe" />
+                <ScalarProperty Name="LaiXe" ColumnName="LaiXe" />
+                <ScalarProperty Name="DTLaiXe" ColumnName="DTLaiXe" />
+                <ScalarProperty Name="IDDMCustomerTranport" ColumnName="IDDMCustomerTranport" />
+                <ScalarProperty Name="IDDMCustomer" ColumnName="IDDMCustomer" />
+                <ScalarProperty Name="IDDMHangHoa" ColumnName="IDDMHangHoa" />
+                <ScalarProperty Name="FlagHangVe" ColumnName="FlagHangVe" />
+                <ScalarProperty Name="ThoiGianVe" ColumnName="ThoiGianVe" />
+                <ScalarProperty Name="SoGioCho" ColumnName="SoGioCho" />
+                <ScalarProperty Name="SoCaLuu" ColumnName="SoCaLuu" />
+                <ScalarProperty Name="CodeDieuVan" ColumnName="CodeDieuVan" />
+                <ScalarProperty Name="IDDMLoaiXe" ColumnName="IDDMLoaiXe" />
+                <ScalarProperty Name="EnumTrangThaiDieuPhoi" ColumnName="EnumTrangThaiDieuPhoi" />
+                <ScalarProperty Name="FlagDaDieuPhoi" ColumnName="FlagDaDieuPhoi" />
+                <ScalarProperty Name="GhiChu" ColumnName="GhiChu" />
+                <ScalarProperty Name="IDUserDieuPhoi" ColumnName="IDUserDieuPhoi" />
+                <ScalarProperty Name="IDTrangThaiVanChuyen" ColumnName="IDTrangThaiVanChuyen" />
+                <ScalarProperty Name="STTDieuPhoi" ColumnName="STTDieuPhoi" />
+                <ScalarProperty Name="VeBenBai" ColumnName="VeBenBai" />
+                <ScalarProperty Name="PhatSinhKhac" ColumnName="PhatSinhKhac" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblDMDoors">
+            <EntityTypeMapping TypeName="Model_CMCBacNinhModel.tblDMDoor">
+              <MappingFragment StoreEntitySet="tblDMDoor">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="EnumTypeOfDoor" ColumnName="EnumTypeOfDoor" />
+                <ScalarProperty Name="IDQuocGia" ColumnName="IDQuocGia" />
+                <ScalarProperty Name="IDCity" ColumnName="IDCity" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="NameVI" ColumnName="NameVI" />
+                <ScalarProperty Name="NameEN" ColumnName="NameEN" />
+                <ScalarProperty Name="AddressVI" ColumnName="AddressVI" />
+                <ScalarProperty Name="AddressEN" ColumnName="AddressEN" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Fax" ColumnName="Fax" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Website" ColumnName="Website" />
+                <ScalarProperty Name="Rating" ColumnName="Rating" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="TaxCode" ColumnName="TaxCode" />
+                <ScalarProperty Name="MaxMoneyDebit" ColumnName="MaxMoneyDebit" />
+                <ScalarProperty Name="PaymentPeriod" ColumnName="PaymentPeriod" />
+                <ScalarProperty Name="FlagFavorite" ColumnName="FlagFavorite" />
+                <ScalarProperty Name="IDBank" ColumnName="IDBank" />
+                <ScalarProperty Name="BankAccountNumber" ColumnName="BankAccountNumber" />
+                <ScalarProperty Name="BankBranchName" ColumnName="BankBranchName" />
+                <ScalarProperty Name="BankAddress" ColumnName="BankAddress" />
+                <ScalarProperty Name="SoDuVND" ColumnName="SoDuVND" />
+                <ScalarProperty Name="SoDuUSD" ColumnName="SoDuUSD" />
+                <ScalarProperty Name="PhanTramPhaiThuChi" ColumnName="PhanTramPhaiThuChi" />
+                <ScalarProperty Name="IDCustomer" ColumnName="IDCustomer" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblDMHangHoas">
+            <EntityTypeMapping TypeName="Model_CMCBacNinhModel.tblDMHangHoa">
+              <MappingFragment StoreEntitySet="tblDMHangHoa">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="NameVI" ColumnName="NameVI" />
+                <ScalarProperty Name="NameEN" ColumnName="NameEN" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="FlagFavorite" ColumnName="FlagFavorite" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblNhanSus">
+            <EntityTypeMapping TypeName="Model_CMCBacNinhModel.tblNhanSu">
+              <MappingFragment StoreEntitySet="tblNhanSu">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="IDChucVu" ColumnName="IDChucVu" />
+                <ScalarProperty Name="IDPhongBan" ColumnName="IDPhongBan" />
+                <ScalarProperty Name="IDVanPhong" ColumnName="IDVanPhong" />
+                <ScalarProperty Name="MANHANSU" ColumnName="MANHANSU" />
+                <ScalarProperty Name="MST" ColumnName="MST" />
+                <ScalarProperty Name="HoTenVI" ColumnName="HoTenVI" />
+                <ScalarProperty Name="HoTenEN" ColumnName="HoTenEN" />
+                <ScalarProperty Name="NamSinh" ColumnName="NamSinh" />
+                <ScalarProperty Name="GioiTinh" ColumnName="GioiTinh" />
+                <ScalarProperty Name="QueQuan" ColumnName="QueQuan" />
+                <ScalarProperty Name="DiaChiThuongTru" ColumnName="DiaChiThuongTru" />
+                <ScalarProperty Name="DiaChiHienTai" ColumnName="DiaChiHienTai" />
+                <ScalarProperty Name="SoCMT" ColumnName="SoCMT" />
+                <ScalarProperty Name="NoiCapCMT" ColumnName="NoiCapCMT" />
+                <ScalarProperty Name="NgayCapCMT" ColumnName="NgayCapCMT" />
+                <ScalarProperty Name="SoHoChieu" ColumnName="SoHoChieu" />
+                <ScalarProperty Name="NoiCapHoChieu" ColumnName="NoiCapHoChieu" />
+                <ScalarProperty Name="NgayCapHoChieu" ColumnName="NgayCapHoChieu" />
+                <ScalarProperty Name="NgayHetHanHoChieu" ColumnName="NgayHetHanHoChieu" />
+                <ScalarProperty Name="NgayKyHopDong" ColumnName="NgayKyHopDong" />
+                <ScalarProperty Name="PictureNV" ColumnName="PictureNV" />
+                <ScalarProperty Name="SoTaiKhoanNH" ColumnName="SoTaiKhoanNH" />
+                <ScalarProperty Name="DiDong" ColumnName="DiDong" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="SoTruong" ColumnName="SoTruong" />
+                <ScalarProperty Name="EnumTinhTrangHonNhan" ColumnName="EnumTinhTrangHonNhan" />
+                <ScalarProperty Name="EnumNhomMau" ColumnName="EnumNhomMau" />
+                <ScalarProperty Name="ChieuCao" ColumnName="ChieuCao" />
+                <ScalarProperty Name="CanNang" ColumnName="CanNang" />
+                <ScalarProperty Name="LUONGCOBAN" ColumnName="LUONGCOBAN" />
+                <ScalarProperty Name="GhiChu" ColumnName="GhiChu" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+                <ScalarProperty Name="SoBangLai" ColumnName="SoBangLai" />
+                <ScalarProperty Name="NgayHetHanBangLai" ColumnName="NgayHetHanBangLai" />
+                <ScalarProperty Name="FlagIsManager" ColumnName="FlagIsManager" />
+                <ScalarProperty Name="SoHopDong" ColumnName="SoHopDong" />
+                <ScalarProperty Name="SoDuVND" ColumnName="SoDuVND" />
+                <ScalarProperty Name="HanMucTamUng" ColumnName="HanMucTamUng" />
+                <ScalarProperty Name="FlagDelete" ColumnName="FlagDelete" />
+                <ScalarProperty Name="IDUserDelete" ColumnName="IDUserDelete" />
+                <ScalarProperty Name="DateDelete" ColumnName="DateDelete" />
+                <ScalarProperty Name="LoaiBang" ColumnName="LoaiBang" />
+                <ScalarProperty Name="FlagDriver" ColumnName="FlagDriver" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblSysUsers">
+            <EntityTypeMapping TypeName="Model_CMCBacNinhModel.tblSysUser">
+              <MappingFragment StoreEntitySet="tblSysUser">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="IDNhanVien" ColumnName="IDNhanVien" />
+                <ScalarProperty Name="IDGroupUser" ColumnName="IDGroupUser" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="GhiChu" ColumnName="GhiChu" />
+                <ScalarProperty Name="Fixed" ColumnName="Fixed" />
+                <ScalarProperty Name="Permission" ColumnName="Permission" />
+                <ScalarProperty Name="StatusLogin" ColumnName="StatusLogin" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

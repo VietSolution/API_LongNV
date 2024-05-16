@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="8bfda365b3b141778097f77cfcd03403" Name="Diagram1">
+        <EntityTypeShape EntityType="Model_CMCBacNinhModel.tblDieuPhoiTrangThaiVC" Width="1.5" PointX="7.5" PointY="14.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model_CMCBacNinhModel.tblDieuPhoiVanChuyen" Width="1.5" PointX="5.25" PointY="9" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model_CMCBacNinhModel.tblDMDoor" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model_CMCBacNinhModel.tblDMHangHoa" Width="1.5" PointX="3" PointY="8.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model_CMCBacNinhModel.tblNhanSu" Width="1.5" PointX="0.75" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model_CMCBacNinhModel.tblSysUser" Width="1.5" PointX="3" PointY="18.25" IsExpanded="true" />
+        <AssociationConnector Association="Model_CMCBacNinhModel.FK_tblDieuPhoiTrangThaiVC_tblDieuPhoiVanChuyen" ManuallyRouted="false" />
+        <AssociationConnector Association="Model_CMCBacNinhModel.FK_tblDieuPhoiTrangThaiVC_tblSysUser" ManuallyRouted="false" />
+        <AssociationConnector Association="Model_CMCBacNinhModel.FK_tblDieuPhoiVanChuyen_tblSysUser" ManuallyRouted="false" />
+        <AssociationConnector Association="Model_CMCBacNinhModel.FK_tblVanChuyenKeHoach_tblDMDoor" ManuallyRouted="false" />
+        <AssociationConnector Association="Model_CMCBacNinhModel.FK_tblVanChuyenKeHoach_tblDMDoor1" ManuallyRouted="false" />
+        <AssociationConnector Association="Model_CMCBacNinhModel.FK_tblVanChuyenKeHoach_tblDMHangHoa" ManuallyRouted="false" />
+        <AssociationConnector Association="Model_CMCBacNinhModel.FK_tblVanChuyenKeHoach_tblNhanSu" ManuallyRouted="false" />
+        <AssociationConnector Association="Model_CMCBacNinhModel.FK_tblVanChuyenKeHoach_tblSysUser" ManuallyRouted="false" />
+        <AssociationConnector Association="Model_CMCBacNinhModel.FK_tblSysUser_tblNhanSu" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
