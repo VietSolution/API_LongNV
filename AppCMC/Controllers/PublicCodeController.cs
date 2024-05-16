@@ -37,8 +37,19 @@ namespace AppCMC.Controllers
         public string Email { get; set; }
         public string IATACode { get; set; }
     }
-
-    public class tblDMCustomersController : ApiController
+    public class tblSysUserDto
+    {
+        public bool FlagQuanLy { get; set; } 
+        public string Username { get; set; }
+        public string Pass { get; set; }
+        public string Key { get; set; }
+        public string HoTen { get; set; }
+        public string DatabaseServerName { get; set; }
+        public string DatabaseName { get; set; }
+        public string DatabaseUserName { get; set; }
+        public string DatabasePassword { get; set; }
+    }
+    public class PublicCodeController : ApiController
     {
         enum ErrorCode
         {
