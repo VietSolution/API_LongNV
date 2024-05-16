@@ -49,6 +49,48 @@ namespace AppCMC.Controllers
         public string DatabaseUserName { get; set; }
         public string DatabasePassword { get; set; }
     }
+    public class tblDieuPhoiVanChuyenDto
+    {
+        public long ID { get; set; }
+        public DateTime? NgayDongHang { get; set; }
+        public DateTime? NgayTraHang { get; set; }
+        public string DiemDi { get; set; }
+        public string DiemDen { get; set; }
+        public string SoPL { get; set; }
+        public string SoKhoi { get; set; }
+        public string SoKG { get; set; }
+        public string BienSoXe { get; set; }
+        public string LaiXe { get; set; }
+        public string DonViVanTai { get; set; }
+        public string KhachHang { get; set; }
+        public string HangHoa { get; set; }
+        public string HangVe { get; set; }
+        public string ThoiGianVe { get; set; }
+    }
+    public class tblDieuPhoiVanChuyenNewDto
+    {
+        public long ID { get; set; }
+        public long IDUser { get; set; }
+        public DateTime? NgayDongHang { get; set; }
+        public DateTime? NgayTraHang { get; set; }
+        public string IDDiemDi { get; set; }
+        public string IDDiemDen { get; set; }
+        public string SoPL { get; set; }
+        public string SoKG { get; set; }
+        public string SoKhoi { get; set; }
+        public string IDKhachHang { get; set; }
+        public string IDHangHoa { get; set; }
+        public string FlagHangVe { get; set; }
+        public string ThoiGianVe { get; set; }
+    }
+    public class tblDMXeDto
+    {
+       public long ID { get; set; }
+        public string BienSoXe { get; set; }
+        public string SoLuongChuyen { get; set; }
+        public string TrangThai { get; set; }
+        public string RGB { get; set; }
+    }
     public class PublicCodeController : ApiController
     {
         enum ErrorCode
@@ -105,6 +147,8 @@ namespace AppCMC.Controllers
         //}
 
         // PUT: api/tblDMCustomers/5
+
+
         [HttpPost]
         [ResponseType(typeof(void))]
         [Route("api/EditCustomer")]
