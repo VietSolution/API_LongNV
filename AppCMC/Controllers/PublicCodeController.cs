@@ -74,9 +74,16 @@ namespace AppCMC.Controllers
         public string DiemDen { get; set; }
         public string SoPL { get; set; }
         public string SoKhoi { get; set; }
+        public string SoGioCho { get; set; }
+        public string SoCaLuu { get; set; }
+        public string VeBenBai { get; set; }
+        public string PhatSinhKhac { get; set; }
+        public string GhiChu { get; set; }
+        public string MaDieuVan { get; set; }
         public string SoKG { get; set; }
         public string BienSoXe { get; set; }
         public string LaiXe { get; set; }
+        public string LoaiXe { get; set; }
         public string DonViVanTai { get; set; }
         public string KhachHang { get; set; }
         public string HangHoa { get; set; }
@@ -94,19 +101,20 @@ namespace AppCMC.Controllers
     }
     public class tblDieuPhoiVanChuyenNewDto
     {
-        public long ID { get; set; }
-        public long IDUser { get; set; }
+        public long IDChuyen { get; set; }
+        public long? IDUser { get; set; }
         public DateTime? NgayDongHang { get; set; }
         public DateTime? NgayTraHang { get; set; }
-        public string IDDiemDi { get; set; }
-        public string IDDiemDen { get; set; }
-        public string SoPL { get; set; }
-        public string SoKG { get; set; }
-        public string SoKhoi { get; set; }
-        public string IDKhachHang { get; set; }
-        public string IDHangHoa { get; set; }
-        public string FlagHangVe { get; set; }
-        public string ThoiGianVe { get; set; }
+        public long? IDDiemDi { get; set; }
+        public long? IDDiemDen { get; set; }
+        public long? IDLoaiXe { get; set; }
+        public double SoPL { get; set; }
+        public double SoKG { get; set; }
+        public double SoKhoi { get; set; }
+        public long? IDKhachHang { get; set; }
+        public long? IDHangHoa { get; set; }
+        public bool FlagHangVe { get; set; }
+        public DateTime? ThoiGianVe { get; set; }
     }
     public class tblDMXeDto
     {

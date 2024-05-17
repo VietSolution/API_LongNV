@@ -23,15 +23,16 @@ namespace AppCMC.Controllers
         {
             _Chuyen.NgayDongHang = _object.NgayDongHang;
             _Chuyen.NgayTraHang = _object.NgayTraHang;
-            _Chuyen.IDDMCustomer = LongNVExport.Getlong(_object.IDKhachHang?.ToString());
-            _Chuyen.IDDiemDi = LongNVExport.Getlong(_object.IDDiemDi?.ToString());
-            _Chuyen.IDDiemDen = LongNVExport.Getlong(_object.IDDiemDen?.ToString());
-            _Chuyen.IDDMHangHoa = LongNVExport.Getlong(_object.IDHangHoa?.ToString());
-            _Chuyen.SoKG = LongNVExport.GetDouble(_object.SoKG?.ToString());
-            _Chuyen.SoKhoi = LongNVExport.GetDouble(_object.SoKhoi?.ToString());
-            _Chuyen.SoPL = LongNVExport.GetDouble(_object.SoPL?.ToString());
-            _Chuyen.FlagHangVe = _object.FlagHangVe == "1" ? true : false;
-            _Chuyen.NgayDongHang = LongNVExport.GetDate(_object.ThoiGianVe);
+            _Chuyen.IDDMCustomer = _object.IDKhachHang;
+            _Chuyen.IDDiemDi = _object.IDDiemDi;
+            _Chuyen.IDDiemDen = _object.IDDiemDen;
+            _Chuyen.IDDMHangHoa = _object.IDHangHoa;
+            _Chuyen.SoKG = _object.SoKG;
+            _Chuyen.SoKhoi = _object.SoKhoi;
+            _Chuyen.SoPL = _object.SoPL;
+            _Chuyen.FlagHangVe = _object.FlagHangVe ;
+            _Chuyen.ThoiGianVe = _object.ThoiGianVe;
+            _Chuyen.IDDMLoaiXe = _object.IDLoaiXe;
         }
         #endregion
         #region Danh mục
@@ -137,9 +138,153 @@ namespace AppCMC.Controllers
             }
         }
 
+        #region danh sách chuyến vận chuyển
         [HttpGet]
         [Route("api/GetListChuyenVanChuyen")] // lọc ds chuyến theo ngày
         public IHttpActionResult GetListChuyenVanChuyen(long IDUSer, DateTime dtS, DateTime dtE)
+        {
+
+            List<tblDieuPhoiVanChuyenDto> LstChuyenDto = new List<tblDieuPhoiVanChuyenDto>();
+            var _user = context.tblSysUsers.FirstOrDefault(x => x.ID == IDUSer);
+            if (_user == null) return Content(HttpStatusCode.NotFound, "Lỗi dữ liệu !");
+            dtE = new DateTime(dtE.Year, dtE.Month, dtE.Day, 23, 59, 00);
+            Expression<Func<tblDieuPhoiVanChuyen, bool>> func = null;
+
+            if (_user.tblNhanSu != null && _user.tblNhanSu.FlagDriver == true) // không phải lái xe
+            {
+                func = x => x.NgayDongHang == null || (x.NgayDongHang >= dtS && x.NgayDongHang <= dtE && x.IDCreateUser == _user.ID);
+            }
+            else
+            {
+                func = x => x.NgayDongHang == null || (x.NgayDongHang >= dtS && x.NgayDongHang <= dtE);
+            }
+            
+            LstChuyenDto = context.tblDieuPhoiVanChuyens.Where(func).Select(x =>
+            new tblDieuPhoiVanChuyenDto
+            {
+                IDChuyen = x.ID,
+                BienSoXe = x.tblDMXeOto != null ? x.tblDMXeOto.BienSoXE : x.BienSoXe,
+                DiemDi = x.tblDMDoor != null ? x.tblDMDoor.AddressVI : "",
+                DiemDen = x.tblDMDoor1 != null ? x.tblDMDoor1.AddressVI : "",
+                DonViVanTai = x.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company ? "CMC" : (x.tblDMCustomer1 != null ? x.tblDMCustomer1.NameVI : ""),
+                HangHoa = x.tblDMHangHoa != null ? x.tblDMHangHoa.NameVI : "",
+                HangVe = x.FlagHangVe == true ? "1" : "0",
+                KhachHang = x.tblDMCustomer != null ? x.tblDMCustomer.NameVI : "",
+                LaiXe = x.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company ? (x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "") : x.LaiXe,
+                NgayDongHangCal = x.NgayDongHang ,
+                NgayTraHangCal = x.NgayDongHang ,
+                SoKhoi = x.SoKhoi != null ? x.SoKhoi.Value.ToString() : "",
+                SoPL = x.SoPL != null ? x.SoPL.Value.ToString() : "",
+                SoKG = x.SoKG != null ? x.SoKG.Value.ToString() : "",
+                LoaiXe = x.tblDMLoaiXe != null ? x.tblDMLoaiXe.NameVI : "",
+                ThoiGianVeCal = x.ThoiGianVe ,
+            }).ToList();
+            return Ok(LstChuyenDto);
+        }
+
+        [HttpPost]
+        [Route("api/PostChuyenVanChuyen")] // mới
+        public IHttpActionResult PostChuyenVanChuyen([FromBody] tblDieuPhoiVanChuyenNewDto _object)
+        {
+            if (_object == null) return Content(HttpStatusCode.NoContent, "Đối tượng rỗng !");
+           
+            if (_object.IDUser == null) return Content(HttpStatusCode.LengthRequired, "Người dùng không tồn tại");
+            if (_object.NgayDongHang == null) return Content(HttpStatusCode.LengthRequired, "Không được để trống Ngày đóng hàng");
+            if (_object.IDKhachHang == null || _object.IDDiemDi == null || _object.IDDiemDen == null) return Content(HttpStatusCode.LengthRequired, "Không được để trống khách hàng/Điểm đi/điểm đến");
+            try
+            {
+                tblDieuPhoiVanChuyen _Chuyen = null;
+                _Chuyen = new tblDieuPhoiVanChuyen()
+                {
+                    CreateDate = DateTime.Now,
+                    IDCreateUser = _object.IDUser,
+                    tblSysUser = context.tblSysUsers.FirstOrDefault(x => x.ID == _object.IDUser)
+                };
+               
+                UpdateChuyen(_Chuyen, _object);
+                _Chuyen.SaveData(context);
+            }
+            catch
+            {
+                return Content(HttpStatusCode.BadRequest, "Lỗi dữ liệu !");
+            }
+
+            return Content(HttpStatusCode.OK, "Cập nhật dữ liệu thành công !");
+        }
+
+        [HttpGet]
+        [Route("api/GetChuyenVanChuyen")]
+        public IHttpActionResult GetChuyenVanChuyen(long IDChuyen) // lấy ra chuyến cần sửa
+        {
+            try
+            {
+                var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
+                if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
+
+                return Ok(new { NgayDongHang = _Chuyen.NgayDongHang, NgayTraHang = _Chuyen.NgayTraHang, IDDiemDi = _Chuyen.IDDiemDi, IDDiemDen = _Chuyen.IDDiemDen, IDDMHangHoa = _Chuyen.IDDMHangHoa ,SoKG = _Chuyen.SoKG , SoKhoi = _Chuyen.SoKhoi, SoPL = _Chuyen.SoPL, FlagHangVe = _Chuyen.FlagHangVe,ThoiGianVe = _Chuyen.ThoiGianVe , IDKhachHang = _Chuyen.IDDMCustomer, IDLoaiXe = _Chuyen.IDDMLoaiXe});
+            }
+            catch
+            {
+                return Content(HttpStatusCode.BadRequest, "Lỗi dữ liệu !");
+            }
+        }
+
+
+        [HttpPut]
+        [Route("api/PutChuyenVanChuyen")] // sửa
+        public IHttpActionResult PutChuyenVanChuyen([FromBody] tblDieuPhoiVanChuyenNewDto _object)
+        {
+            if (_object == null) return Content(HttpStatusCode.NoContent, "Đối tượng rỗng !");
+            if (_object.IDChuyen == 0) return Content(HttpStatusCode.LengthRequired, "Lỗi dữ liệu truyền vào !");
+
+            if (_object.NgayDongHang == null) return Content(HttpStatusCode.LengthRequired, "Không được để trống Ngày đóng hàng");
+            if (_object.IDKhachHang == null || _object.IDDiemDi == null || _object.IDDiemDen == null) return Content(HttpStatusCode.LengthRequired, "Không được để trống khách hàng/Điểm đi/điểm đến");
+
+            try
+            {
+                tblDieuPhoiVanChuyen _Chuyen = null;
+                _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == _object.IDUser);
+                if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
+                UpdateChuyen(_Chuyen, _object);
+                _Chuyen.SaveData(context);
+            }
+            catch
+            {
+                return Content(HttpStatusCode.BadRequest, "Lỗi dữ liệu !");
+            }
+
+            return Content(HttpStatusCode.OK, "Cập nhật dữ liệu thành công !");
+        }
+
+
+        [HttpDelete]
+        [Route("api/DeleteChuyenVanChuyen")]
+        public IHttpActionResult DeleteChuyenVanChuyen(long IDChuyen) //
+        {
+            try
+            {
+                var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
+                if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần xóa !");
+                if(_Chuyen.ListTrangThaiVanChuyen.Count() > 0)
+                {
+                    return Content(HttpStatusCode.BadRequest, "Không thể xóa chuyến đã vận chuyển !");
+                }    
+                context.tblDieuPhoiVanChuyens.Remove(_Chuyen);
+                context.SaveChanges();
+                return Ok();
+            }
+            catch
+            {
+                return Content(HttpStatusCode.BadRequest, "Không thể xóa chuyến !");
+            }
+        }
+        #endregion
+        #region điều phối xe
+        // Điều phối xe
+
+        [HttpGet]
+        [Route("api/GetListDieuPhoiVanChuyen")] // lọc ds chuyến theo ngày
+        public IHttpActionResult GetListDieuPhoiVanChuyen(long IDUSer, DateTime dtS, DateTime dtE)
         {
 
             List<tblDieuPhoiVanChuyenDto> LstChuyenDto = new List<tblDieuPhoiVanChuyenDto>();
@@ -160,103 +305,43 @@ namespace AppCMC.Controllers
             new tblDieuPhoiVanChuyenDto
             {
                 IDChuyen = x.ID,
-                BienSoXe = x.tblDMXeOto != null ? x.tblDMXeOto.BienSoXE : x.BienSoXe,
-                DiemDi = x.tblDMDoor != null ? x.tblDMDoor.AddressVI : "",
-                DiemDen = x.tblDMDoor1 != null ? x.tblDMDoor1.AddressVI : "",
+                NgayDongHangCal = x.NgayDongHang,
+                KhachHang = x.tblDMCustomer != null ? x.tblDMCustomer.NameVI : "",
                 DonViVanTai = x.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company ? "CMC" : (x.tblDMCustomer1 != null ? x.tblDMCustomer1.NameVI : ""),
                 HangHoa = x.tblDMHangHoa != null ? x.tblDMHangHoa.NameVI : "",
-                HangVe = x.FlagHangVe == true ? "1" : "0",
-                KhachHang = x.tblDMCustomer != null ? x.tblDMCustomer.NameVI : "",
+                DiemDi = x.tblDMDoor != null ? x.tblDMDoor.AddressVI : "",
+                DiemDen = x.tblDMDoor1 != null ? x.tblDMDoor1.AddressVI : "",
+                BienSoXe = x.tblDMXeOto != null ? x.tblDMXeOto.BienSoXE : x.BienSoXe,
                 LaiXe = x.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company ? (x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "") : x.LaiXe,
-                NgayDongHangCal = x.NgayDongHang ,
-                NgayTraHangCal = x.NgayDongHang ,
+                SoPL = x.SoPL != null ? x.SoPL.Value.ToString() : "",
                 SoKhoi = x.SoKhoi != null ? x.SoKhoi.Value.ToString() : "",
                 SoKG = x.SoKG != null ? x.SoKG.Value.ToString() : "",
-                SoPL = x.SoPL != null ? x.SoPL.Value.ToString() : "",
-                ThoiGianVeCal = x.ThoiGianVe ,
+                LoaiXe = x.tblDMLoaiXe != null ? x.tblDMLoaiXe.NameVI : "",
+                NgayTraHangCal = x.NgayDongHang,
+                ThoiGianVeCal = x.ThoiGianVe,
+                HangVe = x.FlagHangVe == true ? "1" : "0",
+                SoGioCho = x.SoGioCho != null ? x.SoGioCho.Value.ToString() : "",
+                SoCaLuu = x.SoCaLuu != null ? x.SoCaLuu.Value.ToString() : "",
+                VeBenBai = x.VeBenBai != null ? x.VeBenBai.Value.ToString() : "",
+               PhatSinhKhac = x.PhatSinhKhac,
+               GhiChu = x.GhiChu,
+               MaDieuVan = x.CodeDieuVan,
             }).ToList();
             return Ok(LstChuyenDto);
         }
 
-        [HttpPost]
-        [Route("api/PostChuyenVanChuyen")] // mới
-        public IHttpActionResult PutChuyenVanChuyen([FromBody] tblDieuPhoiVanChuyenNewDto _object)
-        {
-            if (!ModelState.IsValid)
-            {
-                return Content(HttpStatusCode.PreconditionFailed, "Lỗi kiểu dữ liệu đầu vào");
-            }
-            if (_object == null) return Content(HttpStatusCode.LengthRequired, "Lỗi dữ liệu !");
-           
-            if (_object.NgayDongHang == null) return Content(HttpStatusCode.LengthRequired, "Không được để trống Ngày đóng hàng");
-            if (_object.IDKhachHang == null) return Content(HttpStatusCode.LengthRequired, "Không được để trống khách hàng");
 
-            try
-            {
-                tblDieuPhoiVanChuyen _Chuyen = null;
-                _Chuyen = new tblDieuPhoiVanChuyen()
-                {
-                    CreateDate = DateTime.Now,
-                    IDCreateUser = _object.IDUser,
-                    tblSysUser = context.tblSysUsers.FirstOrDefault(x => x.ID == _object.ID)
-                };
-               
-                UpdateChuyen(_Chuyen, _object);
-                _Chuyen.SaveData(context);
-            }
-            catch
-            {
-                return Content(HttpStatusCode.BadRequest, "Lỗi dữ liệu !");
-            }
-
-            return Content(HttpStatusCode.OK, "Cập nhật dữ liệu thành công !");
-        }
-
-        [HttpPut]
-        [Route("api/PutChuyenVanChuyen")] // sửa
-        public IHttpActionResult PostChuyenVanChuyen([FromBody] tblDieuPhoiVanChuyenNewDto _object)
-        {
-            if (!ModelState.IsValid)
-            {
-                return Content(HttpStatusCode.PreconditionFailed, "Lỗi kiểu dữ liệu đầu vào");
-            }
-            if (_object == null) return Content(HttpStatusCode.LengthRequired, "Lỗi dữ liệu !");
-            if (_object.ID == 0) return Content(HttpStatusCode.LengthRequired, "Lỗi dữ liệu truyền vào !");
-
-            if (_object.NgayDongHang == null) return Content(HttpStatusCode.LengthRequired, "Không được để trống Ngày đóng hàng");
-            if (_object.IDKhachHang == null) return Content(HttpStatusCode.LengthRequired, "Không được để trống khách hàng");
-
-            try
-            {
-                tblDieuPhoiVanChuyen _Chuyen = null;
-                _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == _object.ID);
-                if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
-                UpdateChuyen(_Chuyen, _object);
-                _Chuyen.SaveData(context);
-            }
-            catch
-            {
-                return Content(HttpStatusCode.BadRequest, "Lỗi dữ liệu !");
-            }
-
-            return Content(HttpStatusCode.OK, "Cập nhật dữ liệu thành công !");
-        }
-
-
-        // Điều phối xe
         // lấy ra chuyến cần điều phối
-
-
         [HttpGet]
-        [Route("api/GetChuyenDieuPhoi")]// chọn 1 chuyến rồi nhấn chức năng điều phối xe
-        public IHttpActionResult GetChuyenDieuPhoi(long IDChuyen) // Lấy ds chuyến của 1 xe
+        [Route("api/GetChuyenDieuPhoi")]
+        public IHttpActionResult GetChuyenDieuPhoi(long IDChuyen)
         {
             try
             {
                 var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
 
-                return Ok(new { IDXeOTo = _Chuyen.IDDMXeOto, EnumXeThueOrXeCongTy = _Chuyen.EnumThueXeOrXeMinh, IDLaiXe = _Chuyen.IDLaiXe, LaiXe = _Chuyen.LaiXe, DTLaiXe = _Chuyen.DTLaiXe });
+                return Ok(new { IDXeOTo = _Chuyen.IDDMXeOto, IDLaiXe = _Chuyen.IDLaiXe,SoGioCho = _Chuyen.SoGioCho,SoCaLuu = _Chuyen.SoCaLuu,VeBenBai = _Chuyen.VeBenBai,PhatSinhKhac = _Chuyen.PhatSinhKhac, GhiChu = _Chuyen.GhiChu });
             }
             catch
             {
@@ -264,33 +349,9 @@ namespace AppCMC.Controllers
             }
         }
 
+       
 
-        [HttpGet]
-        [Route("api/GetListXeDieuPhoi")] // Trên form điều phối nhấn chọn xe
-        public IHttpActionResult GetListXeDieuPhoi(long IDChuyen)
-        {
-            if (!ModelState.IsValid)
-            {
-                return Content(HttpStatusCode.PreconditionFailed, "Lỗi kiểu dữ liệu đầu vào");
-            }
-            var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
-            if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần điều phối !");
-            try
-            {
-                // ds xe đã sắp xếp ưu tiên
-                var lstXeDieuPhoi = PublicCodeShare.GetListXeDieuPhoiUuTien(context, _Chuyen, context.tblDMXeOtoes.ToList());
-                if (lstXeDieuPhoi.Count() == 0)
-                {
-                    return Content(HttpStatusCode.NotFound, "Không tìm thấy xe để điều phối !");
-                }
-                var LstXeUuTien = lstXeDieuPhoi.Select(x => new {NhomXe = ((EnumGroupXeDieuPhoi)x.EnumGroupCal).GetDescription(), EnumGroup = x.EnumGroupCal , BienSoXe = x.BienSoXE, LaiXe = x.tblNhanSu?.TenText, LoaiXe = x.tblDMLoaiXe?.TenText }).ToList();
-                return Ok(LstXeUuTien);
-            }
-            catch
-            {
-                return Content(HttpStatusCode.BadRequest, "Lỗi dữ liệu !");
-            }
-        }
+        #endregion
         #endregion
     }
 }
