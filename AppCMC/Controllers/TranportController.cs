@@ -34,10 +34,59 @@ namespace AppCMC.Controllers
             _Chuyen.NgayDongHang = LongNVExport.GetDate(_object.ThoiGianVe);
         }
         #endregion
+        #region Danh mục
+        [HttpGet]
+        [Route("api/GettblDMXeOto")]
+        public IHttpActionResult GettblDMXeOto() 
+        {
+            var LstAllXe = context.tblDMXeOtoes.Select(x=>new { ID = x.ID, BienSoXe = x.BienSoXE, LaiXe = x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "",LoaiXe = x.tblDMLoaiXe != null ? x.tblDMLoaiXe.NameVI : "" }).ToList();
+            return Ok(LstAllXe);
+        }
 
+        [HttpGet]
+        [Route("api/GettblNhanSu")]
+        public IHttpActionResult GettblNhanSu()
+        {
+            var LstAll = context.tblNhanSus.Select(x => new { ID = x.ID, HoTen = x.HoTenVI, MaNhanSu = x.MANHANSU}).ToList();
+            return Ok(LstAll);
+        }
+
+        [HttpGet]
+        [Route("api/GettblDMDoor")]
+        public IHttpActionResult GettblDMDoor()
+        {
+            var LstAll = context.tblDMDoors.Select(x => new { ID = x.ID, Name = x.NameVI, Address = x.AddressVI }).ToList();
+            return Ok(LstAll);
+        }
+
+        [HttpGet]
+        [Route("api/GettblDMHangHoa")]
+        public IHttpActionResult GettblDMHangHoa()
+        {
+            var LstAll = context.tblDMHangHoas.Select(x => new { ID = x.ID , Code = x.Code, Name = x.NameVI }).ToList();
+            return Ok(LstAll);
+        }
+
+        [HttpGet]
+        [Route("api/GettblDMCustomer")]
+        public IHttpActionResult GettblDMCustomer()
+        {
+            var LstAll = context.tblDMCustomers.Where(x=>x.FlagCustomer == true || (x.FlagCustomer != true && x.FlagLocalTrans != true || x.FlagNhaCC != true)).Select(x => new { ID = x.ID, Code = x.Code, Name = x.NameVI }).ToList();
+            return Ok(LstAll);
+        }
+
+        [HttpGet]
+        [Route("api/GettblDMDonViVanTai")]
+        public IHttpActionResult GettblDMDonViVanTai()
+        {
+            var LstAll = context.tblDMCustomers.Where(x => x.FlagLocalTrans == true || (x.FlagCustomer != true && x.FlagLocalTrans != true || x.FlagNhaCC != true)).Select(x => new { ID = x.ID, Code = x.Code, Name = x.NameVI }).ToList();
+            return Ok(LstAll);
+        }
+
+        #endregion
         #region Api Admin
         [HttpGet]
-        [Route("api/GetListXe")]
+        [Route("api/GetTrangThaiXeTrongNgay")]
         public IHttpActionResult GetTrangThaiXeTrongNgay() // danh sách xe trên màn hình chính Admin
         {
             List<tblDMXeDto> LstAllXeSelect = new List<tblDMXeDto>();
@@ -47,9 +96,9 @@ namespace AppCMC.Controllers
             {
                 tblDMXeDto _New = new tblDMXeDto()
                 {
-                    ID = _xe.ID,
+                    IDXe = _xe.ID,
                     BienSoXe = _xe.BienSoXE,
-                    SoLuongChuyen = context.tblDieuPhoiVanChuyens.Where(x => x.NgayDongHang != null && x.NgayDongHang.Value.Year == DateTime.Now.Year && x.NgayDongHang.Value.Month == DateTime.Now.Month && x.IDDMXeOto == _xe.ID).Count().ToString(),
+                    SoLuongChuyen = context.tblDieuPhoiVanChuyens.Where(x => x.NgayDongHang != null && x.NgayDongHang.Value.Year == DateTime.Now.Year && x.NgayDongHang.Value.Month == DateTime.Now.Month && x.IDDMXeOto == _xe.ID).Count(),
                 };
                 var _ChuyenHT = context.tblDieuPhoiVanChuyens.Where(x => x.NgayDongHang != null && x.NgayDongHang <= DateTime.Now && x.NgayTraHang >= DateTime.Now && x.IDDMXeOto == _xe.ID).FirstOrDefault();
                 if(_ChuyenHT != null)
@@ -63,7 +112,7 @@ namespace AppCMC.Controllers
         }
 
         [HttpGet]
-        [Route("api/GetTrangThaiXeTrongNgay")]
+        [Route("api/GetListChuyenXe")]
         public IHttpActionResult GetListChuyenXe(long IDXe) // Lấy ds chuyến của 1 xe
         {
             List<tblDieuPhoiVanChuyenDto> LstChuyenDto = new List<tblDieuPhoiVanChuyenDto>();
@@ -74,12 +123,12 @@ namespace AppCMC.Controllers
             LstChuyenDto = context.tblDieuPhoiVanChuyens.Where(func).Select(x =>
             new tblDieuPhoiVanChuyenDto
             {
-                ID = x.ID,
+                IDChuyen = x.ID,
                 BienSoXe = x.tblDMXeOto != null ? x.tblDMXeOto.BienSoXE : x.BienSoXe,
                 DiemDi = x.tblDMDoor != null ? x.tblDMDoor.AddressVI : "",
                 DiemDen = x.tblDMDoor1 != null ? x.tblDMDoor1.AddressVI : "",
-                NgayDongHang = x.NgayDongHang,
-                NgayTraHang = x.NgayTraHang,
+                NgayDongHangCal = x.NgayDongHang,
+                NgayTraHangCal = x.NgayTraHang,
             }).ToList();
             if(LstChuyenDto.Count() > 0) return Ok(LstChuyenDto);
             else
@@ -110,7 +159,7 @@ namespace AppCMC.Controllers
             LstChuyenDto = context.tblDieuPhoiVanChuyens.Where(func).Select(x =>
             new tblDieuPhoiVanChuyenDto
             {
-                ID = x.ID,
+                IDChuyen = x.ID,
                 BienSoXe = x.tblDMXeOto != null ? x.tblDMXeOto.BienSoXE : x.BienSoXe,
                 DiemDi = x.tblDMDoor != null ? x.tblDMDoor.AddressVI : "",
                 DiemDen = x.tblDMDoor1 != null ? x.tblDMDoor1.AddressVI : "",
@@ -119,20 +168,18 @@ namespace AppCMC.Controllers
                 HangVe = x.FlagHangVe == true ? "1" : "0",
                 KhachHang = x.tblDMCustomer != null ? x.tblDMCustomer.NameVI : "",
                 LaiXe = x.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company ? (x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "") : x.LaiXe,
-                NgayDongHang = x.NgayDongHang,
-                NgayTraHang = x.NgayTraHang,
+                NgayDongHangCal = x.NgayDongHang ,
+                NgayTraHangCal = x.NgayDongHang ,
                 SoKhoi = x.SoKhoi != null ? x.SoKhoi.Value.ToString() : "",
                 SoKG = x.SoKG != null ? x.SoKG.Value.ToString() : "",
                 SoPL = x.SoPL != null ? x.SoPL.Value.ToString() : "",
-                ThoiGianVe = x.ThoiGianVe != null ? x.ThoiGianVe.Value.ToString() : "",
-
+                ThoiGianVeCal = x.ThoiGianVe ,
             }).ToList();
             return Ok(LstChuyenDto);
         }
 
-        [HttpPut]
-        //[ResponseType(typeof(void))]
-        [Route("api/PutChuyenVanChuyen")]
+        [HttpPost]
+        [Route("api/PostChuyenVanChuyen")] // mới
         public IHttpActionResult PutChuyenVanChuyen([FromBody] tblDieuPhoiVanChuyenNewDto _object)
         {
             if (!ModelState.IsValid)
@@ -165,9 +212,8 @@ namespace AppCMC.Controllers
             return Content(HttpStatusCode.OK, "Cập nhật dữ liệu thành công !");
         }
 
-        [HttpPost]
-        //[ResponseType(typeof(void))]
-        [Route("api/PostChuyenVanChuyen")]
+        [HttpPut]
+        [Route("api/PutChuyenVanChuyen")] // sửa
         public IHttpActionResult PostChuyenVanChuyen([FromBody] tblDieuPhoiVanChuyenNewDto _object)
         {
             if (!ModelState.IsValid)
@@ -196,6 +242,55 @@ namespace AppCMC.Controllers
             return Content(HttpStatusCode.OK, "Cập nhật dữ liệu thành công !");
         }
 
+
+        // Điều phối xe
+        // lấy ra chuyến cần điều phối
+
+
+        [HttpGet]
+        [Route("api/GetChuyenDieuPhoi")]// chọn 1 chuyến rồi nhấn chức năng điều phối xe
+        public IHttpActionResult GetChuyenDieuPhoi(long IDChuyen) // Lấy ds chuyến của 1 xe
+        {
+            try
+            {
+                var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
+                if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
+
+                return Ok(new { IDXeOTo = _Chuyen.IDDMXeOto, EnumXeThueOrXeCongTy = _Chuyen.EnumThueXeOrXeMinh, IDLaiXe = _Chuyen.IDLaiXe, LaiXe = _Chuyen.LaiXe, DTLaiXe = _Chuyen.DTLaiXe });
+            }
+            catch
+            {
+                return Content(HttpStatusCode.BadRequest, "Lỗi dữ liệu !");
+            }
+        }
+
+
+        [HttpGet]
+        [Route("api/GetListXeDieuPhoi")] // Trên form điều phối nhấn chọn xe
+        public IHttpActionResult GetListXeDieuPhoi(long IDChuyen)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Content(HttpStatusCode.PreconditionFailed, "Lỗi kiểu dữ liệu đầu vào");
+            }
+            var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
+            if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần điều phối !");
+            try
+            {
+                // ds xe đã sắp xếp ưu tiên
+                var lstXeDieuPhoi = PublicCodeShare.GetListXeDieuPhoiUuTien(context, _Chuyen, context.tblDMXeOtoes.ToList());
+                if (lstXeDieuPhoi.Count() == 0)
+                {
+                    return Content(HttpStatusCode.NotFound, "Không tìm thấy xe để điều phối !");
+                }
+                var LstXeUuTien = lstXeDieuPhoi.Select(x => new {NhomXe = ((EnumGroupXeDieuPhoi)x.EnumGroupCal).GetDescription(), EnumGroup = x.EnumGroupCal , BienSoXe = x.BienSoXE, LaiXe = x.tblNhanSu?.TenText, LoaiXe = x.tblDMLoaiXe?.TenText }).ToList();
+                return Ok(LstXeUuTien);
+            }
+            catch
+            {
+                return Content(HttpStatusCode.BadRequest, "Lỗi dữ liệu !");
+            }
+        }
         #endregion
     }
 }

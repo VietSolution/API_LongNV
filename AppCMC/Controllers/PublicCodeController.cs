@@ -48,12 +48,28 @@ namespace AppCMC.Controllers
         public string DatabaseName { get; set; }
         public string DatabaseUserName { get; set; }
         public string DatabasePassword { get; set; }
+        public long IDUser { get; set; }
     }
     public class tblDieuPhoiVanChuyenDto
     {
-        public long ID { get; set; }
-        public DateTime? NgayDongHang { get; set; }
-        public DateTime? NgayTraHang { get; set; }
+        public long IDChuyen { get; set; }
+        public DateTime? NgayDongHangCal { get; set; }
+        public string NgayDongHang { 
+            get 
+            {
+                return NgayDongHangCal?.ToString("HH:mm dd/MM/yyyy");
+            } 
+            set {  }
+        }
+        public DateTime? NgayTraHangCal { get; set; }
+        public string NgayTraHang
+        {
+            get
+            {
+                return NgayDongHangCal?.ToString("HH:mm dd/MM/yyyy");
+            }
+            set { }
+        }
         public string DiemDi { get; set; }
         public string DiemDen { get; set; }
         public string SoPL { get; set; }
@@ -65,7 +81,16 @@ namespace AppCMC.Controllers
         public string KhachHang { get; set; }
         public string HangHoa { get; set; }
         public string HangVe { get; set; }
-        public string ThoiGianVe { get; set; }
+        public DateTime? ThoiGianVeCal { get; set; }
+        public string ThoiGianVe
+        {
+            get
+            {
+                return NgayDongHangCal?.ToString("HH:mm dd/MM/yyyy");
+            }
+            set { }
+        }
+
     }
     public class tblDieuPhoiVanChuyenNewDto
     {
@@ -85,11 +110,22 @@ namespace AppCMC.Controllers
     }
     public class tblDMXeDto
     {
-       public long ID { get; set; }
+       public long IDXe { get; set; }
         public string BienSoXe { get; set; }
-        public string SoLuongChuyen { get; set; }
+        public int SoLuongChuyen { get; set; }
         public string TrangThai { get; set; }
         public string RGB { get; set; }
+    }
+    public class DieuPhoiXeDto
+    {
+        public long IDChuyen { get; set; }
+        public long IDXeOto { get; set; }
+        public string BienSoXe { get; set; }
+        public long? IDLaiXe { get; set; }
+        public int EnumXeThueOrXeCongTy { get; set; }
+        public long IDDonViVanTai { get; set; }
+        public string LaiXe { get; set; }
+        public string DTLaiXe { get; set; }
     }
     public class PublicCodeController : ApiController
     {
@@ -221,12 +257,7 @@ namespace AppCMC.Controllers
 
             return Content(HttpStatusCode.OK, "Cập nhật dữ liệu thành công !");
         }
-
-       
-
         //=============================================================================================================================
-
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
