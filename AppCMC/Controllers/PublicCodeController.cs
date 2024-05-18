@@ -52,6 +52,7 @@ namespace AppCMC.Controllers
     }
     public class tblDieuPhoiVanChuyenDto
     {
+        public string ProductKey { get; set; }
         public long IDChuyen { get; set; }
         public DateTime? NgayDongHangCal { get; set; }
         public string NgayDongHang { 
@@ -101,6 +102,7 @@ namespace AppCMC.Controllers
     }
     public class tblDieuPhoiVanChuyenNewDto
     {
+        public string ProductKey { get; set; }
         public long IDChuyen { get; set; }
         public long? IDUser { get; set; }
         public DateTime? NgayDongHang { get; set; }

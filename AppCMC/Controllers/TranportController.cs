@@ -88,7 +88,7 @@ namespace AppCMC.Controllers
         #region Api Admin
         [HttpGet]
         [Route("api/GetTrangThaiXeTrongNgay")]
-        public IHttpActionResult GetTrangThaiXeTrongNgay() // danh sách xe trên màn hình chính Admin
+        public IHttpActionResult GetTrangThaiXeTrongNgay(string ProductKey) // danh sách xe trên màn hình chính Admin
         {
             List<tblDMXeDto> LstAllXeSelect = new List<tblDMXeDto>();
             var LstAllXe = context.tblDMXeOtoes.ToList();
@@ -114,13 +114,13 @@ namespace AppCMC.Controllers
 
         [HttpGet]
         [Route("api/GetListChuyenXe")]
-        public IHttpActionResult GetListChuyenXe(long IDXe) // Lấy ds chuyến của 1 xe
+        public IHttpActionResult GetListChuyenXe(string ProductKey,long IDXe , DateTime dtNow) // Lấy ds chuyến của 1 xe
         {
             List<tblDieuPhoiVanChuyenDto> LstChuyenDto = new List<tblDieuPhoiVanChuyenDto>();
             
             Expression<Func<tblDieuPhoiVanChuyen, bool>> func = null;
 
-            func = x =>x.IDDMXeOto == IDXe && x.NgayDongHang.Value.Year == DateTime.Now.Year && x.NgayDongHang.Value.Month == DateTime.Now.Month && x.NgayDongHang.Value.Day == DateTime.Now.Day;
+            func = x =>x.IDDMXeOto == IDXe && x.NgayDongHang.Value.Year == dtNow.Year && x.NgayDongHang.Value.Month == dtNow.Month && x.NgayDongHang.Value.Day == dtNow.Day;
             LstChuyenDto = context.tblDieuPhoiVanChuyens.Where(func).Select(x =>
             new tblDieuPhoiVanChuyenDto
             {
@@ -134,14 +134,14 @@ namespace AppCMC.Controllers
             if(LstChuyenDto.Count() > 0) return Ok(LstChuyenDto);
             else
             {
-                return Content(HttpStatusCode.NotFound, "Xe không có chuyến trong ngày !");
+                return Content(HttpStatusCode.NotFound, $"Xe không có chuyến trong ngày {dtNow.ToString("dd/MM/yyyy")} !");
             }
         }
 
         #region danh sách chuyến vận chuyển
         [HttpGet]
         [Route("api/GetListChuyenVanChuyen")] // lọc ds chuyến theo ngày
-        public IHttpActionResult GetListChuyenVanChuyen(long IDUSer, DateTime dtS, DateTime dtE)
+        public IHttpActionResult GetListChuyenVanChuyen(string ProductKey,long IDUSer, DateTime dtS, DateTime dtE)
         {
 
             List<tblDieuPhoiVanChuyenDto> LstChuyenDto = new List<tblDieuPhoiVanChuyenDto>();
@@ -214,7 +214,7 @@ namespace AppCMC.Controllers
 
         [HttpGet]
         [Route("api/GetChuyenVanChuyen")]
-        public IHttpActionResult GetChuyenVanChuyen(long IDChuyen) // lấy ra chuyến cần sửa
+        public IHttpActionResult GetChuyenVanChuyen(string ProductKey,long IDChuyen) // lấy ra chuyến cần sửa
         {
             try
             {
@@ -259,7 +259,7 @@ namespace AppCMC.Controllers
 
         [HttpDelete]
         [Route("api/DeleteChuyenVanChuyen")]
-        public IHttpActionResult DeleteChuyenVanChuyen(long IDChuyen) //
+        public IHttpActionResult DeleteChuyenVanChuyen(string ProductKey ,long IDChuyen) //
         {
             try
             {
@@ -284,7 +284,7 @@ namespace AppCMC.Controllers
 
         [HttpGet]
         [Route("api/GetListDieuPhoiVanChuyen")] // lọc ds chuyến theo ngày
-        public IHttpActionResult GetListDieuPhoiVanChuyen(long IDUSer, DateTime dtS, DateTime dtE)
+        public IHttpActionResult GetListDieuPhoiVanChuyen(string ProductKey,long IDUSer, DateTime dtS, DateTime dtE)
         {
 
             List<tblDieuPhoiVanChuyenDto> LstChuyenDto = new List<tblDieuPhoiVanChuyenDto>();
@@ -334,7 +334,7 @@ namespace AppCMC.Controllers
         // lấy ra chuyến cần điều phối
         [HttpGet]
         [Route("api/GetChuyenDieuPhoi")]
-        public IHttpActionResult GetChuyenDieuPhoi(long IDChuyen)
+        public IHttpActionResult GetChuyenDieuPhoi(string ProductKey,long IDChuyen)
         {
             try
             {
