@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
@@ -12,7 +13,13 @@ using VsLogistics.DataModel;
 
 namespace AppCMC.Controllers
 {
-
+    public enum EnumTrangThaiDieuPhoiFilterApp
+    {
+        All = 0,
+        DuocGiao =1,
+        DaNhan =2,
+        HoanThanh =3
+    }
     public enum EnumObjectType
     {
         Customer = 1,
@@ -89,7 +96,10 @@ namespace AppCMC.Controllers
         public string KhachHang { get; set; }
         public string HangHoa { get; set; }
         public string HangVe { get; set; }
+        public int? TrangThaiDieuPhoiIn { get; set; }
+        public string TrangThaiDieuPhoiOut => this.TrangThaiDieuPhoiIn != null ? ((EnumTrangThaiDieuPhoi)TrangThaiDieuPhoiIn).GetDescription() : "";
         public DateTime? ThoiGianVeCal { get; set; }
+        public string TrangThaiVanChuyen { get; set; }
         public string ThoiGianVe
         {
             get
@@ -110,6 +120,8 @@ namespace AppCMC.Controllers
         public long? IDDiemDi { get; set; }
         public long? IDDiemDen { get; set; }
         public long? IDLoaiXe { get; set; }
+        public long? IDXeOTo { get; set; }
+        public long? IDLaiXe { get; set; }
         public double SoPL { get; set; }
         public double SoKG { get; set; }
         public double SoKhoi { get; set; }
@@ -120,7 +132,9 @@ namespace AppCMC.Controllers
     }
     public class tblDMXeDto
     {
-       public long IDXe { get; set; }
+        
+        public string ProductKey { get; set; }
+        public long IDXe { get; set; }
         public string BienSoXe { get; set; }
         public int SoLuongChuyen { get; set; }
         public string TrangThai { get; set; }
@@ -128,14 +142,64 @@ namespace AppCMC.Controllers
     }
     public class DieuPhoiXeDto
     {
+        public string ProductKey { get; set; }
+        public long IDUser { get; set; }
         public long IDChuyen { get; set; }
-        public long IDXeOto { get; set; }
+        public long? IDXeOTo { get; set; }
         public string BienSoXe { get; set; }
         public long? IDLaiXe { get; set; }
         public int EnumXeThueOrXeCongTy { get; set; }
         public long IDDonViVanTai { get; set; }
         public string LaiXe { get; set; }
         public string DTLaiXe { get; set; }
+        public string SoGioCho { get; set; }
+        public string SoCaLuu { get; set; }
+        public string VeBenBai { get; set; }
+        public string PhatSinhKhac { get; set; }
+        public string GhiChu { get; set; }
+        public int? TrangThai { get; set; }
+    }
+    public class ObjectCal
+    {
+        public string ProductKey { get; set; }
+        public long? IDUser { get; set; }
+        public string BienSoXe { get; set; }
+        public string NoiDungSuaChua { get; set; }
+        public int? SoLuong { get; set; }
+        public long? DonGia { get; set; }
+        public long? ThanhTien { get; set; }
+        public string LaiXe { get; set; }
+        public DateTime? NgaySuaCal { get; set; }
+        public string NgaySua
+        {
+            get
+            {
+                return NgaySuaCal?.ToString("dd/MM/yyyy");
+            }
+            set { }
+        }
+        public DateTime? NgayHoanThanhCal { get; set; }
+        public string NgayHoanThanh
+        {
+            get
+            {
+                return NgayHoanThanhCal?.ToString("dd/MM/yyyy");
+            }
+            set { }
+        }
+        public DateTime? NgayDoDauCal { get; set; }
+        public string NgayDoDau
+        {
+            get
+            {
+                return NgayDoDauCal?.ToString("dd/MM/yyyy");
+            }
+            set { }
+        }
+
+        public string GARAGE { get; set; }
+        public string GhiChu { get; set; }
+
     }
     public class PublicCodeController : ApiController
     {
@@ -177,13 +241,7 @@ namespace AppCMC.Controllers
         }
        
         //===================================================================API=====================================================
-        // GET: api/tblDMCustomers
-        [HttpGet]
-        [Route("api/GetListDieuPhoiVanChuyen")]
-        public List<tblDieuPhoiVanChuyen> GetListDieuPhoiVanChuyen()
-        {
-            return db.tblDieuPhoiVanChuyens.Where(x => x.NgayDongHang != null && x.tblNhanSu != null).ToList();
-        }
+       
         //public IHttpActionResult GetListDieuPhoiVanChuyen()
         //{
         //    int a= db.tblDieuPhoiVanChuyens.Where(x=>x.NgayDongHang != null ).Count();
