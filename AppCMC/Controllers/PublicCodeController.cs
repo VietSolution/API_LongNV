@@ -149,7 +149,7 @@ namespace AppCMC.Controllers
         public string BienSoXe { get; set; }
         public long? IDLaiXe { get; set; }
         public int EnumXeThueOrXeCongTy { get; set; }
-        public long IDDonViVanTai { get; set; }
+        public long? IDDonViVanTai { get; set; }
         public string LaiXe { get; set; }
         public string DTLaiXe { get; set; }
         public string SoGioCho { get; set; }
@@ -158,17 +158,22 @@ namespace AppCMC.Controllers
         public string PhatSinhKhac { get; set; }
         public string GhiChu { get; set; }
         public int? TrangThai { get; set; }
+
+        public long? IDTrangThaiVanChuyen { get; set; }
     }
     public class ObjectCal
     {
+        public long? ID { get; set; }
         public string ProductKey { get; set; }
         public long? IDUser { get; set; }
+        public long? IDXeOTo { get; set; }
         public string BienSoXe { get; set; }
         public string NoiDungSuaChua { get; set; }
         public int? SoLuong { get; set; }
         public long? DonGia { get; set; }
         public long? ThanhTien { get; set; }
         public string LaiXe { get; set; }
+        public long? IDLaiXe { get; set; }
         public DateTime? NgaySuaCal { get; set; }
         public string NgaySua
         {
@@ -194,7 +199,10 @@ namespace AppCMC.Controllers
             {
                 return NgayDoDauCal?.ToString("dd/MM/yyyy");
             }
-            set { }
+            set
+            {
+                
+            }
         }
 
         public string GARAGE { get; set; }

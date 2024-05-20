@@ -92,6 +92,14 @@ namespace AppCMC.Controllers
             return Ok(LstAll);
         }
 
+        [HttpGet]
+        [Route("api/GettblDMTrangThaiVanChuyen")]
+        public IHttpActionResult GettblDMTrangThaiVanChuyen(string ProductKey)
+        {
+            var LstAll = context.tblDMTrangThaiVanChuyens.Select(x => new { ID = x.ID, RGB = x.RGB, Name = x.NameVI }).ToList();
+            return Ok(LstAll);
+        }
+
         #endregion
         #region Api Admin
         [HttpGet]
@@ -334,11 +342,11 @@ namespace AppCMC.Controllers
 
         [HttpPost]
         [Route("api/DeleteChuyenVanChuyen")]
-        public IHttpActionResult DeleteChuyenVanChuyen(string ProductKey ,long IDChuyen) //
+        public IHttpActionResult DeleteChuyenVanChuyen([FromBody] tblDieuPhoiVanChuyenNewDto _object) //
         {
             try
             {
-                var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
+                var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == _object.IDChuyen);
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần xóa !");
                 if(_Chuyen.ListTrangThaiVanChuyen.Count() > 0)
                 {
@@ -511,7 +519,8 @@ namespace AppCMC.Controllers
                 _Chuyen.PhatSinhKhac = _object.PhatSinhKhac;
                 _Chuyen.EnumThueXeOrXeMinh = _Chuyen.IDDMXeOto != null || _Chuyen.IDLaiXe != null ? (int)EnumThueXeOrXeMinhJOB.Company : (int)EnumThueXeOrXeMinhJOB.Rental;
                 _Chuyen.GhiChu = (_object.GhiChu + "").Length > 0 ? _object.GhiChu : _Chuyen.GhiChu;
-                _Chuyen.SaveData(context);
+                var _userDieuPhoi = context.tblSysUsers.FirstOrDefault(x => x.ID == _object.IDUser);
+                _Chuyen.SaveData(context, _userDieuPhoi);
                 var _newDt = NewSelectDieuPhoi(_Chuyen);
                 var res = new
                 {
@@ -708,6 +717,8 @@ namespace AppCMC.Controllers
                 LaiXe = x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "",
                 NgayDoDauCal = x.NgayDoDau,
                 IDUser = x.IDCreateUser,
+                IDXeOTo = x.IDDMXeOto,
+                IDLaiXe = x.IDLaiXe
             }).ToList();
             var res = new
             {
@@ -725,8 +736,8 @@ namespace AppCMC.Controllers
         #region Api lái xe
         // Bỏ Gửi lệnh
         [HttpPost]
-        [Route("api/UpdateNhanChuyen")] // sửa
-        public IHttpActionResult PutUpdateLaiXe([FromBody] DieuPhoiXeDto _object)
+        [Route("api/UpdateTrangThaiDieuPhoi")] // sửa
+        public IHttpActionResult UpdateTrangThaiDieuPhoi([FromBody] DieuPhoiXeDto _object)
         {
             if (_object == null) return Content(HttpStatusCode.NoContent, "Đối tượng rỗng !");
             if (_object.IDChuyen == 0) return Content(HttpStatusCode.LengthRequired, "Lỗi dữ liệu truyền vào !");
@@ -738,7 +749,7 @@ namespace AppCMC.Controllers
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến !");
                 if (_Chuyen.FlagDaDieuPhoi != true || _Chuyen.IDLaiXe == null || _Chuyen.IDDMXeOto == null )
                 {
-                    return Content(HttpStatusCode.Conflict, "Không thể thực hiện trên chuyến này !");
+                    return Content(HttpStatusCode.Conflict, "Chuyến thiếu thông tin.Không thể thực hiện trên chuyến này !");
                 }
                 if (_object.TrangThai == null)
                 {
@@ -752,17 +763,179 @@ namespace AppCMC.Controllers
                     _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoi.KhongNhanLenh;
                 else if (_object.TrangThai == (int)EnumTrangThaiDieuPhoi.HoanThanh)
                     _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoi.HoanThanh;
-
+                else return Content(HttpStatusCode.NotFound, "Trạng thái không hợp lệ !");
                 context.SaveChanges();
+                var _newDt = NewSelectDieuPhoi(_Chuyen);
+                var res = new
+                {
+                    result = "Cập nhật dữ liệu thành công !",
+                    data = _newDt
+                };
+                return Ok(res);
             }
             catch
             {
                 return Content(HttpStatusCode.BadRequest, "Lỗi dữ liệu !");
             }
 
-            return Content(HttpStatusCode.OK, "Cập nhật dữ liệu thành công !");
         }
 
+
+        [HttpPost]
+        [Route("api/UpdateTrangThaiVanChuyen")] // sửa
+        public IHttpActionResult UpdateTrangThaiVanChuyen([FromBody] DieuPhoiXeDto _object)
+        {
+            if (_object == null) return Content(HttpStatusCode.NoContent, "Đối tượng rỗng !");
+            if (_object.IDChuyen == 0) return Content(HttpStatusCode.LengthRequired, "Lỗi dữ liệu truyền vào !");
+
+            try
+            {
+                tblDieuPhoiVanChuyen _Chuyen = null;
+                _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == _object.IDChuyen);
+                if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến !");
+                if (_Chuyen.FlagDaDieuPhoi != true || _Chuyen.IDLaiXe == null || _Chuyen.IDDMXeOto == null)
+                {
+                    return Content(HttpStatusCode.Conflict, "Chuyến thiếu thông tin.Không thể thực hiện trên chuyến này !");
+                }
+                if (_object.TrangThai == null)
+                {
+                    return Content(HttpStatusCode.Conflict, "Nhập trạng thái !");
+                }
+                if (_object.TrangThai == (int)EnumTrangThaiDieuPhoi.NhanLenh)
+                    _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoi.NhanLenh;
+                else if (_object.TrangThai == -1)
+                    _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoi.GuiLenh;
+                else if (_object.TrangThai == (int)EnumTrangThaiDieuPhoi.KhongNhanLenh)
+                    _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoi.KhongNhanLenh;
+                else if (_object.TrangThai == (int)EnumTrangThaiDieuPhoi.HoanThanh)
+                    _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoi.HoanThanh;
+                else return Content(HttpStatusCode.NotFound, "Trạng thái không hợp lệ !");
+                context.SaveChanges();
+                var _newDt = NewSelectDieuPhoi(_Chuyen);
+                var res = new
+                {
+                    result = "Cập nhật dữ liệu thành công !",
+                    data = _newDt
+                };
+                return Ok(res);
+            }
+            catch
+            {
+                return Content(HttpStatusCode.BadRequest, "Lỗi dữ liệu !");
+            }
+
+        }
+
+        // thêm sửa xóa đổ dầu
+        [HttpPost]
+        [Route("api/UpdateDoDau")] // mới
+        public IHttpActionResult UpdateDoDau([FromBody] ObjectCal _object)
+        {
+            if (_object == null) return Content(HttpStatusCode.NoContent, "Đối tượng rỗng !");
+
+            if (_object.IDUser == null) return Content(HttpStatusCode.LengthRequired, "Người dùng không tồn tại");
+            try
+            {
+                tblQuanLyDoDau _chuyen = null;
+                if(_object.ID != null && _object.ID > 0)
+                {
+                    _chuyen = context.tblQuanLyDoDaus.FirstOrDefault(x => x.ID == _object.ID.Value);
+                    if(_chuyen == null)
+                    {
+                        return Content(HttpStatusCode.LengthRequired, "ID không đúng. Dữ liệu không tồn tại");
+                    }    
+                }    
+                else
+                {
+                    var _user = context.tblSysUsers.FirstOrDefault(x => x.ID == _object.IDUser);
+                    _chuyen = new tblQuanLyDoDau()
+                    {
+                        CreateDate = DateTime.Now,
+                        IDCreateUser = _object.IDUser,
+                        tblSysUser = _user,
+                        IDLaiXe = _user?.IDNhanVien,
+                        tblNhanSu = _user?.tblNhanSu
+                    };
+                }
+                _chuyen.DonGia = _object.DonGia;
+                _chuyen.SoLuong = _object.SoLuong ?? 1;
+                _chuyen.ThanhTien = _chuyen.ThanhTienCal;
+                _chuyen.IDDMXeOto = _object.IDXeOTo;
+                _chuyen.NgayDoDau = _object.NgayDoDauCal ?? DateTime.Now;
+                _chuyen.GhiChu = _object.GhiChu;
+                _chuyen.SaveData(context);
+                var _newDt = SelectDataDoDau(_chuyen);
+                var res = new
+                {
+                    result = "Cập nhật dữ liệu thành công !",
+                    data = _newDt
+                };
+                return Ok(res);
+            }
+            catch
+            {
+                return Content(HttpStatusCode.BadRequest, "Lỗi dữ liệu !");
+            }
+
+
+        }
+
+        private ObjectCal SelectDataDoDau(tblQuanLyDoDau _doDau)
+        {
+            var _ob = new ObjectCal
+            {
+                BienSoXe = _doDau.tblDMXeOto != null ? _doDau.tblDMXeOto.BienSoXE : "",
+                GhiChu = _doDau.GhiChu,
+                SoLuong = _doDau.SoLuong,
+                DonGia = _doDau.DonGia,
+                ThanhTien = _doDau.ThanhTien,
+                LaiXe = _doDau.tblNhanSu != null ? _doDau.tblNhanSu.HoTenVI : "",
+                NgayDoDauCal = _doDau.NgayDoDau,
+                IDUser = _doDau.IDCreateUser,
+                IDXeOTo = _doDau.IDDMXeOto,
+                IDLaiXe = _doDau.IDLaiXe,
+                ID = _doDau.ID
+            };
+            return _ob;
+        }
+        [HttpGet]
+        [Route("api/GetDoDau")]
+        public IHttpActionResult GetDoDau(string ProductKey, long ID) // lấy ra cần sửa
+        {
+            try
+            {
+                var _doDau = context.tblQuanLyDoDaus.FirstOrDefault(x => x.ID == ID);
+                if (_doDau == null) return Content(HttpStatusCode.NotFound, "ID không đúng.Không tìm thấy dữ liệu cần sửa !");
+                var _ob = SelectDataDoDau(_doDau);
+                return Ok(_ob);
+            }
+            catch
+            {
+                return Content(HttpStatusCode.BadRequest, "Lỗi dữ liệu !");
+            }
+        }
+
+        [HttpPost]
+        [Route("api/DeleteDoDau")]
+        public IHttpActionResult DeleteDoDau([FromBody] ObjectCal _object) //
+        {
+            try
+            {
+                var _Chuyen = context.tblQuanLyDoDaus.FirstOrDefault(x => x.ID == _object.ID);
+                if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy dữ liệu cần xóa !");
+                context.tblQuanLyDoDaus.Remove(_Chuyen);
+                context.SaveChanges();
+                var res = new
+                {
+                    result = "Xóa dữ liệu thành công !",
+                };
+                return Ok(res);
+            }
+            catch
+            {
+                return Content(HttpStatusCode.BadRequest, "Không thể xóa chuyến !");
+            }
+        }
         #endregion
     }
 }
