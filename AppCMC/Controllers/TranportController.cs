@@ -1,23 +1,28 @@
-﻿using PublicCodeLongNV.ExportExcel;
+﻿
+
+using PublicCodeLongNV.ExportExcel;
 
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity.Infrastructure;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
 
 using VsLogistics.DataModel;
-using VsLogistics.DataModel.Common;
 
 namespace AppCMC.Controllers
 {
     public class TranportController : ApiController
     {
         private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString());
+
         #region Hàm dùng chung
         public void UpdateChuyen(tblDieuPhoiVanChuyen _Chuyen, tblDieuPhoiVanChuyenNewDto _object)
         {
@@ -150,7 +155,7 @@ namespace AppCMC.Controllers
            
             if(_total > 0)
             {
-               LstChuyenDto = context.tblDieuPhoiVanChuyens.Where(func).Skip((Page - 1) * Limit).Take(Limit).Select(x =>
+               LstChuyenDto = context.tblDieuPhoiVanChuyens.Where(func).OrderByDescending(x=>x.NgayDongHang).Skip((Page - 1) * Limit).Take(Limit).Select(x =>
               new tblDieuPhoiVanChuyenDto
               {
                   IDChuyen = x.ID,
@@ -160,20 +165,16 @@ namespace AppCMC.Controllers
                   NgayDongHangCal = x.NgayDongHang,
                   NgayTraHangCal = x.NgayTraHang,
               }).ToList();
-                var res = new
-                {
-                    TotalCount = _total,
-                    Page = Page,
-                    Limit = Limit,
-                    ProductKey = ProductKey,
-                    data = LstChuyenDto,
-                };
-                return Ok(res);
             }    
-            else
+            var res = new
             {
-                return Content(HttpStatusCode.NotFound, $"Xe không có chuyến trong ngày {dtNow.ToString("dd/MM/yyyy")} !");
-            }
+                TotalCount = _total,
+                Page = Page,
+                Limit = Limit,
+                ProductKey = ProductKey,
+                data = LstChuyenDto,
+            };
+            return Ok(res);
         }
 
         #region danh sách chuyến vận chuyển
@@ -301,7 +302,7 @@ namespace AppCMC.Controllers
                 var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
 
-                return Ok(new { NgayDongHang = _Chuyen.NgayDongHang, NgayTraHang = _Chuyen.NgayTraHang, IDDiemDi = _Chuyen.IDDiemDi, IDDiemDen = _Chuyen.IDDiemDen, IDDMHangHoa = _Chuyen.IDDMHangHoa ,SoKG = _Chuyen.SoKG , SoKhoi = _Chuyen.SoKhoi, SoPL = _Chuyen.SoPL, FlagHangVe = _Chuyen.FlagHangVe,ThoiGianVe = _Chuyen.ThoiGianVe , IDKhachHang = _Chuyen.IDDMCustomer, IDLoaiXe = _Chuyen.IDDMLoaiXe});
+                return Ok(new { NgayDongHang = _Chuyen.NgayDongHang, NgayTraHang = _Chuyen.NgayTraHang, IDDiemDi = _Chuyen.IDDiemDi ,ObjectDiemDi =  new tblObjectAll { Name = _Chuyen.tblDMDoor?.AddressText }, IDDiemDen = _Chuyen.IDDiemDen, IDDMHangHoa = _Chuyen.IDDMHangHoa ,SoKG = _Chuyen.SoKG , SoKhoi = _Chuyen.SoKhoi, SoPL = _Chuyen.SoPL, FlagHangVe = _Chuyen.FlagHangVe,ThoiGianVe = _Chuyen.ThoiGianVe , IDKhachHang = _Chuyen.IDDMCustomer, IDLoaiXe = _Chuyen.IDDMLoaiXe});
             }
             catch
             {
@@ -403,7 +404,7 @@ namespace AppCMC.Controllers
 
             IQueryable<tblDieuPhoiVanChuyen> _dp = context.tblDieuPhoiVanChuyens;
             _dp = _dp.Where(func);
-            if (funcTT != null) _dp = _dp.Where(func);
+            if (funcTT != null) _dp = _dp.Where(funcTT);
             int _total = _dp.Count();
             if(_total > 0)
             {
@@ -653,8 +654,8 @@ namespace AppCMC.Controllers
         #endregion
         #region Báo cáo
         [HttpGet]
-        [Route("api/GetListSuachuaXe")] // lọc ds chuyến theo ngày
-        public IHttpActionResult GetListSuachuaXe(string ProductKey, long IDUSer, DateTime dtS, DateTime dtE, int Page, int Limit)
+        [Route("api/GetListSuaChuaXe")] // lọc ds chuyến theo ngày
+        public IHttpActionResult GetListSuaChuaXe(string ProductKey, long IDUSer, DateTime dtS, DateTime dtE, int Page, int Limit)
         {
             List<ObjectCal> LstObject = new List<ObjectCal>();
             var _user = context.tblSysUsers.FirstOrDefault(x => x.ID == IDUSer);
@@ -952,6 +953,48 @@ namespace AppCMC.Controllers
                 return Content(HttpStatusCode.BadRequest, "Không thể xóa chuyến !");
             }
         }
+
+
         #endregion
+
+        [HttpPost]
+        [Route("api/UploadImage")]
+        public async Task<IHttpActionResult> UploadImage()
+        {
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                return BadRequest("Unsupported media type.");
+            }
+
+            var uploadsPath = HttpContext.Current.Server.MapPath("~/uploads");
+            // Tạo thư mục nếu chưa tồn tại
+            if (!Directory.Exists(uploadsPath))
+            {
+                Directory.CreateDirectory(uploadsPath);
+            }
+            
+
+            var provider = new MultipartFormDataStreamProvider(uploadsPath);
+
+            // Lưu các file từ yêu cầu vào thư mục
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+            foreach (var file in provider.FileData)
+            {
+                var originalFileName = file.Headers.ContentDisposition.FileName.Trim('\"');
+                var localFileName = file.LocalFileName;
+                var filePath = Path.Combine(uploadsPath, originalFileName);
+
+                // Move the file to the new location
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+                File.Move(localFileName, filePath);
+            }
+
+            
+            return BadRequest("No file uploaded.");
+        }
     }
 }

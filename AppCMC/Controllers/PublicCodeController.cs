@@ -130,9 +130,16 @@ namespace AppCMC.Controllers
         public bool FlagHangVe { get; set; }
         public DateTime? ThoiGianVe { get; set; }
     }
+
+    public class tblObjectAll
+    {
+        public string BienSoXe { get; set; }
+        public long ID { get; set; }
+        public string Name { get; set; }
+        public string Code { get; set; }
+    }
     public class tblDMXeDto
     {
-        
         public string ProductKey { get; set; }
         public long IDXe { get; set; }
         public string BienSoXe { get; set; }
