@@ -146,21 +146,23 @@ namespace AppCMC.Controllers
             Expression<Func<tblDieuPhoiVanChuyen, bool>> func = null;
 
             func = x =>x.IDDMXeOto == IDXe && x.NgayDongHang.Value.Year == dtNow.Year && x.NgayDongHang.Value.Month == dtNow.Month && x.NgayDongHang.Value.Day == dtNow.Day;
-            LstChuyenDto = context.tblDieuPhoiVanChuyens.Where(func).Skip((Page - 1) * Limit).Take(Limit).Select(x =>
-            new tblDieuPhoiVanChuyenDto
+            int _total = context.tblDieuPhoiVanChuyens.Where(func).Count();
+           
+            if(_total > 0)
             {
-                IDChuyen = x.ID,
-                BienSoXe = x.tblDMXeOto != null ? x.tblDMXeOto.BienSoXE : x.BienSoXe,
-                DiemDi = x.tblDMDoor != null ? x.tblDMDoor.AddressVI : "",
-                DiemDen = x.tblDMDoor1 != null ? x.tblDMDoor1.AddressVI : "",
-                NgayDongHangCal = x.NgayDongHang,
-                NgayTraHangCal = x.NgayTraHang,
-            }).ToList();
-            if(LstChuyenDto.Count() > 0)
-            {
+               LstChuyenDto = context.tblDieuPhoiVanChuyens.Where(func).Skip((Page - 1) * Limit).Take(Limit).Select(x =>
+              new tblDieuPhoiVanChuyenDto
+              {
+                  IDChuyen = x.ID,
+                  BienSoXe = x.tblDMXeOto != null ? x.tblDMXeOto.BienSoXE : x.BienSoXe,
+                  DiemDi = x.tblDMDoor != null ? x.tblDMDoor.AddressVI : "",
+                  DiemDen = x.tblDMDoor1 != null ? x.tblDMDoor1.AddressVI : "",
+                  NgayDongHangCal = x.NgayDongHang,
+                  NgayTraHangCal = x.NgayTraHang,
+              }).ToList();
                 var res = new
                 {
-                    TotalCount = LstChuyenDto.Count(),
+                    TotalCount = _total,
                     Page = Page,
                     Limit = Limit,
                     ProductKey = ProductKey,
@@ -187,34 +189,36 @@ namespace AppCMC.Controllers
             Expression<Func<tblDieuPhoiVanChuyen, bool>> func = null;
 
             func = x => x.FlagDaDieuPhoi != true && (x.NgayDongHang == null || (x.NgayDongHang >= dtS && x.NgayDongHang <= dtE));
-
-            LstChuyenDto = context.tblDieuPhoiVanChuyens.Where(func).OrderByDescending(x => x.NgayDongHang).Skip((Page - 1) * Limit).Take(Limit).Select(x => new tblDieuPhoiVanChuyenDto
+            int _total = context.tblDieuPhoiVanChuyens.Where(func).Count();
+            if(_total > 0)
             {
-                IDChuyen = x.ID,
-                BienSoXe = x.tblDMXeOto != null ? x.tblDMXeOto.BienSoXE : x.BienSoXe,
-                DiemDi = x.tblDMDoor != null ? x.tblDMDoor.AddressVI : "",
-                DiemDen = x.tblDMDoor1 != null ? x.tblDMDoor1.AddressVI : "",
-                DonViVanTai = x.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company ? "CMC" : (x.tblDMCustomer1 != null ? x.tblDMCustomer1.NameVI : ""),
-                HangHoa = x.tblDMHangHoa != null ? x.tblDMHangHoa.NameVI : "",
-                HangVe = x.FlagHangVe == true ? "1" : "0",
-                KhachHang = x.tblDMCustomer != null ? x.tblDMCustomer.NameVI : "",
-                LaiXe = x.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company ? (x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "") : x.LaiXe,
-                NgayDongHangCal = x.NgayDongHang,
-                NgayTraHangCal = x.NgayDongHang,
-                SoKhoi = x.SoKhoi != null ? x.SoKhoi.Value.ToString() : "",
-                SoPL = x.SoPL != null ? x.SoPL.Value.ToString() : "",
-                SoKG = x.SoKG != null ? x.SoKG.Value.ToString() : "",
-                LoaiXe = x.tblDMLoaiXe != null ? x.tblDMLoaiXe.NameVI : "",
-                ThoiGianVeCal = x.ThoiGianVe,
-            }).ToList();
+                LstChuyenDto = context.tblDieuPhoiVanChuyens.Where(func).OrderByDescending(x => x.NgayDongHang).Skip((Page - 1) * Limit).Take(Limit).Select(x => new tblDieuPhoiVanChuyenDto
+                {
+                    IDChuyen = x.ID,
+                    BienSoXe = x.tblDMXeOto != null ? x.tblDMXeOto.BienSoXE : x.BienSoXe,
+                    DiemDi = x.tblDMDoor != null ? x.tblDMDoor.AddressVI : "",
+                    DiemDen = x.tblDMDoor1 != null ? x.tblDMDoor1.AddressVI : "",
+                    DonViVanTai = x.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company ? "CMC" : (x.tblDMCustomer1 != null ? x.tblDMCustomer1.NameVI : ""),
+                    HangHoa = x.tblDMHangHoa != null ? x.tblDMHangHoa.NameVI : "",
+                    HangVe = x.FlagHangVe == true ? "1" : "0",
+                    KhachHang = x.tblDMCustomer != null ? x.tblDMCustomer.NameVI : "",
+                    LaiXe = x.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company ? (x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "") : x.LaiXe,
+                    NgayDongHangCal = x.NgayDongHang,
+                    NgayTraHangCal = x.NgayDongHang,
+                    SoKhoi = x.SoKhoi != null ? x.SoKhoi.Value.ToString() : "",
+                    SoPL = x.SoPL != null ? x.SoPL.Value.ToString() : "",
+                    SoKG = x.SoKG != null ? x.SoKG.Value.ToString() : "",
+                    LoaiXe = x.tblDMLoaiXe != null ? x.tblDMLoaiXe.NameVI : "",
+                    ThoiGianVeCal = x.ThoiGianVe,
+                }).ToList();
+            }
             var res = new
             {
-                TotalCount = context.tblDieuPhoiVanChuyens.Where(func).Count(),
+                TotalCount = _total,
                 Page = Page,
                 Limit = Limit,
                 ProductKey = ProductKey,
                 data = LstChuyenDto,
-                
             };
 
             return Ok(res);
@@ -400,37 +404,41 @@ namespace AppCMC.Controllers
             IQueryable<tblDieuPhoiVanChuyen> _dp = context.tblDieuPhoiVanChuyens;
             _dp = _dp.Where(func);
             if (funcTT != null) _dp = _dp.Where(func);
-            LstChuyenDto = _dp.OrderByDescending(x => x.NgayDongHang).Skip((Page - 1) * Limit).Take(Limit).Select(x =>
-           new tblDieuPhoiVanChuyenDto
-           {
-               IDChuyen = x.ID,
-               TrangThaiDieuPhoiIn = x.EnumTrangThaiDieuPhoi,
-               TrangThaiVanChuyen = x.tblDMTrangThaiVanChuyen != null ? x.tblDMTrangThaiVanChuyen.NameVI : "",
-               NgayDongHangCal = x.NgayDongHang,
-               KhachHang = x.tblDMCustomer != null ? x.tblDMCustomer.NameVI : "",
-               DonViVanTai = x.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company ? "CMC" : (x.tblDMCustomer1 != null ? x.tblDMCustomer1.NameVI : ""),
-               HangHoa = x.tblDMHangHoa != null ? x.tblDMHangHoa.NameVI : "",
-               DiemDi = x.tblDMDoor != null ? x.tblDMDoor.AddressVI : "",
-               DiemDen = x.tblDMDoor1 != null ? x.tblDMDoor1.AddressVI : "",
-               BienSoXe = x.tblDMXeOto != null ? x.tblDMXeOto.BienSoXE : x.BienSoXe,
-               LaiXe = x.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company ? (x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "") : x.LaiXe,
-               SoPL = x.SoPL != null ? x.SoPL.Value.ToString() : "",
-               SoKhoi = x.SoKhoi != null ? x.SoKhoi.Value.ToString() : "",
-               SoKG = x.SoKG != null ? x.SoKG.Value.ToString() : "",
-               LoaiXe = x.tblDMLoaiXe != null ? x.tblDMLoaiXe.NameVI : "",
-               NgayTraHangCal = x.NgayDongHang,
-               ThoiGianVeCal = x.ThoiGianVe,
-               HangVe = x.FlagHangVe == true ? "1" : "0",
-               SoGioCho = x.SoGioCho != null ? x.SoGioCho.Value.ToString() : "",
-               SoCaLuu = x.SoCaLuu != null ? x.SoCaLuu.Value.ToString() : "",
-               VeBenBai = x.VeBenBai != null ? x.VeBenBai.Value.ToString() : "",
-               PhatSinhKhac = x.PhatSinhKhac,
-               GhiChu = x.GhiChu,
-               MaDieuVan = x.CodeDieuVan,
-           }).ToList();
+            int _total = _dp.Count();
+            if(_total > 0)
+            {
+                LstChuyenDto = _dp.OrderByDescending(x => x.NgayDongHang).Skip((Page - 1) * Limit).Take(Limit).Select(x =>
+          new tblDieuPhoiVanChuyenDto
+          {
+              IDChuyen = x.ID,
+              TrangThaiDieuPhoiIn = x.EnumTrangThaiDieuPhoi,
+              TrangThaiVanChuyen = x.tblDMTrangThaiVanChuyen != null ? x.tblDMTrangThaiVanChuyen.NameVI : "",
+              NgayDongHangCal = x.NgayDongHang,
+              KhachHang = x.tblDMCustomer != null ? x.tblDMCustomer.NameVI : "",
+              DonViVanTai = x.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company ? "CMC" : (x.tblDMCustomer1 != null ? x.tblDMCustomer1.NameVI : ""),
+              HangHoa = x.tblDMHangHoa != null ? x.tblDMHangHoa.NameVI : "",
+              DiemDi = x.tblDMDoor != null ? x.tblDMDoor.AddressVI : "",
+              DiemDen = x.tblDMDoor1 != null ? x.tblDMDoor1.AddressVI : "",
+              BienSoXe = x.tblDMXeOto != null ? x.tblDMXeOto.BienSoXE : x.BienSoXe,
+              LaiXe = x.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company ? (x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "") : x.LaiXe,
+              SoPL = x.SoPL != null ? x.SoPL.Value.ToString() : "",
+              SoKhoi = x.SoKhoi != null ? x.SoKhoi.Value.ToString() : "",
+              SoKG = x.SoKG != null ? x.SoKG.Value.ToString() : "",
+              LoaiXe = x.tblDMLoaiXe != null ? x.tblDMLoaiXe.NameVI : "",
+              NgayTraHangCal = x.NgayDongHang,
+              ThoiGianVeCal = x.ThoiGianVe,
+              HangVe = x.FlagHangVe == true ? "1" : "0",
+              SoGioCho = x.SoGioCho != null ? x.SoGioCho.Value.ToString() : "",
+              SoCaLuu = x.SoCaLuu != null ? x.SoCaLuu.Value.ToString() : "",
+              VeBenBai = x.VeBenBai != null ? x.VeBenBai.Value.ToString() : "",
+              PhatSinhKhac = x.PhatSinhKhac,
+              GhiChu = x.GhiChu,
+              MaDieuVan = x.CodeDieuVan,
+          }).ToList();
+            }    
             var res = new
             {
-                TotalCount = _dp.Count(),
+                TotalCount = _total,
                 Page = Page,
                 Limit = Limit,
                 ProductKey = ProductKey,
@@ -663,23 +671,26 @@ namespace AppCMC.Controllers
             {
                 func = x => x.NgaySua == null || (x.NgaySua >= dtS && x.NgaySua <= dtE);
             }
-            LstObject = context.tblQuanLySuaChuaXes.Where(func).OrderByDescending(x=>x.NgaySua).Skip((Page - 1) * Limit).Take(Limit).Select(x => new ObjectCal
+            int _total = context.tblQuanLySuaChuaXes.Where(func).Count();
+            if(_total > 0)
             {
-                BienSoXe = x.tblDMXeOto != null ? x.tblDMXeOto.BienSoXE : "",
-                NoiDungSuaChua = x.NoiDungSuaChua,
-                SoLuong = x.SoLuong,
-                DonGia = x.DonGia,
-                ThanhTien = x.ThanhTien,
-                LaiXe = x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "",
-                NgaySuaCal = x.NgaySua,
-                NgayHoanThanhCal = x.NgayHoanThanh,
-                GARAGE = x.GaraSua,
-                IDUser = x.IDCreateUser,
-            }).ToList();
-
+                LstObject = context.tblQuanLySuaChuaXes.Where(func).OrderByDescending(x => x.NgaySua).Skip((Page - 1) * Limit).Take(Limit).Select(x => new ObjectCal
+                {
+                    BienSoXe = x.tblDMXeOto != null ? x.tblDMXeOto.BienSoXE : "",
+                    NoiDungSuaChua = x.NoiDungSuaChua,
+                    SoLuong = x.SoLuong,
+                    DonGia = x.DonGia,
+                    ThanhTien = x.ThanhTien,
+                    LaiXe = x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "",
+                    NgaySuaCal = x.NgaySua,
+                    NgayHoanThanhCal = x.NgayHoanThanh,
+                    GARAGE = x.GaraSua,
+                    IDUser = x.IDCreateUser,
+                }).ToList();
+            }    
             var res = new
             {
-                TotalCount = context.tblQuanLySuaChuaXes.Where(func).Count(),
+                TotalCount = _total,
                 Page = Page,
                 Limit = Limit,
                 ProductKey = ProductKey,
@@ -707,22 +718,27 @@ namespace AppCMC.Controllers
             {
                 func = x => x.NgayDoDau == null || (x.NgayDoDau >= dtS && x.NgayDoDau <= dtE);
             }
-            LstObject = context.tblQuanLyDoDaus.Where(func).OrderByDescending(x=>x.NgayDoDau).Skip((Page - 1) * Limit).Take(Limit).Select(x => new ObjectCal
+            int _total = context.tblQuanLyDoDaus.Where(func).Count();
+            if(_total > 0)
             {
-                BienSoXe = x.tblDMXeOto != null ? x.tblDMXeOto.BienSoXE : "",
-                GhiChu = x.GhiChu,
-                SoLuong = x.SoLuong,
-                DonGia = x.DonGia,
-                ThanhTien = x.ThanhTien,
-                LaiXe = x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "",
-                NgayDoDauCal = x.NgayDoDau,
-                IDUser = x.IDCreateUser,
-                IDXeOTo = x.IDDMXeOto,
-                IDLaiXe = x.IDLaiXe
-            }).ToList();
+                LstObject = context.tblQuanLyDoDaus.Where(func).OrderByDescending(x => x.NgayDoDau).Skip((Page - 1) * Limit).Take(Limit).Select(x => new ObjectCal
+                {
+                    BienSoXe = x.tblDMXeOto != null ? x.tblDMXeOto.BienSoXE : "",
+                    GhiChu = x.GhiChu,
+                    SoLuong = x.SoLuong,
+                    DonGia = x.DonGia,
+                    ThanhTien = x.ThanhTien,
+                    LaiXe = x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "",
+                    NgayDoDauCal = x.NgayDoDau,
+                    IDUser = x.IDCreateUser,
+                    IDXeOTo = x.IDDMXeOto,
+                    IDLaiXe = x.IDLaiXe
+                }).ToList();
+            }    
+            
             var res = new
             {
-                TotalCount = context.tblQuanLyDoDaus.Where(func).Count(),
+                TotalCount = _total,
                 Page = Page,
                 Limit = Limit,
                 ProductKey = ProductKey,
