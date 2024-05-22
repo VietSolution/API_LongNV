@@ -220,6 +220,8 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="PubDlls\LicenseChecker20.dll" />
+    <Content Include="PubDlls\PublicCodeLongNV.dll" />
     <Content Include="PubDlls\VsLogistics.DataModel.dll" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
