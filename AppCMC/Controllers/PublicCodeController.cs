@@ -171,6 +171,8 @@ namespace AppCMC.Controllers
     public class ObjectCal
     {
         public long? ID { get; set; }
+        public long? IDChuyen { get; set; }
+        public long? IDTrangThaiVanChuyen { get; set; }
         public string ProductKey { get; set; }
         public long? IDUser { get; set; }
         public long? IDXeOTo { get; set; }
