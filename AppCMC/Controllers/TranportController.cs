@@ -1,5 +1,7 @@
 ﻿
 
+using Newtonsoft.Json;
+
 using PublicCodeLongNV.ExportExcel;
 
 using System;
@@ -800,34 +802,63 @@ namespace AppCMC.Controllers
 
         [HttpPost]
         [Route("api/UpdateTrangThaiVanChuyen")] // sửa
-        public IHttpActionResult UpdateTrangThaiVanChuyen([FromBody] DieuPhoiXeDto _object)
+        public async Task<IHttpActionResult> UpdateTrangThaiVanChuyen()
         {
-            if (_object == null) return Content(HttpStatusCode.NoContent, "Đối tượng rỗng !");
-            if (_object.IDChuyen == 0) return Content(HttpStatusCode.LengthRequired, "Lỗi dữ liệu truyền vào !");
-
             try
             {
+                string root = HttpContext.Current.Server.MapPath("~/uploads");
+
+                if (!Directory.Exists(root))
+                {
+                    Directory.CreateDirectory(root);
+                }
+                var provider = new MultipartFormDataStreamProvider(root);
+                //var provider = new MultipartMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+                //var provider = new MultipartFormDataStreamProvider(uploadsPath);
+               
+
+                ObjectCal metadata = null;
+                var _ob = provider.Contents.FirstOrDefault(x => x.Headers.ContentDisposition.Name.Trim('\"') == "data");
+                if(_ob == null)
+                {
+                    return Content(HttpStatusCode.NoContent, "Đối tượng rỗng !");
+                }    
+                var json = await _ob.ReadAsStringAsync();
+                metadata = JsonConvert.DeserializeObject<ObjectCal>(json);
+
+
                 tblDieuPhoiVanChuyen _Chuyen = null;
-                _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == _object.IDChuyen);
+                _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == metadata.IDChuyen);
+                _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault();
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến !");
                 if (_Chuyen.FlagDaDieuPhoi != true || _Chuyen.IDLaiXe == null || _Chuyen.IDDMXeOto == null)
                 {
                     return Content(HttpStatusCode.Conflict, "Chuyến thiếu thông tin.Không thể thực hiện trên chuyến này !");
                 }
-                if (_object.TrangThai == null)
+
+
+
+                // Lưu các file từ yêu cầu vào thư mục
+               
+                
+                foreach (var file in provider.FileData)
                 {
-                    return Content(HttpStatusCode.Conflict, "Nhập trạng thái !");
+                    var originalFileName = file.Headers.ContentDisposition.FileName.Trim('\"');
+                    var localFileName = file.LocalFileName;
+                    var filePath = Path.Combine(root, originalFileName);
+
+                    // Move the file to the new location
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
+                    File.Move(localFileName, filePath);
+
+                    
+
                 }
-                if (_object.TrangThai == (int)EnumTrangThaiDieuPhoi.NhanLenh)
-                    _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoi.NhanLenh;
-                else if (_object.TrangThai == -1)
-                    _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoi.GuiLenh;
-                else if (_object.TrangThai == (int)EnumTrangThaiDieuPhoi.KhongNhanLenh)
-                    _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoi.KhongNhanLenh;
-                else if (_object.TrangThai == (int)EnumTrangThaiDieuPhoi.HoanThanh)
-                    _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoi.HoanThanh;
-                else return Content(HttpStatusCode.NotFound, "Trạng thái không hợp lệ !");
-                context.SaveChanges();
+
                 var _newDt = NewSelectDieuPhoi(_Chuyen);
                 var res = new
                 {
@@ -957,6 +988,27 @@ namespace AppCMC.Controllers
 
         #endregion
 
+        #region Ảnh
+        private string GetContentType(string filePath)
+        {
+            // Xác định loại nội dung dựa trên phần mở rộng tệp
+            var extension = Path.GetExtension(filePath).ToLowerInvariant();
+            switch (extension)
+            {
+                case ".png":
+                    return "image/png";
+                case ".jpg":
+                case ".jpeg":
+                    return "image/jpeg";
+                case ".gif":
+                    return "image/gif";
+                default:
+                    return "application/octet-stream"; // Loại nội dung mặc định cho các tệp khác
+            }
+        }
+
+        #endregion
+
         [HttpPost]
         [Route("api/UploadImage")]
         public async Task<IHttpActionResult> UploadImage()
@@ -972,8 +1024,8 @@ namespace AppCMC.Controllers
             {
                 Directory.CreateDirectory(uploadsPath);
             }
-            
 
+            
             var provider = new MultipartFormDataStreamProvider(uploadsPath);
 
             // Lưu các file từ yêu cầu vào thư mục
