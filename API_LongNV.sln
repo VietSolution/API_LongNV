@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppCMC", "AppCMC\AppCMC.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trackings", "Trackings\Trackings.csproj", "{8EBB673E-A220-4E78-A140-0799261EB4D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRM", "CRM\CRM.csproj", "{9F9C8627-FD0A-4108-8E5F-9AD7929DA8AF}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{8EBB673E-A220-4E78-A140-0799261EB4D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EBB673E-A220-4E78-A140-0799261EB4D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8EBB673E-A220-4E78-A140-0799261EB4D0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9F9C8627-FD0A-4108-8E5F-9AD7929DA8AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9F9C8627-FD0A-4108-8E5F-9AD7929DA8AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9F9C8627-FD0A-4108-8E5F-9AD7929DA8AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9F9C8627-FD0A-4108-8E5F-9AD7929DA8AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

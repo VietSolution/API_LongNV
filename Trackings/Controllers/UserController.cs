@@ -15,7 +15,7 @@ namespace Trackings.Controllers
     {
         [HttpGet]
         [Route("api/GetUserLogin")]
-        public IHttpActionResult GetUserLogin(string ProductKey, string UserName, string Password)
+        public  IHttpActionResult GetUserLogin(string ProductKey, string UserName, string Password)
         {
             if(ProductKey?.Length == 0)
             {
