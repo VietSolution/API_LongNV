@@ -822,7 +822,7 @@ namespace AppCMC.Controllers
                 var _ob = provider.Contents.FirstOrDefault(x => x.Headers.ContentDisposition.Name.Trim('\"') == "data");
                 if(_ob == null)
                 {
-                    return Content(HttpStatusCode.NoContent, "Đối tượng rỗng !");
+                    return Content(HttpStatusCode.NotFound, "Đối tượng rỗng !");
                 }    
                 var json = await _ob.ReadAsStringAsync();
                 metadata = JsonConvert.DeserializeObject<ObjectCal>(json);
@@ -834,14 +834,25 @@ namespace AppCMC.Controllers
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến !");
                 if (_Chuyen.FlagDaDieuPhoi != true || _Chuyen.IDLaiXe == null || _Chuyen.IDDMXeOto == null)
                 {
-                    return Content(HttpStatusCode.Conflict, "Chuyến thiếu thông tin.Không thể thực hiện trên chuyến này !");
+                    return Content(HttpStatusCode.NotFound, "Chuyến thiếu thông tin.Không thể thực hiện trên chuyến này !");
                 }
 
+               // AppSettings.LicenseKey = "dbdev.namanphu.vn";
+                AppSettings.DatabaseServerName = "dbdev.namanphu.vn";
+                AppSettings.DatabaseName = "Model_CMCBacNinh";
+                AppSettings.DatabaseUserName = "notification_user";
+                AppSettings.DatabasePassword = "123456a$";
 
+                AppSettings.ftpurl = "ftp://fs.namanphu.vn";
+                AppSettings.ftpuser = "ftpuser";
+                AppSettings.ftppass = "123456a$";
 
                 // Lưu các file từ yêu cầu vào thư mục
-               
-                
+
+                string _pathServer = "/" + PublicCodeShare.ftpClientModel.root + "/" + "AppCMC"; // sau này sẽ lấy theo DB chính
+                _pathServer = "/db.namanphu.vn/CMCBacNinhDB/AppCMC";
+                PublicCodeShare.ftpClientModel.createDirAndSub(_pathServer);
+
                 foreach (var file in provider.FileData)
                 {
                     var originalFileName = file.Headers.ContentDisposition.FileName.Trim('\"');
@@ -854,8 +865,14 @@ namespace AppCMC.Controllers
                         File.Delete(filePath);
                     }
                     File.Move(localFileName, filePath);
-
+                    List<string> _lstFileName = new List<string>();
+                    _lstFileName.Add(filePath);
                     
+                    if (!PublicCodeShare.ftpClientModel.uploads(_pathServer, _lstFileName))
+                    {
+                        return Content(HttpStatusCode.NotFound, "Lỗi khi tải ảnh lên !");
+                    }
+                    File.Delete(filePath);
 
                 }
 
@@ -869,7 +886,7 @@ namespace AppCMC.Controllers
             }
             catch
             {
-                return Content(HttpStatusCode.BadRequest, "Lỗi dữ liệu !");
+                return Content(HttpStatusCode.NotFound, "Lỗi dữ liệu !");
             }
 
         }
