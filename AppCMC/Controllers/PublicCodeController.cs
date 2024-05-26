@@ -59,8 +59,10 @@ namespace AppCMC.Controllers
     }
     public class tblDieuPhoiVanChuyenDto
     {
+        public string RGB { get; set; }
         public string ProductKey { get; set; }
         public long IDChuyen { get; set; }
+        public long? IDLaiXe { get; set; }
         public DateTime? NgayDongHangCal { get; set; }
         public string NgayDongHang { 
             get 
@@ -172,6 +174,7 @@ namespace AppCMC.Controllers
     {
         public long? ID { get; set; }
         public long? IDChuyen { get; set; }
+        public long? IDTrangThaiVanChuyen { get; set; }
         public string ProductKey { get; set; }
         public long? IDUser { get; set; }
         public long? IDXeOTo { get; set; }
@@ -200,6 +203,7 @@ namespace AppCMC.Controllers
             }
             set { }
         }
+        public DateTime? NgayGioThucHien { get; set; }
         public DateTime? NgayDoDauCal { get; set; }
         public string NgayDoDau
         {

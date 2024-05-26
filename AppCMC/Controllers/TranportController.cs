@@ -32,14 +32,18 @@ namespace AppCMC.Controllers
             _Chuyen.NgayTraHang = _object.NgayTraHang;
             _Chuyen.IDDMCustomer = _object.IDKhachHang;
             _Chuyen.IDDiemDi = _object.IDDiemDi;
+            _Chuyen.tblDMDoor = context.tblDMDoors.FirstOrDefault(x => x.ID == _Chuyen.IDDiemDi);
             _Chuyen.IDDiemDen = _object.IDDiemDen;
+            _Chuyen.tblDMDoor1 = context.tblDMDoors.FirstOrDefault(x => x.ID == _Chuyen.IDDiemDen);
             _Chuyen.IDDMHangHoa = _object.IDHangHoa;
+            _Chuyen.tblDMCustomer = context.tblDMCustomers.FirstOrDefault(x => x.ID == _Chuyen.IDDMCustomer);
             _Chuyen.SoKG = _object.SoKG;
             _Chuyen.SoKhoi = _object.SoKhoi;
             _Chuyen.SoPL = _object.SoPL;
             _Chuyen.FlagHangVe = _object.FlagHangVe ;
             _Chuyen.ThoiGianVe = _object.ThoiGianVe;
             _Chuyen.IDDMLoaiXe = _object.IDLoaiXe;
+            _Chuyen.tblDMLoaiXe = context.tblDMLoaiXes.FirstOrDefault(x => x.ID == _Chuyen.IDDMLoaiXe);
         }
         #endregion
         #region Danh mục
@@ -128,7 +132,7 @@ namespace AppCMC.Controllers
                 var _ChuyenHT = context.tblDieuPhoiVanChuyens.Where(x => x.NgayDongHang != null && x.NgayDongHang <= DateTime.Now && x.NgayTraHang >= DateTime.Now && x.IDDMXeOto == _xe.ID).FirstOrDefault();
                 if(_ChuyenHT != null)
                 {
-                    _New.TrangThai = _ChuyenHT.ListTrangThaiVanChuyen.OrderByDescending(x => x.NgayGioThucHien).FirstOrDefault()?.tblDMTrangThaiVanChuyen?.TenText;
+                    _New.TrangThai = _ChuyenHT.ListTrangThaiVanChuyen.OrderByDescending(x => x.NgayGioThucHien).FirstOrDefault()?.tblDMTrangThaiVanChuyen?.NameVI;
                     _New.RGB = _ChuyenHT.ListTrangThaiVanChuyen.OrderByDescending(x => x.NgayGioThucHien).FirstOrDefault()?.tblDMTrangThaiVanChuyen?.RGB;
                 }
                 LstAllXeSelect.Add(_New);
@@ -239,6 +243,7 @@ namespace AppCMC.Controllers
                 HangHoa = x.tblDMHangHoa != null ? x.tblDMHangHoa.NameVI : "",
                 HangVe = x.FlagHangVe == true ? "1" : "0",
                 KhachHang = x.tblDMCustomer != null ? x.tblDMCustomer.NameVI : "",
+                IDLaiXe = x.IDLaiXe,
                 LaiXe = x.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company ? (x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "") : x.LaiXe,
                 NgayDongHangCal = x.NgayDongHang,
                 NgayTraHangCal = x.NgayDongHang,
@@ -249,12 +254,14 @@ namespace AppCMC.Controllers
                 ThoiGianVeCal = x.ThoiGianVe,
                 TrangThaiDieuPhoiIn = x.EnumTrangThaiDieuPhoi,
                 TrangThaiVanChuyen = x.tblDMTrangThaiVanChuyen != null ? x.tblDMTrangThaiVanChuyen.NameVI : "",
+                RGB = x.tblDMTrangThaiVanChuyen != null ? x.tblDMTrangThaiVanChuyen.RGB : "",
                 SoGioCho = x.SoGioCho != null ? x.SoGioCho.Value.ToString() : "",
                 SoCaLuu = x.SoCaLuu != null ? x.SoCaLuu.Value.ToString() : "",
                 VeBenBai = x.VeBenBai != null ? x.VeBenBai.Value.ToString() : "",
                 PhatSinhKhac = x.PhatSinhKhac,
                 GhiChu = x.GhiChu,
                 MaDieuVan = x.CodeDieuVan,
+
             };
         }
 
@@ -304,7 +311,7 @@ namespace AppCMC.Controllers
                 var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
 
-                return Ok(new { NgayDongHang = _Chuyen.NgayDongHang, NgayTraHang = _Chuyen.NgayTraHang, IDDiemDi = _Chuyen.IDDiemDi ,ObjectDiemDi =  new tblObjectAll { Name = _Chuyen.tblDMDoor?.AddressText }, IDDiemDen = _Chuyen.IDDiemDen, IDDMHangHoa = _Chuyen.IDDMHangHoa ,SoKG = _Chuyen.SoKG , SoKhoi = _Chuyen.SoKhoi, SoPL = _Chuyen.SoPL, FlagHangVe = _Chuyen.FlagHangVe,ThoiGianVe = _Chuyen.ThoiGianVe , IDKhachHang = _Chuyen.IDDMCustomer, IDLoaiXe = _Chuyen.IDDMLoaiXe});
+                return Ok(new { NgayDongHang = _Chuyen.NgayDongHang, NgayTraHang = _Chuyen.NgayTraHang, IDDiemDi = _Chuyen.IDDiemDi ,DiemDi = _Chuyen.tblDMDoor?.NameVI, IDDiemDen = _Chuyen.IDDiemDen, DiemDen = _Chuyen.tblDMDoor1?.NameVI, IDDMHangHoa = _Chuyen.IDDMHangHoa, HangHoa  = _Chuyen.tblDMHangHoa?.NameVI, SoKG = _Chuyen.SoKG , SoKhoi = _Chuyen.SoKhoi, SoPL = _Chuyen.SoPL, FlagHangVe = _Chuyen.FlagHangVe,ThoiGianVe = _Chuyen.ThoiGianVe , IDKhachHang = _Chuyen.IDDMCustomer, KhachHang = _Chuyen.tblDMCustomer?.NameVI, IDLoaiXe = _Chuyen.IDDMLoaiXe, LoaiXe = _Chuyen.tblDMLoaiXe?.NameVI });
             }
             catch
             {
@@ -416,6 +423,7 @@ namespace AppCMC.Controllers
               IDChuyen = x.ID,
               TrangThaiDieuPhoiIn = x.EnumTrangThaiDieuPhoi,
               TrangThaiVanChuyen = x.tblDMTrangThaiVanChuyen != null ? x.tblDMTrangThaiVanChuyen.NameVI : "",
+              RGB = x.tblDMTrangThaiVanChuyen != null ? x.tblDMTrangThaiVanChuyen.RGB : "",
               NgayDongHangCal = x.NgayDongHang,
               KhachHang = x.tblDMCustomer != null ? x.tblDMCustomer.NameVI : "",
               DonViVanTai = x.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company ? "CMC" : (x.tblDMCustomer1 != null ? x.tblDMCustomer1.NameVI : ""),
@@ -424,6 +432,7 @@ namespace AppCMC.Controllers
               DiemDen = x.tblDMDoor1 != null ? x.tblDMDoor1.AddressVI : "",
               BienSoXe = x.tblDMXeOto != null ? x.tblDMXeOto.BienSoXE : x.BienSoXe,
               LaiXe = x.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company ? (x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "") : x.LaiXe,
+              IDLaiXe = x.IDLaiXe,
               SoPL = x.SoPL != null ? x.SoPL.Value.ToString() : "",
               SoKhoi = x.SoKhoi != null ? x.SoKhoi.Value.ToString() : "",
               SoKG = x.SoKG != null ? x.SoKG.Value.ToString() : "",
@@ -461,7 +470,12 @@ namespace AppCMC.Controllers
                 var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
 
-                return Ok(new {BienSoXe = _Chuyen.BienSoXe, LaiXe = _Chuyen.LaiXe,DTLaiXe = _Chuyen.DTLaiXe, IDDonViVanTai = _Chuyen.IDDMCustomerTranport ,  IDXeOTo = _Chuyen.IDDMXeOto, IDLaiXe = _Chuyen.IDLaiXe,SoGioCho = _Chuyen.SoGioCho,SoCaLuu = _Chuyen.SoCaLuu,VeBenBai = _Chuyen.VeBenBai,PhatSinhKhac = _Chuyen.PhatSinhKhac, GhiChu = _Chuyen.GhiChu });
+                if(_Chuyen.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company)
+                    return Ok(new {IDXeOTo = _Chuyen.IDDMXeOto,BienSoXe = _Chuyen.tblDMXeOto?.BienSoXE, IDLaiXe = _Chuyen.IDLaiXe, LaiXe = _Chuyen.tblNhanSu?.HoTenVI ,SoGioCho = _Chuyen.SoGioCho,SoCaLuu = _Chuyen.SoCaLuu,VeBenBai = _Chuyen.VeBenBai,PhatSinhKhac = _Chuyen.PhatSinhKhac, GhiChu = _Chuyen.GhiChu });
+                else if (_Chuyen.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company)
+                    return Ok(new { BienSoXe = _Chuyen.BienSoXe, LaiXe = _Chuyen.LaiXe, DTLaiXe = _Chuyen.DTLaiXe, IDDonViVanTai = _Chuyen.IDDMCustomerTranport, SoGioCho = _Chuyen.SoGioCho, SoCaLuu = _Chuyen.SoCaLuu, VeBenBai = _Chuyen.VeBenBai, PhatSinhKhac = _Chuyen.PhatSinhKhac, GhiChu = _Chuyen.GhiChu });
+                else 
+                    return Ok(new { BienSoXe = _Chuyen.BienSoXe, LaiXe = _Chuyen.LaiXe, DTLaiXe = _Chuyen.DTLaiXe, IDDonViVanTai = _Chuyen.IDDMCustomerTranport, IDXeOTo = _Chuyen.IDDMXeOto, IDLaiXe = _Chuyen.IDLaiXe, SoGioCho = _Chuyen.SoGioCho, SoCaLuu = _Chuyen.SoCaLuu, VeBenBai = _Chuyen.VeBenBai, PhatSinhKhac = _Chuyen.PhatSinhKhac, GhiChu = _Chuyen.GhiChu });
             }
             catch
             {
@@ -830,7 +844,6 @@ namespace AppCMC.Controllers
 
                 tblDieuPhoiVanChuyen _Chuyen = null;
                 _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == metadata.IDChuyen);
-                _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault();
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến !");
                 if (_Chuyen.FlagDaDieuPhoi != true || _Chuyen.IDLaiXe == null || _Chuyen.IDDMXeOto == null)
                 {
@@ -847,12 +860,46 @@ namespace AppCMC.Controllers
                 AppSettings.ftpuser = "ftpuser";
                 AppSettings.ftppass = "123456a$";
 
+                var UserLogin = context.tblSysUsers.FirstOrDefault(x => x.ID == metadata.IDUser);
+
+                var _newTrangThai = new tblDieuPhoiTrangThaiVC
+                {
+                    IDDieuPhoi = _Chuyen.ID,
+                    DateCreate = DateTime.Now,
+                    NgayGioThucHien = metadata.NgayGioThucHien ?? DateTime.Now,
+                    IDUserCreate = UserLogin.ID,
+                    tblSysUser = UserLogin,
+                    IDDMTrangThaiVanChuyen = _Chuyen.IDTrangThaiVanChuyen,
+                    tblDMTrangThaiVanChuyen = context.tblDMTrangThaiVanChuyens.FirstOrDefault(x => x.ID == metadata.IDTrangThaiVanChuyen),
+                };
+                _Chuyen.ListTrangThaiVanChuyen.Add(_newTrangThai);
+                context.tblDieuPhoiTrangThaiVCs.Add(_newTrangThai);
+                context.SaveChanges();
+
+
+                var _doc = new tblJOBDocument
+                {
+                    IDUserUpload = UserLogin.ID,
+                    tblSysUser = UserLogin,
+                    CreateDate = DateTime.Now,
+                   
+                    IDTheoDoiVanChuyen = _newTrangThai?.ID,
+                    tblDieuPhoiTrangThaiVC = _newTrangThai
+                };
+                _newTrangThai.ListDocument.Add(_doc);
+                context.tblJOBDocuments.Add(_doc);
+               
+
                 // Lưu các file từ yêu cầu vào thư mục
 
-                string _pathServer = "/" + PublicCodeShare.ftpClientModel.root + "/" + "AppCMC"; // sau này sẽ lấy theo DB chính
-                _pathServer = "/db.namanphu.vn/CMCBacNinhDB/AppCMC";
-                PublicCodeShare.ftpClientModel.createDirAndSub(_pathServer);
+                string _pathServer = "/" + PublicCodeShare.ftpClientModel.root + "/" + $"Document Transport/DP{_Chuyen.ID}"; // sau này sẽ lấy theo DB chính
+                //_pathServer = "/db.namanphu.vn/CMCBacNinhDB/AppCMC";
 
+                _doc.Path = _pathServer;
+                
+
+                PublicCodeShare.ftpClientModel.createDirAndSub(_pathServer);
+                
                 foreach (var file in provider.FileData)
                 {
                     var originalFileName = file.Headers.ContentDisposition.FileName.Trim('\"');
@@ -867,15 +914,19 @@ namespace AppCMC.Controllers
                     File.Move(localFileName, filePath);
                     List<string> _lstFileName = new List<string>();
                     _lstFileName.Add(filePath);
-                    
+
+
+                    string _fnOnly = Path.GetFileName(filePath);
+                    _doc.FileName = _fnOnly + ";" + _doc.FileName;
+
+
                     if (!PublicCodeShare.ftpClientModel.uploads(_pathServer, _lstFileName))
                     {
-                        return Content(HttpStatusCode.NotFound, "Lỗi khi tải ảnh lên !");
+                         Content(HttpStatusCode.InternalServerError, "Chưa thể tải ảnh lên !");
                     }
                     File.Delete(filePath);
-
                 }
-
+                _Chuyen.SaveData(context);
                 var _newDt = NewSelectDieuPhoi(_Chuyen);
                 var res = new
                 {
@@ -890,6 +941,52 @@ namespace AppCMC.Controllers
             }
 
         }
+
+        [HttpGet]
+        [Route("api/GetListTrangThaiVanChuyen")]
+        public IHttpActionResult GetListTrangThaiVanChuyen(string ProductKey, long IDChuyen)
+        {
+            try
+            {
+                var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
+                if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
+                var lst = _Chuyen.ListTrangThaiVanChuyen.Select(x => new {ID = x.ID, IDChuyen = x.IDDieuPhoi, IDTrangThaiVanChuyen = x.IDDMTrangThaiVanChuyen, TrangThaiVanChuyen = x.tblDMTrangThaiVanChuyen != null ? x.tblDMTrangThaiVanChuyen.NameVI : "", FileAttach = x.ListFileNameText}  ).ToList();
+
+                return Ok(lst);
+            }
+            catch
+            {
+                return Content(HttpStatusCode.BadRequest, "Lỗi dữ liệu !");
+            }
+        }
+
+        [HttpPost]
+        [Route("api/DeleteTrangThaiVanChuyen")]
+        public IHttpActionResult DeleteTrangThaiVanChuyen([FromBody] ObjectCal _object) //
+        {
+            try
+            {
+                var _trangThai = context.tblDieuPhoiTrangThaiVCs.FirstOrDefault(x => x.ID == _object.ID);
+                if (_trangThai == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy dữ liệu cần xóa !");
+
+                var _chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == _trangThai.IDDieuPhoi);
+
+                context.tblJOBDocuments.RemoveRange(_trangThai.tblJOBDocuments);
+                context.tblDieuPhoiTrangThaiVCs.Remove(_trangThai);
+                _chuyen.ListTrangThaiVanChuyen.Remove(_trangThai);
+                _chuyen.SaveData(context);
+                var res = new
+                {
+                    result = "Xóa dữ liệu thành công !",
+                };
+                return Ok(res);
+            }
+            catch
+            {
+                return Content(HttpStatusCode.BadRequest, "Chưa thể xóa dữ liệu !");
+            }
+        }
+
 
         // thêm sửa xóa đổ dầu
         [HttpPost]
@@ -1023,9 +1120,6 @@ namespace AppCMC.Controllers
                     return "application/octet-stream"; // Loại nội dung mặc định cho các tệp khác
             }
         }
-
-        #endregion
-
         [HttpPost]
         [Route("api/UploadImage")]
         public async Task<IHttpActionResult> UploadImage()
@@ -1065,5 +1159,6 @@ namespace AppCMC.Controllers
             
             return BadRequest("No file uploaded.");
         }
+        #endregion
     }
 }
