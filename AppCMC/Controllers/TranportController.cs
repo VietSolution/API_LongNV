@@ -127,10 +127,10 @@ namespace AppCMC.Controllers
                 {
                     IDXe = _xe.ID,
                     BienSoXe = _xe.BienSoXE,
-                    SoLuongChuyen = context.tblDieuPhoiVanChuyens.Where(x => x.NgayDongHang != null && x.NgayDongHang.Value.Year == DateTime.Now.Year && x.NgayDongHang.Value.Month == DateTime.Now.Month && x.IDDMXeOto == _xe.ID).Count(),
+                    SoLuongChuyen = context.tblDieuPhoiVanChuyens.Where(x => x.NgayDongHang != null && x.NgayDongHang.Value.Year == DateTime.Now.Year && x.NgayDongHang.Value.Month == DateTime.Now.Month && x.IDDMXeOto == _xe.ID && x.EnumTrangThaiDieuPhoi != (int)EnumTrangThaiDieuPhoiVC.ChuyenHuy).Count(),
                 };
-                var _ChuyenHT = context.tblDieuPhoiVanChuyens.Where(x => x.NgayDongHang != null && x.NgayDongHang <= DateTime.Now && x.NgayTraHang >= DateTime.Now && x.IDDMXeOto == _xe.ID).FirstOrDefault();
-                if(_ChuyenHT != null)
+                var _ChuyenHT = context.tblDieuPhoiVanChuyens.Where(x => x.NgayDongHang != null && x.EnumTrangThaiDieuPhoi != (int)EnumTrangThaiDieuPhoiVC.HoanThanh && x.EnumTrangThaiDieuPhoi != (int)EnumTrangThaiDieuPhoiVC.ChuyenHuy && x.IDDMXeOto == _xe.ID && x.NgayDongHang <= DateTime.Now && ((x.FlagHangVe != true && x.NgayTraHang >= DateTime.Now) || (x.FlagHangVe == true && x.ThoiGianVe >= DateTime.Now))).FirstOrDefault();
+                if (_ChuyenHT != null)
                 {
                     _New.TrangThai = _ChuyenHT.ListTrangThaiVanChuyen.OrderByDescending(x => x.NgayGioThucHien).FirstOrDefault()?.tblDMTrangThaiVanChuyen?.NameVI;
                     _New.RGB = _ChuyenHT.ListTrangThaiVanChuyen.OrderByDescending(x => x.NgayGioThucHien).FirstOrDefault()?.tblDMTrangThaiVanChuyen?.RGB;
@@ -404,9 +404,9 @@ namespace AppCMC.Controllers
             {
                 func = x => x.NgayDongHang == null || (x.NgayDongHang >= dtS && x.NgayDongHang <= dtE);
             }
-            if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DaNhan) funcTT  = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoi.NhanLenh;
+            if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DaNhan) funcTT  = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.NhanLenh;
             else if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DuocGiao) funcTT = x => x.EnumTrangThaiDieuPhoi == null ;
-            else if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.HoanThanh) funcTT = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoi.HoanThanh;
+            else if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.HoanThanh) funcTT = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.HoanThanh;
 
             Lstfunc.Add(func);
            
@@ -578,7 +578,7 @@ namespace AppCMC.Controllers
                 {
                     return Content(HttpStatusCode.Conflict, "Không thể thực hiện gửi lệnh trên chuyến này !");
                 }
-                _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoi.GuiLenh;
+                _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoiVC.GuiLenh;
                 context.SaveChanges() ;
                 var _newDt = NewSelectDieuPhoi(_Chuyen);
                 var res = new
@@ -610,7 +610,7 @@ namespace AppCMC.Controllers
                 tblDieuPhoiVanChuyen _Chuyen = null;
                 _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == _object.IDChuyen);
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến !");
-                if (_Chuyen.FlagDaDieuPhoi != true || _Chuyen.IDLaiXe == null || _Chuyen.IDDMXeOto == null || _Chuyen.EnumTrangThaiDieuPhoi != (int)EnumTrangThaiDieuPhoi.GuiLenh)
+                if (_Chuyen.FlagDaDieuPhoi != true || _Chuyen.IDLaiXe == null || _Chuyen.IDDMXeOto == null || _Chuyen.EnumTrangThaiDieuPhoi != (int)EnumTrangThaiDieuPhoiVC.GuiLenh)
                 {
                     return Content(HttpStatusCode.Conflict, "Không thể thực hiện bỏ gửi lệnh trên chuyến này !");
                 }
@@ -651,7 +651,7 @@ namespace AppCMC.Controllers
                 {
                     return Content(HttpStatusCode.Conflict, "Không thể thực hiện hủy chuyến trên chuyến này !");
                 }
-                _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoi.ChuyenHuy;
+                _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoiVC.ChuyenHuy;
                 context.SaveChanges();
                 var _newDt = NewSelectDieuPhoi(_Chuyen);
                 var res = new
@@ -788,14 +788,14 @@ namespace AppCMC.Controllers
                 {
                     return Content(HttpStatusCode.Conflict, "Nhập trạng thái !");
                 }
-                if (_object.TrangThai == (int)EnumTrangThaiDieuPhoi.NhanLenh)
-                    _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoi.NhanLenh;
+                if (_object.TrangThai == (int)EnumTrangThaiDieuPhoiVC.NhanLenh)
+                    _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoiVC.NhanLenh;
                 else if (_object.TrangThai == -1)
-                    _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoi.GuiLenh;
-                else if (_object.TrangThai == (int)EnumTrangThaiDieuPhoi.KhongNhanLenh)
-                    _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoi.KhongNhanLenh;
-                else if (_object.TrangThai == (int)EnumTrangThaiDieuPhoi.HoanThanh)
-                    _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoi.HoanThanh;
+                    _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoiVC.GuiLenh;
+                else if (_object.TrangThai == (int)EnumTrangThaiDieuPhoiVC.KhongNhanLenh)
+                    _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoiVC.KhongNhanLenh;
+                else if (_object.TrangThai == (int)EnumTrangThaiDieuPhoiVC.HoanThanh)
+                    _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoiVC.HoanThanh;
                 else return Content(HttpStatusCode.NotFound, "Trạng thái không hợp lệ !");
                 context.SaveChanges();
                 var _newDt = NewSelectDieuPhoi(_Chuyen);
