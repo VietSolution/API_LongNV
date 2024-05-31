@@ -295,8 +295,8 @@ namespace Trackings.Controllers
                 CangDen = EntityJOB.tblDMPort1 != null ? EntityJOB.tblDMPort1.NameVI : "",
                 NgayDi = EntityJOB.ETDATD?.ToString("HH:mm dd/MM/yyyy"),
                 NgayDen = EntityJOB.ETAATA?.ToString("HH:mm dd/MM/yyyy"),
-                ListCharge = EntityJOB.tblJOBChargeLists.Where(x => x.FlagChargeBaoHangDen == true).Select(x => new { TenChiPhi = x.tblDMCharge?.NameVI, DonViTinh = x.tblDMSeaUnit?.NameVI,SoLuong = x.Quantity?.ToString("#,#.0##") , DonGia = x.DonGiaVN_Ex?.ToString("#,#"), VAT = x.VAT, ThanhTien = x.AmountByExchange?.ToString("#,#") }).ToList()
-                 
+                ListCharge = EntityJOB.tblJOBChargeLists.Where(x => x.FlagChargeBaoHangDen == true).Select(x => new { TenChiPhi = x.tblDMCharge?.NameVI, DonViTinh = x.tblDMSeaUnit?.NameVI,SoLuong = x.Quantity?.ToString("#,#.0##") , DonGia = x.DonGiaVN_Ex?.ToString("#,#"), VAT = x.VAT, ThanhTien = x.AmountByExchange?.ToString("#,#") }).ToList(),
+                TongTien = EntityJOB.tblJOBChargeLists.Where(x => x.FlagChargeBaoHangDen == true).Sum(x=>x.AmountByExchange)?.ToString("#,#")
             };
             return Ok(_Dto);
 
