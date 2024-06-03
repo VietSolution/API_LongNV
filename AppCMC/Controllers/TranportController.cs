@@ -59,6 +59,7 @@ namespace AppCMC.Controllers
         [Route("api/GettblDMLoaiXe")]
         public IHttpActionResult GettblDMLoaiXe(string ProductKey)
         {
+           
             var LstAllXe = context.tblDMLoaiXes.Select(x => new { ID = x.ID,Code = x.Code, Name = x.NameVI, TrongTai = x.TrongTai }).ToList();
             return Ok(LstAllXe);
         }
@@ -813,16 +814,54 @@ namespace AppCMC.Controllers
 
         }
 
+       
+        [HttpGet]
+        [Route("api/GetPathLocal")]
+        public IHttpActionResult GetPathLocal(string ProductKey)
+        {
+            string root = SetValueExcel.PathExportView;
+            if (!Directory.Exists(root))
+            {
+                Directory.CreateDirectory(root);
+            }
+            return Ok(new { PathLocal = root});
+        }
+
+        [HttpGet]
+        [Route("api/GetPathServer")]
+        public IHttpActionResult GetPathServer(string ProductKey)
+        {
+            
+            string root1 = HttpContext.Current.Server.MapPath("~/uploads");
+            if (!Directory.Exists(root1))
+            {
+                Directory.CreateDirectory(root1);
+            }
+
+            return Ok(new { PathServer = root1 });
+        }
+
+        [HttpGet]
+        [Route("api/GetPathSFix")]
+        public IHttpActionResult GetPathSFix(string ProductKey)
+        {
+            string _r = @"D:\ftpuser\dbdev.namanphu.vn\Model_CMCBacNinh\Document Transport\DP1";
+            if (!Directory.Exists(_r))
+            {
+                Directory.CreateDirectory(_r);
+            }
+            return Ok(new { PathServer = _r });
+        }
 
         [HttpPost]
         [Route("api/UpdateTrangThaiVanChuyen")] // sửa
         public async Task<IHttpActionResult> UpdateTrangThaiVanChuyen()
         {
-            try
-            {
-                string root = HttpContext.Current.Server.MapPath("~/uploads");
-
-                if (!Directory.Exists(root))
+            
+            //string root = HttpContext.Current.Server.MapPath("~/uploads");
+            //root = SetValueExcel.PathExportView;
+            string root = @"D:\Temp";  // đường dẫn lưu temp trên server
+            if (!Directory.Exists(root))
                 {
                     Directory.CreateDirectory(root);
                 }
@@ -934,11 +973,13 @@ namespace AppCMC.Controllers
                     data = _newDt
                 };
                 return Ok(res);
-            }
-            catch
-            {
-                return Content(HttpStatusCode.NotFound, "Lỗi dữ liệu !");
-            }
+            //try
+            //{
+            //}
+            //catch
+            //{
+            //    return Content(HttpStatusCode.NotFound, "Lỗi dữ liệu !");
+            //}
 
         }
 
