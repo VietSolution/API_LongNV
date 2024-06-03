@@ -475,7 +475,7 @@ namespace AppCMC.Controllers
                 else if (_Chuyen.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company)
                     return Ok(new { BienSoXe = _Chuyen.BienSoXe, LaiXe = _Chuyen.LaiXe, DTLaiXe = _Chuyen.DTLaiXe, IDDonViVanTai = _Chuyen.IDDMCustomerTranport, SoGioCho = _Chuyen.SoGioCho, SoCaLuu = _Chuyen.SoCaLuu, VeBenBai = _Chuyen.VeBenBai, PhatSinhKhac = _Chuyen.PhatSinhKhac, GhiChu = _Chuyen.GhiChu });
                 else 
-                    return Ok(new { BienSoXe = _Chuyen.BienSoXe, LaiXe = _Chuyen.LaiXe, DTLaiXe = _Chuyen.DTLaiXe, IDDonViVanTai = _Chuyen.IDDMCustomerTranport, IDXeOTo = _Chuyen.IDDMXeOto, IDLaiXe = _Chuyen.IDLaiXe, SoGioCho = _Chuyen.SoGioCho, SoCaLuu = _Chuyen.SoCaLuu, VeBenBai = _Chuyen.VeBenBai, PhatSinhKhac = _Chuyen.PhatSinhKhac, GhiChu = _Chuyen.GhiChu });
+                    return Ok(new { BienSoXe = _Chuyen.BienSoXe, LaiXe = _Chuyen.LaiXe, DTLaiXe = _Chuyen.DTLaiXe, IDDonViVanTai = _Chuyen.IDDMCustomerTranport, IDXeOto = _Chuyen.IDDMXeOto, IDLaiXe = _Chuyen.IDLaiXe, SoGioCho = _Chuyen.SoGioCho, SoCaLuu = _Chuyen.SoCaLuu, VeBenBai = _Chuyen.VeBenBai, PhatSinhKhac = _Chuyen.PhatSinhKhac, GhiChu = _Chuyen.GhiChu });
             }
             catch
             {
