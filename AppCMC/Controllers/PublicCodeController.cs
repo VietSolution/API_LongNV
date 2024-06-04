@@ -122,7 +122,7 @@ namespace AppCMC.Controllers
         public long? IDDiemDi { get; set; }
         public long? IDDiemDen { get; set; }
         public long? IDLoaiXe { get; set; }
-        public long? IDXeOTo { get; set; }
+        public long? IDXeOto { get; set; }
         public long? IDLaiXe { get; set; }
         public double SoPL { get; set; }
         public double SoKG { get; set; }
@@ -154,7 +154,7 @@ namespace AppCMC.Controllers
         public string ProductKey { get; set; }
         public long IDUser { get; set; }
         public long IDChuyen { get; set; }
-        public long? IDXeOTo { get; set; }
+        public long? IDXeOto { get; set; }
         public string BienSoXe { get; set; }
         public long? IDLaiXe { get; set; }
         public int EnumXeThueOrXeCongTy { get; set; }
@@ -177,7 +177,7 @@ namespace AppCMC.Controllers
         public long? IDTrangThaiVanChuyen { get; set; }
         public string ProductKey { get; set; }
         public long? IDUser { get; set; }
-        public long? IDXeOTo { get; set; }
+        public long? IDXeOto { get; set; }
         public string BienSoXe { get; set; }
         public string NoiDungSuaChua { get; set; }
         public int? SoLuong { get; set; }

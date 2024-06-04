@@ -523,7 +523,7 @@ namespace AppCMC.Controllers
 
                 if(_Chuyen.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company)
                 {
-                    var _data = new { IDXeOTo = _Chuyen.IDDMXeOto, BienSoXe = _Chuyen.tblDMXeOto?.BienSoXE, IDLaiXe = _Chuyen.IDLaiXe, LaiXe = _Chuyen.tblNhanSu?.HoTenVI, SoGioCho = _Chuyen.SoGioCho, SoCaLuu = _Chuyen.SoCaLuu, VeBenBai = _Chuyen.VeBenBai, PhatSinhKhac = _Chuyen.PhatSinhKhac, GhiChu = _Chuyen.GhiChu };
+                    var _data = new { IDXeOto = _Chuyen.IDDMXeOto, BienSoXe = _Chuyen.tblDMXeOto?.BienSoXE, IDLaiXe = _Chuyen.IDLaiXe, LaiXe = _Chuyen.tblNhanSu?.HoTenVI, SoGioCho = _Chuyen.SoGioCho, SoCaLuu = _Chuyen.SoCaLuu, VeBenBai = _Chuyen.VeBenBai, PhatSinhKhac = _Chuyen.PhatSinhKhac, GhiChu = _Chuyen.GhiChu };
                     var res = new
                     {
                         result = "Lấy dữ liệu thành công !",
@@ -619,7 +619,7 @@ namespace AppCMC.Controllers
                 _Chuyen.LaiXe = _object.LaiXe;
                 _Chuyen.DTLaiXe = _object.DTLaiXe;
                 _Chuyen.IDDMCustomerTranport = _object.IDDonViVanTai;
-                _Chuyen.IDDMXeOto = _object.IDXeOTo;
+                _Chuyen.IDDMXeOto = _object.IDXeOto;
                 _Chuyen.IDLaiXe = _object.IDLaiXe;
                 _Chuyen.IDUserDieuPhoi = _object.IDUser;
                 _Chuyen.SoGioCho = LongNVExport.Getlong(_object.SoGioCho);
@@ -825,6 +825,7 @@ namespace AppCMC.Controllers
             {
                 LstObject = context.tblQuanLyDoDaus.Where(func).OrderByDescending(x => x.NgayDoDau).Skip((Page - 1) * Limit).Take(Limit).Select(x => new ObjectCal
                 {
+                    ID = x.ID,
                     BienSoXe = x.tblDMXeOto != null ? x.tblDMXeOto.BienSoXE : "",
                     GhiChu = x.GhiChu,
                     SoLuong = x.SoLuong,
@@ -833,7 +834,7 @@ namespace AppCMC.Controllers
                     LaiXe = x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "",
                     NgayDoDauCal = x.NgayDoDau,
                     IDUser = x.IDCreateUser,
-                    IDXeOTo = x.IDDMXeOto,
+                    IDXeOto = x.IDDMXeOto,
                     IDLaiXe = x.IDLaiXe
                 }).ToList();
             }    
@@ -1152,7 +1153,7 @@ namespace AppCMC.Controllers
                 _chuyen.DonGia = _object.DonGia;
                 _chuyen.SoLuong = _object.SoLuong ?? 1;
                 _chuyen.ThanhTien = _chuyen.ThanhTienCal;
-                _chuyen.IDDMXeOto = _object.IDXeOTo;
+                _chuyen.IDDMXeOto = _object.IDXeOto;
                 _chuyen.NgayDoDau = _object.NgayDoDauCal ?? DateTime.Now;
                 _chuyen.GhiChu = _object.GhiChu;
                 _chuyen.SaveData(context);
@@ -1184,7 +1185,7 @@ namespace AppCMC.Controllers
                 LaiXe = _doDau.tblNhanSu != null ? _doDau.tblNhanSu.HoTenVI : "",
                 NgayDoDauCal = _doDau.NgayDoDau,
                 IDUser = _doDau.IDCreateUser,
-                IDXeOTo = _doDau.IDDMXeOto,
+                IDXeOto = _doDau.IDDMXeOto,
                 IDLaiXe = _doDau.IDLaiXe,
                 ID = _doDau.ID
             };
