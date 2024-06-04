@@ -52,7 +52,12 @@ namespace AppCMC.Controllers
         public IHttpActionResult GettblDMXeOto(string ProductKey) 
         {
             var LstAllXe = context.tblDMXeOtoes.Select(x=>new { ID = x.ID, BienSoXe = x.BienSoXE, LaiXe = x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "",LoaiXe = x.tblDMLoaiXe != null ? x.tblDMLoaiXe.NameVI : "" }).ToList();
-            return Ok(LstAllXe);
+            var res = new
+            {
+                result = "Lấy dữ liệu thành công !",
+                data = LstAllXe
+            };
+            return Ok(res);
         }
 
         [HttpGet]
@@ -61,7 +66,12 @@ namespace AppCMC.Controllers
         {
            
             var LstAllXe = context.tblDMLoaiXes.Select(x => new { ID = x.ID,Code = x.Code, Name = x.NameVI, TrongTai = x.TrongTai }).ToList();
-            return Ok(LstAllXe);
+            var res = new
+            {
+                result = "Lấy dữ liệu thành công !",
+                data = LstAllXe
+            };
+            return Ok(res);
         }
 
         [HttpGet]
@@ -69,7 +79,12 @@ namespace AppCMC.Controllers
         public IHttpActionResult GettblNhanSu(string ProductKey)
         {
             var LstAll = context.tblNhanSus.Select(x => new { ID = x.ID, HoTen = x.HoTenVI, MaNhanSu = x.MANHANSU}).ToList();
-            return Ok(LstAll);
+            var res = new
+            {
+                result = "Lấy dữ liệu thành công !",
+                data = LstAll
+            };
+            return Ok(res);
         }
 
         [HttpGet]
@@ -77,7 +92,13 @@ namespace AppCMC.Controllers
         public IHttpActionResult GettblDMDoor(string ProductKey)
         {
             var LstAll = context.tblDMDoors.Select(x => new { ID = x.ID, Name = x.NameVI, Address = x.AddressVI }).ToList();
-            return Ok(LstAll);
+
+            var res = new
+            {
+                result = "Lấy dữ liệu thành công !",
+                data = LstAll
+            };
+            return Ok(res);
         }
 
         [HttpGet]
@@ -85,7 +106,12 @@ namespace AppCMC.Controllers
         public IHttpActionResult GettblDMHangHoa(string ProductKey)
         {
             var LstAll = context.tblDMHangHoas.Select(x => new { ID = x.ID , Code = x.Code, Name = x.NameVI }).ToList();
-            return Ok(LstAll);
+            var res = new
+            {
+                result = "Lấy dữ liệu thành công !",
+                data = LstAll
+            };
+            return Ok(res);
         }
 
         [HttpGet]
@@ -93,7 +119,12 @@ namespace AppCMC.Controllers
         public IHttpActionResult GettblDMCustomer(string ProductKey)
         {
             var LstAll = context.tblDMCustomers.Where(x=>x.FlagCustomer == true || (x.FlagCustomer != true && x.FlagLocalTrans != true || x.FlagNhaCC != true)).Select(x => new { ID = x.ID, Code = x.Code, Name = x.NameVI }).ToList();
-            return Ok(LstAll);
+            var res = new
+            {
+                result = "Lấy dữ liệu thành công !",
+                data = LstAll
+            };
+            return Ok(res);
         }
 
         [HttpGet]
@@ -101,7 +132,12 @@ namespace AppCMC.Controllers
         public IHttpActionResult GettblDMDonViVanTai(string ProductKey)
         {
             var LstAll = context.tblDMCustomers.Where(x => x.FlagLocalTrans == true || (x.FlagCustomer != true && x.FlagLocalTrans != true || x.FlagNhaCC != true)).Select(x => new { ID = x.ID, Code = x.Code, Name = x.NameVI }).ToList();
-            return Ok(LstAll);
+            var res = new
+            {
+                result = "Lấy dữ liệu thành công !",
+                data = LstAll
+            };
+            return Ok(res);
         }
 
         [HttpGet]
@@ -109,7 +145,12 @@ namespace AppCMC.Controllers
         public IHttpActionResult GettblDMTrangThaiVanChuyen(string ProductKey)
         {
             var LstAll = context.tblDMTrangThaiVanChuyens.Select(x => new { ID = x.ID, RGB = x.RGB, Name = x.NameVI }).ToList();
-            return Ok(LstAll);
+            var res = new
+            {
+                result = "Lấy dữ liệu thành công !",
+                data = LstAll
+            };
+            return Ok(res);
         }
 
         #endregion
@@ -140,6 +181,7 @@ namespace AppCMC.Controllers
             }
             var res = new
             {
+                result = "Lấy dữ liệu thành công !",
                 data = LstAllXeSelect.OrderByDescending(x => x.SoLuongChuyen).Skip(_skip).Take(Limit).ToList(),
                 TotalCount = _count,
                 Page = Page,
@@ -175,6 +217,7 @@ namespace AppCMC.Controllers
             }    
             var res = new
             {
+                result = "Lấy dữ liệu thành công !",
                 TotalCount = _total,
                 Page = Page,
                 Limit = Limit,
@@ -222,6 +265,7 @@ namespace AppCMC.Controllers
             }
             var res = new
             {
+                result = "Lấy dữ liệu thành công !",
                 TotalCount = _total,
                 Page = Page,
                 Limit = Limit,
@@ -312,7 +356,13 @@ namespace AppCMC.Controllers
                 var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
 
-                return Ok(new { NgayDongHang = _Chuyen.NgayDongHang, NgayTraHang = _Chuyen.NgayTraHang, IDDiemDi = _Chuyen.IDDiemDi ,DiemDi = _Chuyen.tblDMDoor?.NameVI, IDDiemDen = _Chuyen.IDDiemDen, DiemDen = _Chuyen.tblDMDoor1?.NameVI, IDDMHangHoa = _Chuyen.IDDMHangHoa, HangHoa  = _Chuyen.tblDMHangHoa?.NameVI, SoKG = _Chuyen.SoKG , SoKhoi = _Chuyen.SoKhoi, SoPL = _Chuyen.SoPL, FlagHangVe = _Chuyen.FlagHangVe,ThoiGianVe = _Chuyen.ThoiGianVe , IDKhachHang = _Chuyen.IDDMCustomer, KhachHang = _Chuyen.tblDMCustomer?.NameVI, IDLoaiXe = _Chuyen.IDDMLoaiXe, LoaiXe = _Chuyen.tblDMLoaiXe?.NameVI });
+                var _newDt =  new { NgayDongHang = _Chuyen.NgayDongHang, NgayTraHang = _Chuyen.NgayTraHang, IDDiemDi = _Chuyen.IDDiemDi ,DiemDi = _Chuyen.tblDMDoor?.NameVI, IDDiemDen = _Chuyen.IDDiemDen, DiemDen = _Chuyen.tblDMDoor1?.NameVI, IDDMHangHoa = _Chuyen.IDDMHangHoa, HangHoa  = _Chuyen.tblDMHangHoa?.NameVI, SoKG = _Chuyen.SoKG , SoKhoi = _Chuyen.SoKhoi, SoPL = _Chuyen.SoPL, FlagHangVe = _Chuyen.FlagHangVe,ThoiGianVe = _Chuyen.ThoiGianVe , IDKhachHang = _Chuyen.IDDMCustomer, KhachHang = _Chuyen.tblDMCustomer?.NameVI, IDLoaiXe = _Chuyen.IDDMLoaiXe, LoaiXe = _Chuyen.tblDMLoaiXe?.NameVI };
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = _newDt
+                };
+                return Ok(res);
             }
             catch
             {
@@ -388,7 +438,6 @@ namespace AppCMC.Controllers
         [Route("api/GetListDieuPhoiVanChuyen")] // lọc ds chuyến theo ngày
         public IHttpActionResult GetListDieuPhoiVanChuyen(string ProductKey,long IDUSer, DateTime dtS, DateTime dtE, int Page, int Limit, int TrangThai=0)
         {
-
             List<tblDieuPhoiVanChuyenDto> LstChuyenDto = new List<tblDieuPhoiVanChuyenDto>();
             var _user = context.tblSysUsers.FirstOrDefault(x => x.ID == IDUSer);
             if (_user == null) return Content(HttpStatusCode.NotFound, "Lỗi dữ liệu !");
@@ -451,6 +500,7 @@ namespace AppCMC.Controllers
             }    
             var res = new
             {
+                result = "Lấy dữ liệu thành công !",
                 TotalCount = _total,
                 Page = Page,
                 Limit = Limit,
@@ -472,11 +522,35 @@ namespace AppCMC.Controllers
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
 
                 if(_Chuyen.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company)
-                    return Ok(new {IDXeOTo = _Chuyen.IDDMXeOto,BienSoXe = _Chuyen.tblDMXeOto?.BienSoXE, IDLaiXe = _Chuyen.IDLaiXe, LaiXe = _Chuyen.tblNhanSu?.HoTenVI ,SoGioCho = _Chuyen.SoGioCho,SoCaLuu = _Chuyen.SoCaLuu,VeBenBai = _Chuyen.VeBenBai,PhatSinhKhac = _Chuyen.PhatSinhKhac, GhiChu = _Chuyen.GhiChu });
+                {
+                    var _data = new { IDXeOTo = _Chuyen.IDDMXeOto, BienSoXe = _Chuyen.tblDMXeOto?.BienSoXE, IDLaiXe = _Chuyen.IDLaiXe, LaiXe = _Chuyen.tblNhanSu?.HoTenVI, SoGioCho = _Chuyen.SoGioCho, SoCaLuu = _Chuyen.SoCaLuu, VeBenBai = _Chuyen.VeBenBai, PhatSinhKhac = _Chuyen.PhatSinhKhac, GhiChu = _Chuyen.GhiChu };
+                    var res = new
+                    {
+                        result = "Lấy dữ liệu thành công !",
+                        data = _data,
+                    };
+                    return Ok(res);
+                }    
                 else if (_Chuyen.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company)
-                    return Ok(new { BienSoXe = _Chuyen.BienSoXe, LaiXe = _Chuyen.LaiXe, DTLaiXe = _Chuyen.DTLaiXe, IDDonViVanTai = _Chuyen.IDDMCustomerTranport, SoGioCho = _Chuyen.SoGioCho, SoCaLuu = _Chuyen.SoCaLuu, VeBenBai = _Chuyen.VeBenBai, PhatSinhKhac = _Chuyen.PhatSinhKhac, GhiChu = _Chuyen.GhiChu });
-                else 
-                    return Ok(new { BienSoXe = _Chuyen.BienSoXe, LaiXe = _Chuyen.LaiXe, DTLaiXe = _Chuyen.DTLaiXe, IDDonViVanTai = _Chuyen.IDDMCustomerTranport, IDXeOto = _Chuyen.IDDMXeOto, IDLaiXe = _Chuyen.IDLaiXe, SoGioCho = _Chuyen.SoGioCho, SoCaLuu = _Chuyen.SoCaLuu, VeBenBai = _Chuyen.VeBenBai, PhatSinhKhac = _Chuyen.PhatSinhKhac, GhiChu = _Chuyen.GhiChu });
+                {
+                    var _data = new { BienSoXe = _Chuyen.BienSoXe, LaiXe = _Chuyen.LaiXe, DTLaiXe = _Chuyen.DTLaiXe, IDDonViVanTai = _Chuyen.IDDMCustomerTranport, SoGioCho = _Chuyen.SoGioCho, SoCaLuu = _Chuyen.SoCaLuu, VeBenBai = _Chuyen.VeBenBai, PhatSinhKhac = _Chuyen.PhatSinhKhac, GhiChu = _Chuyen.GhiChu };
+                    var res = new
+                    {
+                        result = "Lấy dữ liệu thành công !",
+                        data = _data,
+                    };
+                    return Ok(res);
+                }
+                else
+                {
+                    var _data = new { BienSoXe = _Chuyen.BienSoXe, LaiXe = _Chuyen.LaiXe, DTLaiXe = _Chuyen.DTLaiXe, IDDonViVanTai = _Chuyen.IDDMCustomerTranport, IDXeOto = _Chuyen.IDDMXeOto, IDLaiXe = _Chuyen.IDLaiXe, SoGioCho = _Chuyen.SoGioCho, SoCaLuu = _Chuyen.SoCaLuu, VeBenBai = _Chuyen.VeBenBai, PhatSinhKhac = _Chuyen.PhatSinhKhac, GhiChu = _Chuyen.GhiChu };
+                    var res = new
+                    {
+                        result = "Lấy dữ liệu thành công !",
+                        data = _data,
+                    };
+                    return Ok(res);
+                } 
             }
             catch
             {
@@ -494,8 +568,12 @@ namespace AppCMC.Controllers
                 var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
                 var lst = PublicCodeShare.GetListXeDieuPhoiUuTien(context, _Chuyen, context.tblDMXeOtoes.ToList());
-
-                return Ok(lst.Select(x=>x.BienSoXE).ToList());
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = lst.Select(x => x.BienSoXE).ToList(),
+                };
+                return Ok(res);
             }
             catch
             {
@@ -512,7 +590,12 @@ namespace AppCMC.Controllers
             {
                 var _xe = context.tblDMXeOtoes.FirstOrDefault(x => x.ID == IDXe);
                 if (_xe == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy xe!");
-                return Ok(new {IDLaiXe = _xe.IDTaiXe});
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = new { IDTaiXe = _xe.IDTaiXe , TaiXe = _xe.tblNhanSu?.NameVI},
+                };
+                return Ok(res);
             }
             catch
             {
@@ -708,6 +791,7 @@ namespace AppCMC.Controllers
             }    
             var res = new
             {
+                result = "Lấy dữ liệu thành công !",
                 TotalCount = _total,
                 Page = Page,
                 Limit = Limit,
@@ -756,6 +840,7 @@ namespace AppCMC.Controllers
             
             var res = new
             {
+                result = "Lấy dữ liệu thành công !",
                 TotalCount = _total,
                 Page = Page,
                 Limit = Limit,
@@ -908,12 +993,12 @@ namespace AppCMC.Controllers
                     NgayGioThucHien = metadata.NgayGioThucHien ?? DateTime.Now,
                     IDUserCreate = UserLogin.ID,
                     tblSysUser = UserLogin,
-                    IDDMTrangThaiVanChuyen = _Chuyen.IDTrangThaiVanChuyen,
+                    IDDMTrangThaiVanChuyen = metadata.IDTrangThaiVanChuyen,
                     tblDMTrangThaiVanChuyen = context.tblDMTrangThaiVanChuyens.FirstOrDefault(x => x.ID == metadata.IDTrangThaiVanChuyen),
                 };
                 _Chuyen.ListTrangThaiVanChuyen.Add(_newTrangThai);
                 context.tblDieuPhoiTrangThaiVCs.Add(_newTrangThai);
-                context.SaveChanges();
+                _Chuyen.SaveData(context, UserLogin);
 
 
                 var _doc = new tblJOBDocument
@@ -931,8 +1016,7 @@ namespace AppCMC.Controllers
 
                 // Lưu các file từ yêu cầu vào thư mục
 
-                string _pathServer = "/" + PublicCodeShare.ftpClientModel.root + "/" + $"Document Transport/DP{_Chuyen.ID}"; // sau này sẽ lấy theo DB chính
-                //_pathServer = "/db.namanphu.vn/CMCBacNinhDB/AppCMC";
+                string _pathServer = "/db.namanphu.vn/CMCBacNinhDB/AppCMC" + $"/{AppSettings.DatabaseName}/DP{_Chuyen.ID}"; // sau này sẽ lấy theo DB chính
 
                 _doc.Path = _pathServer;
                 
@@ -991,13 +1075,18 @@ namespace AppCMC.Controllers
             {
                 var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
-                var lst = _Chuyen.ListTrangThaiVanChuyen.Select(x => new {ID = x.ID, IDChuyen = x.IDDieuPhoi, IDTrangThaiVanChuyen = x.IDDMTrangThaiVanChuyen, TrangThaiVanChuyen = x.tblDMTrangThaiVanChuyen != null ? x.tblDMTrangThaiVanChuyen.NameVI : "", FileAttach = x.ListFileNameText}  ).ToList();
-
-                return Ok(lst);
+                AppSettings.DatabaseName = "Model_CMCBacNinh";
+                var lst = _Chuyen.ListTrangThaiVanChuyen.Select(x => new {ID = x.ID , IDChuyen = x.IDDieuPhoi, IDTrangThaiVanChuyen = x.IDDMTrangThaiVanChuyen, TrangThaiVanChuyen = x.tblDMTrangThaiVanChuyen != null ? x.tblDMTrangThaiVanChuyen.NameVI : "", FileAttach = x.ListFileNameArrayAppText, NgayGioThucHien = x.NgayGioThucHien}  ).ToList();
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = lst
+                };
+                return Ok(res);
             }
-            catch
+            catch(Exception ex)
             {
-                return Content(HttpStatusCode.BadRequest, "Lỗi dữ liệu !");
+                return Content(HttpStatusCode.BadRequest, $"Lỗi dữ liệu: {ex.Message}");
             }
         }
 
@@ -1110,7 +1199,12 @@ namespace AppCMC.Controllers
                 var _doDau = context.tblQuanLyDoDaus.FirstOrDefault(x => x.ID == ID);
                 if (_doDau == null) return Content(HttpStatusCode.NotFound, "ID không đúng.Không tìm thấy dữ liệu cần sửa !");
                 var _ob = SelectDataDoDau(_doDau);
-                return Ok(_ob);
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = _ob
+                };
+                return Ok(res);
             }
             catch
             {
