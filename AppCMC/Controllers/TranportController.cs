@@ -159,30 +159,23 @@ namespace AppCMC.Controllers
         [Route("api/GetTrangThaiXeTrongNgay")]
         public IHttpActionResult GetTrangThaiXeTrongNgay(string ProductKey,int Page,int Limit) // danh sách xe trên màn hình chính Admin
         {
-            List<tblDMXeDto> LstAllXeSelect = new List<tblDMXeDto>();
             int _skip =(Page -1)* Limit;
-            var LstAllXe = context.tblDMXeOtoes.ToList();
+            var LstAllXe = context.tblDMXeOtoes.Select(x=> new tblDMXeDto { IDXe = x.ID,BienSoXe = x.BienSoXE} ).ToList();
             int _count = LstAllXe.Count();
             foreach(var _xe in LstAllXe)
             {
-                tblDMXeDto _New = new tblDMXeDto()
-                {
-                    IDXe = _xe.ID,
-                    BienSoXe = _xe.BienSoXE,
-                    SoLuongChuyen = context.tblDieuPhoiVanChuyens.Where(x => x.NgayDongHang != null && x.NgayDongHang.Value.Year == DateTime.Now.Year && x.NgayDongHang.Value.Month == DateTime.Now.Month && x.IDDMXeOto == _xe.ID && x.EnumTrangThaiDieuPhoi != (int)EnumTrangThaiDieuPhoiVC.ChuyenHuy).Count(),
-                };
-                var _ChuyenHT = context.tblDieuPhoiVanChuyens.Where(x => x.NgayDongHang != null && x.EnumTrangThaiDieuPhoi != (int)EnumTrangThaiDieuPhoiVC.HoanThanh && x.EnumTrangThaiDieuPhoi != (int)EnumTrangThaiDieuPhoiVC.ChuyenHuy && x.IDDMXeOto == _xe.ID && x.NgayDongHang <= DateTime.Now && ((x.FlagHangVe != true && x.NgayTraHang >= DateTime.Now) || (x.FlagHangVe == true && x.ThoiGianVe >= DateTime.Now))).FirstOrDefault();
+                _xe.SoLuongChuyen = context.tblDieuPhoiVanChuyens.Where(x => x.NgayDongHang != null && x.NgayDongHang.Value.Year == DateTime.Now.Year && x.NgayDongHang.Value.Month == DateTime.Now.Month && x.IDDMXeOto == _xe.IDXe && x.EnumTrangThaiDieuPhoi != (int)EnumTrangThaiDieuPhoiVC.ChuyenHuy).Count();
+                var _ChuyenHT = context.tblDieuPhoiVanChuyens.Where(x => x.NgayDongHang != null && x.EnumTrangThaiDieuPhoi != (int)EnumTrangThaiDieuPhoiVC.HoanThanh && x.EnumTrangThaiDieuPhoi != (int)EnumTrangThaiDieuPhoiVC.ChuyenHuy && x.IDDMXeOto == _xe.IDXe && x.NgayDongHang <= DateTime.Now && ((x.FlagHangVe != true && x.NgayTraHang >= DateTime.Now) || (x.FlagHangVe == true && x.ThoiGianVe >= DateTime.Now))).FirstOrDefault();
                 if (_ChuyenHT != null)
                 {
-                    _New.TrangThai = _ChuyenHT.ListTrangThaiVanChuyen.OrderByDescending(x => x.NgayGioThucHien).FirstOrDefault()?.tblDMTrangThaiVanChuyen?.NameVI;
-                    _New.RGB = _ChuyenHT.ListTrangThaiVanChuyen.OrderByDescending(x => x.NgayGioThucHien).FirstOrDefault()?.tblDMTrangThaiVanChuyen?.RGB;
+                    _xe.TrangThai = _ChuyenHT.ListTrangThaiVanChuyen.OrderByDescending(x => x.NgayGioThucHien).FirstOrDefault()?.tblDMTrangThaiVanChuyen?.NameVI;
+                    _xe.RGB = _ChuyenHT.ListTrangThaiVanChuyen.OrderByDescending(x => x.NgayGioThucHien).FirstOrDefault()?.tblDMTrangThaiVanChuyen?.RGB;
                 }
-                LstAllXeSelect.Add(_New);
             }
             var res = new
             {
                 result = "Lấy dữ liệu thành công !",
-                data = LstAllXeSelect.OrderByDescending(x => x.SoLuongChuyen).Skip(_skip).Take(Limit).ToList(),
+                data = LstAllXe.OrderByDescending(x => x.SoLuongChuyen).Skip(_skip).Take(Limit).ToList(),
                 TotalCount = _count,
                 Page = Page,
                 Limit = Limit,
