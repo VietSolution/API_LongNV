@@ -1070,6 +1070,25 @@ namespace AppCMC.Controllers
                 var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
                 AppSettings.DatabaseName = "Model_CMCBacNinh";
+
+                //foreach(var tt in _Chuyen.ListTrangThaiVanChuyen)
+                //{
+                //    int _count = tt.ListDocument.Where(x => x.FileName != null && x.FileName.Length > 0).SelectMany(x => x.FileNames).Count();
+                //    string[] stringArray = new string[_count];
+                //    if (_count == 0)
+                //    { }   
+                //    int sl = 0;
+                //    foreach (var c in tt.ListDocument)
+                //    {
+                //        foreach (var _f in c.FileNames)
+                //        {
+                //            stringArray[sl] = $"{AppSettings.DatabaseName}/DP{tt.IDDieuPhoi}/{_f}";
+                //            sl++;
+                //        }
+                //    }
+                //}    
+
+
                 var lst = _Chuyen.ListTrangThaiVanChuyen.Select(x => new {ID = x.ID , IDChuyen = x.IDDieuPhoi, IDTrangThaiVanChuyen = x.IDDMTrangThaiVanChuyen, TrangThaiVanChuyen = x.tblDMTrangThaiVanChuyen != null ? x.tblDMTrangThaiVanChuyen.NameVI : "", FileAttach = x.ListFileNameArrayAppText, NgayGioThucHien = x.NgayGioThucHien}  ).ToList();
                 var res = new
                 {
