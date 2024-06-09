@@ -448,7 +448,7 @@ namespace AppCMC.Controllers
                 func = x => x.NgayDongHang == null || (x.NgayDongHang >= dtS && x.NgayDongHang <= dtE);
             }
             if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DaNhan) funcTT  = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.NhanLenh;
-            else if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DuocGiao) funcTT = x => x.EnumTrangThaiDieuPhoi == null ;
+            else if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DuocGiao) funcTT = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.GuiLenh;
             else if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.HoanThanh) funcTT = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.HoanThanh;
 
             Lstfunc.Add(func);
