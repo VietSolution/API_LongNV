@@ -586,7 +586,7 @@ namespace AppCMC.Controllers
                 var res = new
                 {
                     result = "Lấy dữ liệu thành công !",
-                    data = new { IDTaiXe = _xe.IDTaiXe , TaiXe = _xe.tblNhanSu?.NameVI},
+                    data = new { IDLaiXe = _xe.IDTaiXe , TaiXe = _xe.tblNhanSu?.NameVI},
                 };
                 return Ok(res);
             }

@@ -14,6 +14,7 @@ using System.Web.Http.Description;
 
 using VsLogistics.DataModel;
 using VsLogistics.DataModel.Common;
+using VsLogistics.DataModel.Properties;
 
 namespace Trackings.Controllers
 {
@@ -108,9 +109,51 @@ namespace Trackings.Controllers
             set { }
         }
     }
-
+    public class ObjectThuChiCal
+    {
+        public long ID { get; set; }
+        public string ProductKey { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public long IDUser { get; set; }
+        public int _EnumLoaiDS { get; set; }
+        public int? LoaiPhieuCal { get; set; }
+        public string LoaiPhieu
+        {
+            get
+            {
+                if(_EnumLoaiDS == 1) return LoaiPhieuCal != null ? ((EnumQuyetToanThuChiJOB)LoaiPhieuCal).GetDescription() : ""; // nếu là ds quyết toán
+                return LoaiPhieuCal != null ? ((EnumLoaiPhieuThuChi)LoaiPhieuCal).GetDescription() : "";
+            }
+            set { }
+        }
+        public string SoPhieu { get; set; }
+        public string TrangThai{ get; set; }
+        public DateTime? NgayThuChiCal { get; set; }
+        public string NgayThuChi
+        {
+            get
+            {
+                return NgayThuChiCal?.ToString("HH:mm dd/MM/yyyy") + "";
+            }
+            set { }
+        }
+        public string NhanVien { get; set; }
+        public double? SoTienCal { get; set; }
+        public string SoTien => SoTienCal != null ? SoTienCal?.ToString("#,#") : "";
+        public string LoaiTien { get; set; }
+        public double? TyGiaCal { get; set; }
+        public string TyGia => TyGiaCal != null ? TyGiaCal?.ToString("#,#") : "";
+        public string NoiDung { get; set; }
+        public string DoiTuongThanhToan { get; set; }
+        public string CodeJOB { get; set; }
+        public string NguoiDuyet { get; set; }
+        public string DanhSachChungTu { get; set; }
+    }
+  
     public class UserController : ApiController
     {
+        #region Key - login
         private readonly string JwtKey = "napLocy20PhuongNam8888888888888888";
 
         public string CreateToken(string ProductKey , long IDUser, double expire)
@@ -165,6 +208,38 @@ namespace Trackings.Controllers
                 return false;
             }
             return true;
+        }
+        private tblSysUser UserLogin { get; set; }
+        private LGTICDBEntities GetLicenseKey(string ProductKey, long IDUser)
+        {
+            if (ProductKey?.Length == 0)
+            {
+                return null;
+            }
+            LocyWS.LicenseKeyChecker20 lc = new LocyWS.LicenseKeyChecker20();
+            var response = lc.GetCustomerFromDatabaseName(ProductKey);
+            if (response.Status == (int)LocyWS.EnumTokenStatusCode.SUCCESS)
+            {
+                AppSettings.DatabaseServerName = response.obj.ServerIP;
+                AppSettings.DatabaseName = response.obj.DatabaseName;
+                AppSettings.DatabaseUserName = response.obj.Username;
+                AppSettings.DatabasePassword = response.obj.Password;
+
+                LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString(AppSettings.DatabaseServerName, AppSettings.DatabaseName, AppSettings.DatabaseUserName, AppSettings.DatabasePassword));
+                UserLogin = context.tblSysUsers.FirstOrDefault(x => x.ID == IDUser);
+                AppSettings.CurrentLoginUser = new LoginUserInfo
+                {
+                    LoginUser = UserLogin,
+                    IDLoginUser = UserLogin.ID,
+                    IDLoginNhanSu = UserLogin.IDNhanVien,
+                    LoginNhanSu = UserLogin.tblNhanSu
+                };
+                return context;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         [HttpGet]
@@ -250,7 +325,8 @@ namespace Trackings.Controllers
                return Content(HttpStatusCode.NotFound, "Tài khoản hoặc mật khẩu không chính xác !");
             }
         }
-
+        #endregion
+        #region đơn hàng
         [HttpGet]
         [Route("api/GetJOBTracking")]
         public IHttpActionResult GetJOBTracking(string ProductKey, string CodeFind)
@@ -313,7 +389,8 @@ namespace Trackings.Controllers
             LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString(AppSettings.DatabaseServerName, AppSettings.DatabaseName, AppSettings.DatabaseUserName, AppSettings.DatabasePassword));
 
             var _user = context.tblSysUsers.FirstOrDefault(x => x.ID == IDUser);
-
+            dtS = dtS.Date;
+            dtE = new DateTime(dtE.Year, dtE.Month, dtE.Day, 23, 59, 00);
             Expression<Func<View_tblJOB, bool>> func = null;
             Expression<Func<View_tblJOB, bool>> funUser = null;
             IQueryable<View_tblJOB> sourceJOB = context.View_tblJOB;
@@ -375,7 +452,8 @@ namespace Trackings.Controllers
             LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString(AppSettings.DatabaseServerName, AppSettings.DatabaseName, AppSettings.DatabaseUserName, AppSettings.DatabasePassword));
 
             var _user = context.tblSysUsers.FirstOrDefault(x => x.ID == IDUser);
-
+            dtS = dtS.Date;
+            dtE = new DateTime(dtE.Year, dtE.Month, dtE.Day, 23, 59, 00);
             Expression<Func<View_tblJOB, bool>> func = null;
             Expression<Func<View_tblJOB, bool>> funUser = null;
             IQueryable<View_tblJOB> sourceJOB = context.View_tblJOB;
@@ -428,5 +506,289 @@ namespace Trackings.Controllers
 
 
         }
+        #endregion
+        #region thu chi - phê duyệt
+        [HttpGet]
+        [Route("api/GetListThuChi")]
+        public IHttpActionResult GetListThuChi(string ProductKey, long IDUser, DateTime dtS, DateTime dtE,  int Page, int Limit)
+        {
+            LGTICDBEntities context = GetLicenseKey(ProductKey, IDUser);
+            if (context == null)
+                return Content(HttpStatusCode.NotFound, "ProductKey không hợp lệ !");
+
+            dtS = dtS.Date;
+            dtE = new DateTime(dtE.Year, dtE.Month, dtE.Day, 23, 59, 00);
+
+            Expression<Func<tblJOBPhieuThuChi, bool>> func = null;
+            Expression<Func<tblJOBPhieuThuChi, bool>> funUser = null;
+            IQueryable<tblJOBPhieuThuChi> sourceJOB = context.tblJOBPhieuThuChis;
+
+            func = x => x.NgayThuChi >= dtS && x.NgayThuChi <= dtE;
+
+            if (!UserLogin.HasPermiss(EnumPermission.Admin) && !UserLogin.HasPermiss(EnumPermission.ViewAccouting))
+            {
+                var resError = new
+                {
+                    result = "Người dùng không có quyền xem dữ liệu !",
+                    data = "",
+                    TotalCount = 0,
+                    Page = Page,
+                    Limit = Limit,
+                    ProductKey = ProductKey
+                };
+                return Ok(resError);
+                
+            }
+            var _u = AppSettings.CurrentLoginUser.LoginUser;
+            sourceJOB = sourceJOB.Where(func);
+            if (funUser != null) sourceJOB = sourceJOB.Where(funUser);
+            sourceJOB = sourceJOB.OrderByDescending(x => x.NgayThuChi).Skip((Page - 1) * Limit).Take(Limit);
+            var LstJOB = sourceJOB.ToList().Select(x => new ObjectThuChiCal
+            {
+                ID = x.ID,
+                LoaiPhieuCal = x.EnumLoaiPhieu,
+                SoPhieu = x.BillNo,
+                TrangThai = x.EnumStatusText,
+                NgayThuChiCal = x.NgayThuChi,
+                NhanVien = x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "",
+                SoTienCal = x.Amount,
+                LoaiTien = x.tblDMCurrency != null ? x.tblDMCurrency.KyHieu : "VND",
+                TyGiaCal = x.TyGia,
+                NoiDung = x.Note,
+                CodeJOB = x.tblJOB != null ? x.tblJOB.CodeJOB : "",
+                DoiTuongThanhToan = x.CurrentObjectNameWeb + "",
+                NguoiDuyet = x.LichSuPheDuyetWebText + "",
+                DanhSachChungTu = x.DocumentText
+            }).ToList();
+            string _text = sourceJOB.Count() > 0 ? "Lấy dữ liệu thành công !" : "Không có dữ liệu trong khoảng thời gian đã chọn !";
+            var res = new
+            {
+                result = _text,
+                data = LstJOB,
+                TotalCount = sourceJOB.Count(),
+                Page = Page,
+                Limit = Limit,
+                ProductKey = ProductKey
+            };
+            return Ok(res);
+
+
+        }
+
+
+        [HttpGet]
+        [Route("api/GetListPheDuyetThuChi")]
+        public IHttpActionResult GetListPheDuyetThuChi(string ProductKey, long IDUser, DateTime dtS, DateTime dtE, int Page, int Limit)
+        {
+            LGTICDBEntities context = GetLicenseKey(ProductKey, IDUser);
+            if (context == null)
+                return Content(HttpStatusCode.NotFound, "ProductKey không hợp lệ !");
+            dtS = dtS.Date;
+            dtE = new DateTime(dtE.Year, dtE.Month, dtE.Day, 23, 59, 00);
+            if (!UserLogin.HasPermiss(EnumPermission.Admin) && !UserLogin.HasPermiss(EnumPermission.ViewAccouting) && UserLogin.FlagDuyetChi != true)
+            {
+                var resError = new
+                {
+                    result = "Người dùng không có quyền xem dữ liệu !",
+                    data = "",
+                    TotalCount = 0,
+                    Page = Page,
+                    Limit = Limit,
+                    ProductKey = ProductKey
+                };
+                return Ok(resError);
+            }
+
+            List<tblJOBPhieuThuChi> LstThuChi = new List<tblJOBPhieuThuChi>();
+            if (UserLogin.HasPermiss(EnumPermission.Admin))
+            {
+                LstThuChi = context.tblJOBPhieuThuChis.Where(x=>x.tblJOBUserPheDuyets.Count(x1 => x1.EnumStatus == (int)EnumStatusPheDuyet.Init) > 0).OrderByDescending(x => x.NgayThuChi).Skip((Page - 1) * Limit).Take(Limit).ToList();
+            }
+            else
+            {
+                LstThuChi = context.tblJOBPhieuThuChis.Where(x => x.tblJOBUserPheDuyets.Count(x1 => x1.IDUserPheDuyet == AppSettings.CurrentLoginUser.IDLoginUser && x1.EnumStatus == (int)EnumStatusPheDuyet.Init) > 0).OrderByDescending(x => x.NgayThuChi).Skip((Page - 1) * Limit).Take(Limit).ToList();
+            } 
+            var LstJOB = LstThuChi.Select(x => new ObjectThuChiCal
+            {
+                ID = x.ID,
+                LoaiPhieuCal = x.EnumLoaiPhieu,
+                SoPhieu = x.BillNo,
+                TrangThai = x.EnumStatusText,
+                NgayThuChiCal = x.NgayThuChi,
+                NhanVien = x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "",
+                SoTienCal = x.Amount,
+                LoaiTien = x.tblDMCurrency != null ? x.tblDMCurrency.KyHieu : "VND",
+                TyGiaCal = x.TyGia,
+                NoiDung = x.Note,
+                CodeJOB =x.tblJOB != null ? x.tblJOB.CodeJOB : "",
+                DoiTuongThanhToan = x.CurrentObjectNameWeb + "",
+                NguoiDuyet = x.LichSuPheDuyetWebText + "",
+                DanhSachChungTu = x.DocumentText
+            }).ToList();
+            string _text = LstThuChi.Count() > 0 ? "Lấy dữ liệu thành công !" : "Không có dữ liệu !";
+            var res = new
+            {
+                result = _text,
+                data = LstJOB,
+                TotalCount = LstThuChi.Count(),
+                Page = Page,
+                Limit = Limit,
+                ProductKey = ProductKey
+            };
+            return Ok(res);
+
+
+        }
+
+        [HttpGet]
+        [Route("api/GetListQuyetToan")]
+        public IHttpActionResult GetListQuyetToan(string ProductKey, long IDUser, DateTime dtS, DateTime dtE, int Page, int Limit)
+        {
+            LGTICDBEntities context = GetLicenseKey(ProductKey, IDUser);
+            if (context == null)
+                return Content(HttpStatusCode.NotFound, "ProductKey không hợp lệ !");
+
+            dtS = dtS.Date;
+            dtE = new DateTime(dtE.Year, dtE.Month, dtE.Day, 23, 59, 00);
+            if (!UserLogin.HasPermiss(EnumPermission.Admin) && !UserLogin.HasPermiss(EnumPermission.ViewAccouting) )
+            {
+                var resError = new
+                {
+                    result = "Người dùng không có quyền xem dữ liệu !",
+                    data = "",
+                    TotalCount = 0,
+                    Page = Page,
+                    Limit = Limit,
+                    ProductKey = ProductKey
+                };
+                return Ok(resError);
+            }
+
+            Expression<Func<tblJOBQuyetToan, bool>> funUser = null;
+            Expression<Func<tblJOBQuyetToan, bool>> func = x => x.NgayQuyetToan != null && x.NgayQuyetToan >= dtS && x.NgayQuyetToan <= dtE;
+
+            IQueryable<tblJOBQuyetToan> _source = context.tblJOBQuyetToans;
+           
+
+            List<tblJOBQuyetToan> LstThuChi = new List<tblJOBQuyetToan>();
+            if (UserLogin.HasPermiss(EnumPermission.Admin) || UserLogin.HasPermiss(EnumPermission.ViewAccouting))
+            {
+            }
+            else
+            {
+                funUser = x => x.IDUserCreate == UserLogin.ID || x.tblJOBUserPheDuyets.FirstOrDefault(x1 => x1.IDUserPheDuyet == UserLogin.ID) != null;
+            }
+            _source = _source.Where(func);
+            _source = _source.Where(funUser);
+
+            var LstJOB = _source.OrderByDescending(x => x.NgayQuyetToan).Skip((Page - 1) * Limit).Take(Limit).ToList().Select(x => new ObjectThuChiCal
+            {
+                _EnumLoaiDS = 1,
+                ID = x.ID,
+                LoaiPhieuCal = x.EnumQuyetToanThuChi,
+                SoPhieu = x.SoQuyetToan,
+                TrangThai = x.EnumStatusText,
+                NgayThuChiCal = x.NgayQuyetToan,
+                NhanVien = x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "",
+                SoTienCal = x.TienDaChi,
+                LoaiTien = x.tblDMCurrency != null ? x.tblDMCurrency.KyHieu : "VND",
+                NoiDung = x.GhiChu,
+                CodeJOB = x.tblJOB != null ? x.tblJOB.CodeJOB : "",
+                DoiTuongThanhToan = x.CurrentObjectNameWeb,
+                NguoiDuyet = x.LichSuPheDuyetWebText,
+                DanhSachChungTu = string.Join("\n", x.ListAllChargeList.Select(x1 => x1.FileAttachText).ToList())
+            }).ToList();
+            string _text = LstThuChi.Count() > 0 ? "Lấy dữ liệu thành công !" : "Không có dữ liệu !";
+            var res = new
+            {
+                result = _text,
+                data = LstJOB,
+                TotalCount = LstThuChi.Count(),
+                Page = Page,
+                Limit = Limit,
+                ProductKey = ProductKey
+            };
+            return Ok(res);
+
+
+        }
+
+        [HttpGet]
+        [Route("api/GetListPheDuyetQuyetToan")]
+        public IHttpActionResult GetListPheDuyetQuyetToan(string ProductKey, long IDUser, DateTime dtS, DateTime dtE, int Page, int Limit, bool bJOB)
+        {
+            LGTICDBEntities context = GetLicenseKey(ProductKey, IDUser);
+            if (context == null)
+                return Content(HttpStatusCode.NotFound, "ProductKey không hợp lệ !");
+
+            dtS = dtS.Date;
+            dtE = new DateTime(dtE.Year, dtE.Month, dtE.Day, 23, 59, 00);
+            if (!UserLogin.HasPermiss(EnumPermission.Admin) && !UserLogin.HasPermiss(EnumPermission.ViewAccouting ) && UserLogin.FlagDuyetChi != true)
+            {
+                var resError = new
+                {
+                    result = "Người dùng không có quyền xem dữ liệu !",
+                    data = "",
+                    TotalCount = 0,
+                    Page = Page,
+                    Limit = Limit,
+                    ProductKey = ProductKey
+                };
+                return Ok(resError);
+            }
+
+            Expression<Func<tblJOBQuyetToan, bool>> func = null;
+            Expression<Func<tblJOBQuyetToan, bool>> funUser = null;
+
+            IQueryable<tblJOBQuyetToan> _source = context.tblJOBQuyetToans;
+            if (bJOB == true) func = x => x.IDJOB != null;
+            else func = x => x.IDJOB == null;
+
+            List<tblJOBQuyetToan> LstThuChi = new List<tblJOBQuyetToan>();
+            if (UserLogin.HasPermiss(EnumPermission.Admin))
+            {
+                funUser = x =>  x.tblJOBUserPheDuyets.Count(x1 => x1.EnumStatus == (int)EnumStatusPheDuyet.Init) > 0;
+            }
+            else
+            {
+                funUser = x =>  x.tblJOBUserPheDuyets.Count(x1 => x1.IDUserPheDuyet == AppSettings.CurrentLoginUser.IDLoginUser && x1.EnumStatus == (int)EnumStatusPheDuyet.Init) > 0;
+            }
+            _source = _source.Where(func);
+            _source = _source.Where(funUser);
+
+            var LstJOB = _source.OrderByDescending(x => x.NgayQuyetToan).Skip((Page - 1) * Limit).Take(Limit).ToList().Select(x => new ObjectThuChiCal
+            {
+                _EnumLoaiDS = 1,
+                ID = x.ID,
+                LoaiPhieuCal = x.EnumQuyetToanThuChi,
+                SoPhieu = x.SoQuyetToan,
+                TrangThai = x.EnumStatusText,
+                NgayThuChiCal = x.NgayQuyetToan,
+                NhanVien = x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "",
+                SoTienCal = x.TienDaChi,
+                LoaiTien = x.tblDMCurrency != null ? x.tblDMCurrency.KyHieu : "VND",
+                NoiDung = x.GhiChu,
+                CodeJOB = x.tblJOB != null ? x.tblJOB.CodeJOB : "",
+                DoiTuongThanhToan = x.CurrentObjectNameWeb,
+                NguoiDuyet = x.LichSuPheDuyetWebText,
+                DanhSachChungTu = string.Join("\n",x.ListAllChargeList.Select(x1=>x1.FileAttachText).ToList())
+            }).ToList();
+            string _text = LstThuChi.Count() > 0 ? "Lấy dữ liệu thành công !" : "Không có dữ liệu !";
+            var res = new
+            {
+                result = _text,
+                data = LstJOB,
+                TotalCount = LstThuChi.Count(),
+                Page = Page,
+                Limit = Limit,
+                ProductKey = ProductKey
+            };
+            return Ok(res);
+
+
+        }
+
+        #endregion
+
     }
 }
