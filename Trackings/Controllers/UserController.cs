@@ -149,6 +149,7 @@ namespace Trackings.Controllers
         public string CodeJOB { get; set; }
         public string NguoiDuyet { get; set; }
         public string DanhSachChungTu { get; set; }
+        public int TrangThaiDuyet { get; set; }
     }
   
     public class UserController : ApiController
@@ -578,13 +579,12 @@ namespace Trackings.Controllers
 
         [HttpGet]
         [Route("api/GetListPheDuyetThuChi")]
-        public IHttpActionResult GetListPheDuyetThuChi(string ProductKey, long IDUser, DateTime dtS, DateTime dtE, int Page, int Limit)
+        public IHttpActionResult GetListPheDuyetThuChi(string ProductKey, long IDUser, int Page, int Limit)
         {
             LGTICDBEntities context = GetLicenseKey(ProductKey, IDUser);
             if (context == null)
                 return Content(HttpStatusCode.NotFound, "ProductKey không hợp lệ !");
-            dtS = dtS.Date;
-            dtE = new DateTime(dtE.Year, dtE.Month, dtE.Day, 23, 59, 00);
+           
             if (!UserLogin.HasPermiss(EnumPermission.Admin) && !UserLogin.HasPermiss(EnumPermission.ViewAccouting) && UserLogin.FlagDuyetChi != true)
             {
                 var resError = new
@@ -606,7 +606,7 @@ namespace Trackings.Controllers
             }
             else
             {
-                LstThuChi = context.tblJOBPhieuThuChis.Where(x => x.tblJOBUserPheDuyets.Count(x1 => x1.IDUserPheDuyet == AppSettings.CurrentLoginUser.IDLoginUser && x1.EnumStatus == (int)EnumStatusPheDuyet.Init) > 0).OrderByDescending(x => x.NgayThuChi).Skip((Page - 1) * Limit).Take(Limit).ToList();
+                LstThuChi = context.tblJOBPhieuThuChis.Where(x => x.tblJOBUserPheDuyets.Count(x1 => x1.IDUserPheDuyet == IDUser && x1.EnumStatus == (int)EnumStatusPheDuyet.Init) > 0).OrderByDescending(x => x.NgayThuChi).Skip((Page - 1) * Limit).Take(Limit).ToList();
             } 
             var LstJOB = LstThuChi.Select(x => new ObjectThuChiCal
             {
@@ -636,6 +636,36 @@ namespace Trackings.Controllers
                 ProductKey = ProductKey
             };
             return Ok(res);
+
+
+        }
+        // Gửi lệnh
+        [HttpPost]
+        [Route("api/UpdateTrangThaiThuChi")] // sửa
+        public IHttpActionResult UpdateTrangThaiThuChi([FromBody] ObjectThuChiCal _object)
+        {
+            if (_object == null) return Content(HttpStatusCode.NotFound, "Đối tượng rỗng !");
+            if (_object.ID == 0) return Content(HttpStatusCode.NotFound, "Lỗi dữ liệu truyền vào !");
+
+            try
+            {
+                LGTICDBEntities context = GetLicenseKey(_object.ProductKey , _object.IDUser);
+                if (context == null)
+                    return Content(HttpStatusCode.NotFound, "ProductKey không hợp lệ !");
+
+                var  _entity = context.tblJOBPhieuThuChis.FirstOrDefault(x => x.ID == _object.ID);
+                
+                var res = new
+                {
+                    result = "Cập nhật dữ liệu thành công !",
+                    data = ""
+                };
+                return Ok(res);
+            }
+            catch
+            {
+                return Content(HttpStatusCode.BadRequest, "Lỗi dữ liệu !");
+            }
 
 
         }
