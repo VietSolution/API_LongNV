@@ -76,7 +76,7 @@ namespace AppCMC.Controllers
         {
             get
             {
-                return NgayDongHangCal?.ToString("HH:mm dd/MM/yyyy");
+                return NgayTraHangCal?.ToString("HH:mm dd/MM/yyyy");
             }
             set { }
         }
@@ -106,7 +106,7 @@ namespace AppCMC.Controllers
         {
             get
             {
-                return NgayDongHangCal?.ToString("HH:mm dd/MM/yyyy");
+                return ThoiGianVeCal?.ToString("HH:mm dd/MM/yyyy");
             }
             set { }
         }

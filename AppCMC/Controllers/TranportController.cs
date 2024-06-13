@@ -249,7 +249,7 @@ namespace AppCMC.Controllers
                     KhachHang = x.tblDMCustomer != null ? x.tblDMCustomer.NameVI : "",
                     LaiXe = x.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company ? (x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "") : x.LaiXe,
                     NgayDongHangCal = x.NgayDongHang,
-                    NgayTraHangCal = x.NgayDongHang,
+                    NgayTraHangCal = x.NgayTraHang,
                     SoKhoi = x.SoKhoi != null ? x.SoKhoi.Value.ToString() : "",
                     SoPL = x.SoPL != null ? x.SoPL.Value.ToString() : "",
                     SoKG = x.SoKG != null ? x.SoKG.Value.ToString() : "",
@@ -461,7 +461,7 @@ namespace AppCMC.Controllers
             int _total = _dp.Count();
             if(_total > 0)
             {
-                LstChuyenDto = _dp.ToList().OrderByDescending(x => x.STT_SapXep).Skip((Page - 1) * Limit).Take(Limit).Select(x =>
+                LstChuyenDto = _dp.ToList().OrderBy(x => x.STT_SapXep).Skip((Page - 1) * Limit).Take(Limit).Select(x =>
           new tblDieuPhoiVanChuyenDto
           {
               IDChuyen = x.ID,
@@ -481,7 +481,7 @@ namespace AppCMC.Controllers
               SoKhoi = x.SoKhoi != null ? x.SoKhoi.Value.ToString() : "",
               SoKG = x.SoKG != null ? x.SoKG.Value.ToString() : "",
               LoaiXe = x.tblDMLoaiXe != null ? x.tblDMLoaiXe.NameVI : "",
-              NgayTraHangCal = x.NgayDongHang,
+              NgayTraHangCal = x.NgayTraHang,
               ThoiGianVeCal = x.ThoiGianVe,
               HangVe = x.FlagHangVe == true ? "1" : "0",
               SoGioCho = x.SoGioCho != null ? x.SoGioCho.Value.ToString() : "",
@@ -508,14 +508,17 @@ namespace AppCMC.Controllers
         // lấy ra chuyến cần điều phối
         [HttpGet]
         [Route("api/GetChuyenDieuPhoi")]
-        public IHttpActionResult GetChuyenDieuPhoi(string ProductKey,long IDChuyen)
+        public IHttpActionResult GetChuyenDieuPhoi(string ProductKey,long IDChuyen , int EnumThueXeOrXeMinh )
         {
             try
             {
                 var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
-
-                if(_Chuyen.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company)
+                if(_Chuyen.EnumTrangThaiDieuPhoi != null)
+                {
+                    return Content(HttpStatusCode.BadRequest, "Chuyển đã được điều phối !");
+                }    
+                if(EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company)
                 {
                     var _data = new { IDXeOto = _Chuyen.IDDMXeOto, BienSoXe = _Chuyen.tblDMXeOto?.BienSoXE, IDLaiXe = _Chuyen.IDLaiXe, LaiXe = _Chuyen.tblNhanSu?.HoTenVI, SoGioCho = _Chuyen.SoGioCho, SoCaLuu = _Chuyen.SoCaLuu, VeBenBai = _Chuyen.VeBenBai, PhatSinhKhac = _Chuyen.PhatSinhKhac, GhiChu = _Chuyen.GhiChu };
                     var res = new
@@ -525,7 +528,7 @@ namespace AppCMC.Controllers
                     };
                     return Ok(res);
                 }    
-                else if (_Chuyen.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company)
+                else if (EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Rental)
                 {
                     var _data = new { BienSoXe = _Chuyen.BienSoXe, LaiXe = _Chuyen.LaiXe, DTLaiXe = _Chuyen.DTLaiXe, IDDonViVanTai = _Chuyen.IDDMCustomerTranport, SoGioCho = _Chuyen.SoGioCho, SoCaLuu = _Chuyen.SoCaLuu, VeBenBai = _Chuyen.VeBenBai, PhatSinhKhac = _Chuyen.PhatSinhKhac, GhiChu = _Chuyen.GhiChu };
                     var res = new
@@ -562,10 +565,14 @@ namespace AppCMC.Controllers
                 var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
                 var lst = PublicCodeShare.GetListXeDieuPhoiUuTien(context, _Chuyen, context.tblDMXeOtoes.ToList());
+                if(lst.Count() == 0)
+                {
+                    return Content(HttpStatusCode.NotFound, "Không tìm thấy xe phù hợp !");
+                }    
                 var res = new
                 {
                     result = "Lấy dữ liệu thành công !",
-                    data = lst.Select(x => x.BienSoXE).ToList(),
+                    data = lst.Select(x => new { ID = x.ID, BienSoXe = x.BienSoXE, LaiXe = x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "", LoaiXe = x.tblDMLoaiXe != null ? x.tblDMLoaiXe.NameVI : "" }).ToList(),
                 };
                 return Ok(res);
             }
@@ -609,12 +616,27 @@ namespace AppCMC.Controllers
                 tblDieuPhoiVanChuyen _Chuyen = null;
                 _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == _object.IDChuyen);
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
-                _Chuyen.BienSoXe = _object.BienSoXe;
-                _Chuyen.LaiXe = _object.LaiXe;
-                _Chuyen.DTLaiXe = _object.DTLaiXe;
-                _Chuyen.IDDMCustomerTranport = _object.IDDonViVanTai;
-                _Chuyen.IDDMXeOto = _object.IDXeOto;
-                _Chuyen.IDLaiXe = _object.IDLaiXe;
+
+                if(_object.EnumXeThueOrXeCongTy == (int)EnumThueXeOrXeMinhJOB.Company)
+                {
+                    _Chuyen.IDDMXeOto = _object.IDXeOto;
+                    _Chuyen.IDLaiXe = _object.IDLaiXe;
+                    _Chuyen.BienSoXe = null;
+                    _Chuyen.LaiXe = null;
+                    _Chuyen.DTLaiXe = null;
+                    _Chuyen.IDDMCustomerTranport = null;
+                }    
+                else
+                {
+                    _Chuyen.IDDMXeOto = null;
+                    _Chuyen.IDLaiXe = null;
+                    _Chuyen.BienSoXe = _object.BienSoXe;
+                    _Chuyen.LaiXe = _object.LaiXe;
+                    _Chuyen.DTLaiXe = _object.DTLaiXe;
+                    _Chuyen.IDDMCustomerTranport = _object.IDDonViVanTai;
+                }    
+               
+                
                 _Chuyen.IDUserDieuPhoi = _object.IDUser;
                 _Chuyen.SoGioCho = LongNVExport.Getlong(_object.SoGioCho);
                 _Chuyen.SoCaLuu = LongNVExport.Getlong(_object.SoCaLuu);
@@ -1131,6 +1153,28 @@ namespace AppCMC.Controllers
             }
         }
 
+
+        [HttpGet]
+        [Route("api/GetXeVanChuyen")]
+        public IHttpActionResult GetXeVanChuyen(string ProductKey, long IDUser)
+        {
+            try
+            {
+                var _user = context.tblSysUsers.FirstOrDefault(x => x.ID == IDUser);
+                var _xe = context.tblDMXeOtoes.FirstOrDefault(x => x.IDTaiXe == _user.IDNhanVien);
+                if (_xe == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy xe!");
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = new {IDXeOto = _xe.ID,BienSoXe = _xe.BienSoXE , IDLaiXe = _xe.IDTaiXe, TaiXe = _xe.tblNhanSu?.NameVI },
+                };
+                return Ok(res);
+            }
+            catch
+            {
+                return Content(HttpStatusCode.BadRequest, "Lỗi dữ liệu !");
+            }
+        }
 
         // thêm sửa xóa đổ dầu
         [HttpPost]
