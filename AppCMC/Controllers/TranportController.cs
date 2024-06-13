@@ -168,8 +168,9 @@ namespace AppCMC.Controllers
                 var _ChuyenHT = context.tblDieuPhoiVanChuyens.Where(x => x.NgayDongHang != null && x.EnumTrangThaiDieuPhoi != (int)EnumTrangThaiDieuPhoiVC.HoanThanh && x.EnumTrangThaiDieuPhoi != (int)EnumTrangThaiDieuPhoiVC.ChuyenHuy && x.IDDMXeOto == _xe.IDXe && x.NgayDongHang <= DateTime.Now && ((x.FlagHangVe != true && x.NgayTraHang >= DateTime.Now) || (x.FlagHangVe == true && x.ThoiGianVe >= DateTime.Now))).FirstOrDefault();
                 if (_ChuyenHT != null)
                 {
-                    _xe.TrangThai = _ChuyenHT.ListTrangThaiVanChuyen.OrderByDescending(x => x.NgayGioThucHien).FirstOrDefault()?.tblDMTrangThaiVanChuyen?.NameVI;
-                    _xe.RGB = _ChuyenHT.ListTrangThaiVanChuyen.OrderByDescending(x => x.NgayGioThucHien).FirstOrDefault()?.tblDMTrangThaiVanChuyen?.RGB;
+                    var _tt = _ChuyenHT.ListTrangThaiVanChuyen.OrderByDescending(x => x.NgayGioThucHien).FirstOrDefault();
+                    _xe.TrangThai = _tt?.tblDMTrangThaiVanChuyen?.NameVI + $" - {_tt?.NgayGioThucHien?.ToString("HH:mm")}";
+                    _xe.RGB = _tt?.tblDMTrangThaiVanChuyen?.RGB;
                 }
             }
             var res = new
@@ -460,7 +461,7 @@ namespace AppCMC.Controllers
             int _total = _dp.Count();
             if(_total > 0)
             {
-                LstChuyenDto = _dp.OrderByDescending(x => x.NgayDongHang).Skip((Page - 1) * Limit).Take(Limit).Select(x =>
+                LstChuyenDto = _dp.ToList().OrderByDescending(x => x.STT_SapXep).Skip((Page - 1) * Limit).Take(Limit).Select(x =>
           new tblDieuPhoiVanChuyenDto
           {
               IDChuyen = x.ID,
