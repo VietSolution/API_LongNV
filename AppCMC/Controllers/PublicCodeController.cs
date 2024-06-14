@@ -157,7 +157,7 @@ namespace AppCMC.Controllers
         public long? IDXeOto { get; set; }
         public string BienSoXe { get; set; }
         public long? IDLaiXe { get; set; }
-        public int EnumXeThueOrXeCongTy { get; set; }
+        public int EnumThueXeOrXeMinh { get; set; }
         public long? IDDonViVanTai { get; set; }
         public string LaiXe { get; set; }
         public string DTLaiXe { get; set; }

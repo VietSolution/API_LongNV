@@ -436,27 +436,52 @@ namespace AppCMC.Controllers
             var _user = context.tblSysUsers.FirstOrDefault(x => x.ID == IDUSer);
             if (_user == null) return Content(HttpStatusCode.NotFound, "Lỗi dữ liệu !");
             dtE = new DateTime(dtE.Year, dtE.Month, dtE.Day, 23, 59, 00);
-            List<Expression<Func<tblDieuPhoiVanChuyen, bool>>> Lstfunc = new List<Expression<Func<tblDieuPhoiVanChuyen, bool>>>();
             Expression<Func<tblDieuPhoiVanChuyen, bool>> func = null;
             Expression<Func<tblDieuPhoiVanChuyen, bool>> funcTT = null;
            
-            if (_user.tblNhanSu != null && _user.tblNhanSu.FlagDriver == true) //  lái xe
+           
+            if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DaNhan)
             {
-                func = x => x.NgayDongHang >= dtS && x.NgayDongHang <= dtE && x.IDLaiXe == _user.IDNhanVien;
+                funcTT = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.NhanLenh;
+                if (_user.tblNhanSu != null && _user.tblNhanSu.FlagDriver == true) //  lái xe
+                {
+                    func = x => x.IDLaiXe == _user.IDNhanVien;
+                }
+            } 
+            else if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DuocGiao)
+            {
+                funcTT = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.GuiLenh;
+                if (_user.tblNhanSu != null && _user.tblNhanSu.FlagDriver == true) //  lái xe
+                {
+                    func = x => x.IDLaiXe == _user.IDNhanVien;
+                }
+            } 
+            else if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.HoanThanh)
+            {
+                funcTT = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.HoanThanh;
+                if (_user.tblNhanSu != null && _user.tblNhanSu.FlagDriver == true) //  lái xe
+                {
+                    func = x => x.NgayDongHang >= dtS && x.NgayDongHang <= dtE && x.IDLaiXe == _user.IDNhanVien;
+                }
+                else
+                {
+                    func = x => x.NgayDongHang == null || (x.NgayDongHang >= dtS && x.NgayDongHang <= dtE);
+                }
             }
             else
             {
-                func = x => x.NgayDongHang == null || (x.NgayDongHang >= dtS && x.NgayDongHang <= dtE);
-            }
-            if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DaNhan) funcTT  = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.NhanLenh;
-            else if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DuocGiao) funcTT = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.GuiLenh;
-            else if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.HoanThanh) funcTT = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.HoanThanh;
-
-            Lstfunc.Add(func);
-           
-
+                if (_user.tblNhanSu != null && _user.tblNhanSu.FlagDriver == true) //  lái xe
+                {
+                    func = x => x.NgayDongHang >= dtS && x.NgayDongHang <= dtE && x.IDLaiXe == _user.IDNhanVien;
+                }
+                else
+                {
+                    func = x => x.NgayDongHang == null || (x.NgayDongHang >= dtS && x.NgayDongHang <= dtE);
+                }
+            } 
+                
             IQueryable<tblDieuPhoiVanChuyen> _dp = context.tblDieuPhoiVanChuyens;
-            _dp = _dp.Where(func);
+            if (func != null) _dp = _dp.Where(func);
             if (funcTT != null) _dp = _dp.Where(funcTT);
             int _total = _dp.Count();
             if(_total > 0)
@@ -617,7 +642,7 @@ namespace AppCMC.Controllers
                 _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == _object.IDChuyen);
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
 
-                if(_object.EnumXeThueOrXeCongTy == (int)EnumThueXeOrXeMinhJOB.Company)
+                if(_object.EnumThueXeOrXeMinh == (int)EnumThueXeOrXeMinhJOB.Company)
                 {
                     _Chuyen.IDDMXeOto = _object.IDXeOto;
                     _Chuyen.IDLaiXe = _object.IDLaiXe;
