@@ -144,7 +144,7 @@ namespace AppCMC.Controllers
         [Route("api/GettblDMTrangThaiVanChuyen")]
         public IHttpActionResult GettblDMTrangThaiVanChuyen(string ProductKey)
         {
-            var LstAll = context.tblDMTrangThaiVanChuyens.Select(x => new { ID = x.ID, RGB = x.RGB, Name = x.NameVI }).ToList();
+            var LstAll = context.tblDMTrangThaiVanChuyens.Where(x=>x.EnumStatus == null || x.EnumStatus >= 0).Select(x => new { ID = x.ID, RGB = x.RGB, Name = x.NameVI }).ToList();
             var res = new
             {
                 result = "Lấy dữ liệu thành công !",
@@ -635,7 +635,9 @@ namespace AppCMC.Controllers
                 else
                 {
                     _Chuyen.IDDMXeOto = null;
+                    _Chuyen.tblDMXeOto = null;
                     _Chuyen.IDLaiXe = null;
+                    _Chuyen.tblNhanSu = null;
                     _Chuyen.BienSoXe = _object.BienSoXe;
                     _Chuyen.LaiXe = _object.LaiXe;
                     _Chuyen.DTLaiXe = _object.DTLaiXe;
@@ -1118,7 +1120,7 @@ namespace AppCMC.Controllers
                 //}    
 
 
-                var lst = _Chuyen.ListTrangThaiVanChuyen.Select(x => new {ID = x.ID , IDChuyen = x.IDDieuPhoi, IDTrangThaiVanChuyen = x.IDDMTrangThaiVanChuyen, TrangThaiVanChuyen = x.tblDMTrangThaiVanChuyen != null ? x.tblDMTrangThaiVanChuyen.NameVI : "", FileAttach = x.ListFileNameArrayAppText, NgayGioThucHien = x.NgayGioThucHien}  ).ToList();
+                var lst = context.tblDieuPhoiTrangThaiVCs.Where(x=>x.IDDieuPhoi == IDChuyen).ToList().Select(x => new {ID = x.ID , IDChuyen = x.IDDieuPhoi, IDTrangThaiVanChuyen = x.IDDMTrangThaiVanChuyen, TrangThaiVanChuyen = x.tblDMTrangThaiVanChuyen != null ? x.tblDMTrangThaiVanChuyen.NameVI : "", FileAttach = x.ListFileNameArrayAppText, NgayGioThucHien = x.NgayGioThucHien}  ).ToList();
                 var res = new
                 {
                     result = "Lấy dữ liệu thành công !",
