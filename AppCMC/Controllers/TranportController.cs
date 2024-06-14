@@ -443,43 +443,24 @@ namespace AppCMC.Controllers
             if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DaNhan)
             {
                 funcTT = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.NhanLenh;
-                if (_user.tblNhanSu != null && _user.tblNhanSu.FlagDriver == true) //  lái xe
-                {
-                    func = x => x.IDLaiXe == _user.IDNhanVien;
-                }
             } 
             else if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DuocGiao)
             {
                 funcTT = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.GuiLenh;
-                if (_user.tblNhanSu != null && _user.tblNhanSu.FlagDriver == true) //  lái xe
-                {
-                    func = x => x.IDLaiXe == _user.IDNhanVien;
-                }
             } 
             else if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.HoanThanh)
             {
                 funcTT = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.HoanThanh;
-                if (_user.tblNhanSu != null && _user.tblNhanSu.FlagDriver == true) //  lái xe
-                {
-                    func = x => x.NgayDongHang >= dtS && x.NgayDongHang <= dtE && x.IDLaiXe == _user.IDNhanVien;
-                }
-                else
-                {
-                    func = x => x.NgayDongHang == null || (x.NgayDongHang >= dtS && x.NgayDongHang <= dtE);
-                }
+            }
+            
+            if (_user.tblNhanSu != null && _user.tblNhanSu.FlagDriver == true) //  lái xe
+            {
+                func = x => x.NgayDongHang >= dtS && x.NgayDongHang <= dtE && x.IDLaiXe == _user.IDNhanVien;
             }
             else
             {
-                if (_user.tblNhanSu != null && _user.tblNhanSu.FlagDriver == true) //  lái xe
-                {
-                    func = x => x.NgayDongHang >= dtS && x.NgayDongHang <= dtE && x.IDLaiXe == _user.IDNhanVien;
-                }
-                else
-                {
-                    func = x => x.NgayDongHang == null || (x.NgayDongHang >= dtS && x.NgayDongHang <= dtE);
-                }
-            } 
-                
+                func = x => x.NgayDongHang == null || (x.NgayDongHang >= dtS && x.NgayDongHang <= dtE);
+            }
             IQueryable<tblDieuPhoiVanChuyen> _dp = context.tblDieuPhoiVanChuyens;
             if (func != null) _dp = _dp.Where(func);
             if (funcTT != null) _dp = _dp.Where(funcTT);
@@ -735,7 +716,7 @@ namespace AppCMC.Controllers
                 tblDieuPhoiVanChuyen _Chuyen = null;
                 _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == _object.IDChuyen);
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến !");
-                if (_Chuyen.FlagDaDieuPhoi != true || _Chuyen.IDLaiXe == null || _Chuyen.IDDMXeOto == null || _Chuyen.EnumTrangThaiDieuPhoi != (int)EnumTrangThaiDieuPhoiVC.GuiLenh)
+                if (_Chuyen.FlagDaDieuPhoi != true || _Chuyen.IDLaiXe == null || _Chuyen.IDDMXeOto == null || ( _Chuyen.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.HoanThanh))
                 {
                     return Content(HttpStatusCode.Conflict, "Không thể thực hiện bỏ gửi lệnh trên chuyến này !");
                 }
