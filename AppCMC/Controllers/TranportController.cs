@@ -23,7 +23,7 @@ namespace AppCMC.Controllers
 {
     public class TranportController : ApiController
     {
-        private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString());
+        private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString("db.namanphu.vn","CMCBacNinhDB","cmc_user","123456a$"));
 
         #region Hàm dùng chung
         public void UpdateChuyen(tblDieuPhoiVanChuyen _Chuyen, tblDieuPhoiVanChuyenNewDto _object)
@@ -45,6 +45,8 @@ namespace AppCMC.Controllers
             _Chuyen.IDDMLoaiXe = _object.IDLoaiXe;
             _Chuyen.tblDMLoaiXe = context.tblDMLoaiXes.FirstOrDefault(x => x.ID == _Chuyen.IDDMLoaiXe);
         }
+       
+        
         #endregion
         #region Danh mục
         [HttpGet]
@@ -999,11 +1001,14 @@ namespace AppCMC.Controllers
                     return Content(HttpStatusCode.NotFound, "Chuyến thiếu thông tin.Không thể thực hiện trên chuyến này !");
                 }
 
-               // AppSettings.LicenseKey = "dbdev.namanphu.vn";
-                AppSettings.DatabaseServerName = "dbdev.namanphu.vn";
-                AppSettings.DatabaseName = "Model_CMCBacNinh";
-                AppSettings.DatabaseUserName = "notification_user";
-                AppSettings.DatabasePassword = "123456a$";
+            // AppSettings.LicenseKey = "dbdev.namanphu.vn";
+            //AppSettings.DatabaseServerName = "dbdev.namanphu.vn";
+            //AppSettings.DatabaseName = "Model_CMCBacNinh";
+            //AppSettings.DatabaseUserName = "notification_user";
+            AppSettings.DatabaseServerName = "db.namanphu.vn";
+            AppSettings.DatabaseName = "CMCBacNinhDB";
+            AppSettings.DatabaseUserName = "cmc_user";
+            AppSettings.DatabasePassword = "123456a$";
 
                 AppSettings.ftpurl = "ftp://fs.namanphu.vn";
                 AppSettings.ftpuser = "ftpuser";
@@ -1100,7 +1105,8 @@ namespace AppCMC.Controllers
             {
                 var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
-                AppSettings.DatabaseName = "Model_CMCBacNinh";
+               // AppSettings.DatabaseName = "Model_CMCBacNinh";
+                AppSettings.DatabaseName = "CMCBacNinhDB";
 
                 //foreach(var tt in _Chuyen.ListTrangThaiVanChuyen)
                 //{
