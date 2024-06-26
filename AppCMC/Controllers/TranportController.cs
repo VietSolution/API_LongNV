@@ -23,7 +23,8 @@ namespace AppCMC.Controllers
 {
     public class TranportController : ApiController
     {
-        private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString("db.namanphu.vn","CMCBacNinhDB","cmc_user","123456a$"));
+       // private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString("db.namanphu.vn","CMCBacNinhDB","cmc_user","123456a$"));
+        private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString("dbdev.namanphu.vn", "Model_CMCBacNinh", "notification_user", "123456a$"));
 
         #region Hàm dùng chung
         public void UpdateChuyen(tblDieuPhoiVanChuyen _Chuyen, tblDieuPhoiVanChuyenNewDto _object)
@@ -457,7 +458,10 @@ namespace AppCMC.Controllers
             
             if (_user.tblNhanSu != null && _user.tblNhanSu.FlagDriver == true) //  lái xe
             {
-                func = x => x.NgayDongHang >= dtS && x.NgayDongHang <= dtE && x.IDLaiXe == _user.IDNhanVien;
+                if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DuocGiao || TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.HoanThanh)
+                {
+                    func = x => x.NgayDongHang >= dtS && x.NgayDongHang <= dtE && x.IDLaiXe == _user.IDNhanVien;
+                }
             }
             else
             {
@@ -1002,12 +1006,12 @@ namespace AppCMC.Controllers
                 }
 
             // AppSettings.LicenseKey = "dbdev.namanphu.vn";
-            //AppSettings.DatabaseServerName = "dbdev.namanphu.vn";
-            //AppSettings.DatabaseName = "Model_CMCBacNinh";
-            //AppSettings.DatabaseUserName = "notification_user";
-            AppSettings.DatabaseServerName = "db.namanphu.vn";
-            AppSettings.DatabaseName = "CMCBacNinhDB";
-            AppSettings.DatabaseUserName = "cmc_user";
+            AppSettings.DatabaseServerName = "dbdev.namanphu.vn";
+            AppSettings.DatabaseName = "Model_CMCBacNinh";
+            AppSettings.DatabaseUserName = "notification_user";
+            //AppSettings.DatabaseServerName = "db.namanphu.vn";
+            //AppSettings.DatabaseName = "CMCBacNinhDB";
+            //AppSettings.DatabaseUserName = "cmc_user";
             AppSettings.DatabasePassword = "123456a$";
 
                 AppSettings.ftpurl = "ftp://fs.namanphu.vn";
@@ -1105,8 +1109,8 @@ namespace AppCMC.Controllers
             {
                 var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
-               // AppSettings.DatabaseName = "Model_CMCBacNinh";
-                AppSettings.DatabaseName = "CMCBacNinhDB";
+               AppSettings.DatabaseName = "Model_CMCBacNinh";
+                //AppSettings.DatabaseName = "CMCBacNinhDB";
 
                 //foreach(var tt in _Chuyen.ListTrangThaiVanChuyen)
                 //{

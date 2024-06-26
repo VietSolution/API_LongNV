@@ -14,8 +14,8 @@ namespace AppCMC.Controllers
 {
     public class UserController : ApiController
     {
-        private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString("db.namanphu.vn", "CMCBacNinhDB", "cmc_user", "123456a$"));
-
+        //private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString("db.namanphu.vn", "CMCBacNinhDB", "cmc_user", "123456a$"));
+        private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString("dbdev.namanphu.vn", "Model_CMCBacNinh", "notification_user", "123456a$"));
         [HttpGet]
         [Route("api/GetUserLogin")]
         public IHttpActionResult GetUserLogin(string ProductKey, string UserName, string Password)
