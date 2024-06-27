@@ -462,6 +462,7 @@ namespace AppCMC.Controllers
                 {
                     func = x => x.NgayDongHang >= dtS && x.NgayDongHang <= dtE && x.IDLaiXe == _user.IDNhanVien;
                 }
+                else func = x =>  x.IDLaiXe == _user.IDNhanVien;
             }
             else
             {
@@ -1009,9 +1010,11 @@ namespace AppCMC.Controllers
             //AppSettings.DatabaseServerName = "dbdev.namanphu.vn";
             //AppSettings.DatabaseName = "Model_CMCBacNinh";
             //AppSettings.DatabaseUserName = "notification_user";
+
             AppSettings.DatabaseServerName = "db.namanphu.vn";
             AppSettings.DatabaseName = "CMCBacNinhDB";
             AppSettings.DatabaseUserName = "cmc_user";
+
             AppSettings.DatabasePassword = "123456a$";
 
                 AppSettings.ftpurl = "ftp://fs.namanphu.vn";
@@ -1059,8 +1062,30 @@ namespace AppCMC.Controllers
                 
                 foreach (var file in provider.FileData)
                 {
-                    var originalFileName = file.Headers.ContentDisposition.FileName.Trim('\"');
-                    var localFileName = file.LocalFileName;
+                    var originalFileName = file.Headers.ContentDisposition.FileName.Trim('\"') + "";
+
+                string _fileNameNew = originalFileName;
+                var _split = originalFileName.Split('.');
+                if (_split.Count() > 2)
+                {
+                    _fileNameNew = "";
+                    int _i = 1;
+                    foreach (var _sp in _split)
+                    {
+                        if (_i == _split.Count())
+                        {
+                            _fileNameNew = _fileNameNew + "." + _sp;
+                            break;
+                        }
+                        else
+                            _fileNameNew = _fileNameNew + _sp;
+
+                        _i++;
+                    }
+                    originalFileName = _fileNameNew;
+                }
+
+                var localFileName = file.LocalFileName;
                     var filePath = Path.Combine(root, originalFileName);
 
                     // Move the file to the new location
@@ -1070,12 +1095,15 @@ namespace AppCMC.Controllers
                     }
                     File.Move(localFileName, filePath);
                     List<string> _lstFileName = new List<string>();
-                    _lstFileName.Add(filePath);
+
+               
+
+                _lstFileName.Add(filePath);
 
 
                     string _fnOnly = Path.GetFileName(filePath);
                     _doc.FileName = _fnOnly + ";" + _doc.FileName;
-
+                
 
                     if (!PublicCodeShare.ftpClientModel.uploads(_pathServer, _lstFileName))
                     {
