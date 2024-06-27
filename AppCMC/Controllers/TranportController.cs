@@ -23,8 +23,8 @@ namespace AppCMC.Controllers
 {
     public class TranportController : ApiController
     {
-       // private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString("db.namanphu.vn","CMCBacNinhDB","cmc_user","123456a$"));
-        private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString("dbdev.namanphu.vn", "Model_CMCBacNinh", "notification_user", "123456a$"));
+        private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString("db.namanphu.vn","CMCBacNinhDB","cmc_user","123456a$"));
+        //private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString("dbdev.namanphu.vn", "Model_CMCBacNinh", "notification_user", "123456a$"));
 
         #region Hàm dùng chung
         public void UpdateChuyen(tblDieuPhoiVanChuyen _Chuyen, tblDieuPhoiVanChuyenNewDto _object)
@@ -147,7 +147,7 @@ namespace AppCMC.Controllers
         [Route("api/GettblDMTrangThaiVanChuyen")]
         public IHttpActionResult GettblDMTrangThaiVanChuyen(string ProductKey)
         {
-            var LstAll = context.tblDMTrangThaiVanChuyens.Where(x=>x.EnumStatus == null || x.EnumStatus >= 0).Select(x => new { ID = x.ID, RGB = x.RGB, Name = x.NameVI }).ToList();
+            var LstAll = context.tblDMTrangThaiVanChuyens.Where(x=>x.EnumStatus == null || x.EnumStatus >= 0).OrderBy(x=>x.STT).Select(x => new { ID = x.ID, RGB = x.RGB, Name = x.NameVI }).ToList();
             var res = new
             {
                 result = "Lấy dữ liệu thành công !",
@@ -1006,12 +1006,12 @@ namespace AppCMC.Controllers
                 }
 
             // AppSettings.LicenseKey = "dbdev.namanphu.vn";
-            AppSettings.DatabaseServerName = "dbdev.namanphu.vn";
-            AppSettings.DatabaseName = "Model_CMCBacNinh";
-            AppSettings.DatabaseUserName = "notification_user";
-            //AppSettings.DatabaseServerName = "db.namanphu.vn";
-            //AppSettings.DatabaseName = "CMCBacNinhDB";
-            //AppSettings.DatabaseUserName = "cmc_user";
+            //AppSettings.DatabaseServerName = "dbdev.namanphu.vn";
+            //AppSettings.DatabaseName = "Model_CMCBacNinh";
+            //AppSettings.DatabaseUserName = "notification_user";
+            AppSettings.DatabaseServerName = "db.namanphu.vn";
+            AppSettings.DatabaseName = "CMCBacNinhDB";
+            AppSettings.DatabaseUserName = "cmc_user";
             AppSettings.DatabasePassword = "123456a$";
 
                 AppSettings.ftpurl = "ftp://fs.namanphu.vn";
@@ -1109,8 +1109,8 @@ namespace AppCMC.Controllers
             {
                 var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
                 if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
-               AppSettings.DatabaseName = "Model_CMCBacNinh";
-                //AppSettings.DatabaseName = "CMCBacNinhDB";
+               //AppSettings.DatabaseName = "Model_CMCBacNinh";
+                AppSettings.DatabaseName = "CMCBacNinhDB";
 
                 //foreach(var tt in _Chuyen.ListTrangThaiVanChuyen)
                 //{
@@ -1128,7 +1128,7 @@ namespace AppCMC.Controllers
                 //        }
                 //    }
                 //}    
-
+                // link xem ảnh : http://db.namanphu.vn:1358/db.namanphu.vn/CMCBacNinhDB/AppCMC/Model_CMCBacNinh/DP255/image_0.6659239648708267.jpg
 
                 var lst = context.tblDieuPhoiTrangThaiVCs.Where(x=>x.IDDieuPhoi == IDChuyen).ToList().Select(x => new {ID = x.ID , IDChuyen = x.IDDieuPhoi, IDTrangThaiVanChuyen = x.IDDMTrangThaiVanChuyen, TrangThaiVanChuyen = x.tblDMTrangThaiVanChuyen != null ? x.tblDMTrangThaiVanChuyen.NameVI : "", FileAttach = x.ListFileNameArrayAppText, NgayGioThucHien = x.NgayGioThucHien}  ).ToList();
                 var res = new
