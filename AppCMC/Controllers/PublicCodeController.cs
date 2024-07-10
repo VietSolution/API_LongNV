@@ -99,7 +99,7 @@ namespace AppCMC.Controllers
         public string HangHoa { get; set; }
         public string HangVe { get; set; }
         public int? TrangThaiDieuPhoiIn { get; set; }
-        public string TrangThaiDieuPhoiOut => this.TrangThaiDieuPhoiIn != null ? ((EnumTrangThaiDieuPhoiVC)TrangThaiDieuPhoiIn).GetDescription() : "";
+        public string TrangThaiDieuPhoiOut => (TrangThaiVanChuyen + "").Length > 0 ? TrangThaiVanChuyen : (this.TrangThaiDieuPhoiIn != null ? ((EnumTrangThaiDieuPhoiVC)TrangThaiDieuPhoiIn).GetDescription() : "");
         public DateTime? ThoiGianVeCal { get; set; }
         public string TrangThaiVanChuyen { get; set; }
         public string ThoiGianVe
