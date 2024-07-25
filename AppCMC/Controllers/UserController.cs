@@ -47,7 +47,7 @@ namespace AppCMC.Controllers
             if (_checkUser != null)
             {
                 _UserDto = new tblSysUserDto {IDUser = _checkUser.ID , HoTen = _checkUser.tblNhanSu != null ? _checkUser.tblNhanSu.HoTenVI : "Admin", Username = UserName,
-                FlagQuanLy = _checkUser.tblNhanSu != null && _checkUser.tblNhanSu.FlagDriver == true ? false : true , DatabaseName = AppSettings.DatabaseName, DatabasePassword = AppSettings.DatabasePassword, DatabaseServerName = AppSettings.DatabaseServerName, DatabaseUserName = AppSettings.DatabaseUserName, Key = ProductKey, Pass = Password
+                FlagQuanLy = _checkUser.tblNhanSu != null && _checkUser.tblNhanSu.FlagDriver == true ? false : true , DatabaseName = AppSettings.DatabaseName, DatabasePassword = AppSettings.DatabasePassword, DatabaseServerName = AppSettings.DatabaseServerName, DatabaseUserName = AppSettings.DatabaseUserName, Key = ProductKey, Pass = Password,
                 };
                 return Ok(_UserDto);
             }

@@ -303,7 +303,9 @@ namespace AppCMC.Controllers
                 PhatSinhKhac = x.PhatSinhKhac,
                 GhiChu = x.GhiChu,
                 MaDieuVan = x.CodeDieuVan,
-
+                TrangThaiVanChuyenIn = x.tblDMTrangThaiVanChuyen != null ? x.tblDMTrangThaiVanChuyen.EnumStatus : null,
+                STTChuyen = x.STTDieuPhoiTrongNgay ?? 1 ,
+                
             };
         }
 
@@ -340,8 +342,6 @@ namespace AppCMC.Controllers
             {
                 return Content(HttpStatusCode.BadRequest, "Lỗi dữ liệu !");
             }
-
-            
         }
 
         [HttpGet]
@@ -445,11 +445,13 @@ namespace AppCMC.Controllers
            
             if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DaNhan)
             {
-                funcTT = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.NhanLenh;
+                //funcTT = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.NhanLenh;
+                funcTT = x =>  x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.GuiLenh || x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.NhanLenh;
             } 
             else if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DuocGiao)
             {
-                funcTT = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.GuiLenh;
+                //funcTT = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.GuiLenh;
+                funcTT = x => x.EnumTrangThaiDieuPhoi != null && x.EnumTrangThaiDieuPhoi != (int)EnumTrangThaiDieuPhoiVC.ChuyenHuy;
             } 
             else if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.HoanThanh)
             {
@@ -474,9 +476,17 @@ namespace AppCMC.Controllers
             int _total = _dp.Count();
             if(_total > 0)
             {
-                LstChuyenDto = _dp.ToList().OrderBy(x => x.STT_SapXep).Skip((Page - 1) * Limit).Take(Limit).Select(x =>
+                List<tblDieuPhoiVanChuyen> Lst = new List<tblDieuPhoiVanChuyen>();
+                if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DaNhan)
+                {
+                    var dpView = _dp.OrderBy(x => x.STTDieuPhoiTrongNgay).FirstOrDefault();
+                    Lst.Add(dpView);
+                }
+                else Lst = _dp.ToList();
+                LstChuyenDto = Lst.OrderBy(x => x.STT_SapXep).Skip((Page - 1) * Limit).Take(Limit).Select(x =>
           new tblDieuPhoiVanChuyenDto
           {
+              STTChuyen = x.STTDieuPhoiTrongNgay ?? 1,
               IDChuyen = x.ID,
               TrangThaiDieuPhoiIn = x.EnumTrangThaiDieuPhoi,
               TrangThaiVanChuyen = x.tblDMTrangThaiVanChuyen != null ? x.tblDMTrangThaiVanChuyen.NameVI : "",
@@ -503,6 +513,7 @@ namespace AppCMC.Controllers
               PhatSinhKhac = x.PhatSinhKhac,
               GhiChu = x.GhiChu,
               MaDieuVan = x.CodeDieuVan,
+              TrangThaiVanChuyenIn = x.tblDMTrangThaiVanChuyen != null ? x.tblDMTrangThaiVanChuyen.EnumStatus : null
           }).ToList();
             }    
             var res = new
@@ -885,7 +896,6 @@ namespace AppCMC.Controllers
         #endregion
         #endregion
         #region Api lái xe
-        // Bỏ Gửi lệnh
         [HttpPost]
         [Route("api/UpdateTrangThaiDieuPhoi")] // sửa
         public IHttpActionResult UpdateTrangThaiDieuPhoi([FromBody] DieuPhoiXeDto _object)
@@ -932,6 +942,8 @@ namespace AppCMC.Controllers
         }
 
        
+
+
         [HttpGet]
         [Route("api/GetPathLocal")]
         public IHttpActionResult GetPathLocal(string ProductKey)
@@ -1126,6 +1138,228 @@ namespace AppCMC.Controllers
             //{
             //    return Content(HttpStatusCode.NotFound, "Lỗi dữ liệu !");
             //}
+
+        }
+
+
+
+        // lấy ra chuyến cần điều phối
+        [HttpGet]
+        [Route("api/GetTrangThaiHienThi")]
+        public IHttpActionResult GetTrangThaiHienThi(string ProductKey, long IDChuyen)
+        {
+            try
+            {
+                var _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == IDChuyen);
+                if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến cần sửa !");
+               
+                var _data = new { EnumTrangThai = _Chuyen.ListTrangThaiVanChuyen.OrderByDescending(x=>x.NgayGioThucHien).FirstOrDefault()?.tblDMTrangThaiVanChuyen?.EnumStatus ?? 0 };
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = _data,
+                };
+                return Ok(res);
+            }
+            catch
+            {
+                return Content(HttpStatusCode.NotFound, "Lỗi dữ liệu !");
+            }
+        }
+
+        private tblDieuPhoiTrangThaiVC NewTrangThaiVanChuyen(LGTICDBEntities _context, EnumTrangThaiVanChuyen _enum , tblSysUser UserLogin , tblDieuPhoiVanChuyen _Chuyen)
+        {
+            var _TrangThaiDM = _context.tblDMTrangThaiVanChuyens.FirstOrDefault(x => x.EnumStatus == (int)_enum);
+            var _newTrangThai = new tblDieuPhoiTrangThaiVC
+            {
+                IDDieuPhoi = _Chuyen.ID,
+                DateCreate = DateTime.Now,
+                NgayGioThucHien = DateTime.Now,
+                IDUserCreate = UserLogin.ID,
+                tblSysUser = UserLogin,
+                IDDMTrangThaiVanChuyen = _TrangThaiDM?.ID,
+                tblDMTrangThaiVanChuyen = _TrangThaiDM,
+            };
+            return _newTrangThai;
+        }
+
+        [HttpPost]
+        [Route("api/UpdateTrangThaiChuyen")] // sửa
+        public async Task<IHttpActionResult> UpdateTrangThaiChuyen()
+        {
+
+            string root = @"D:\Temp";  // đường dẫn lưu temp trên server
+            if (!Directory.Exists(root))
+            {
+                Directory.CreateDirectory(root);
+            }
+            var provider = new MultipartFormDataStreamProvider(root);
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+
+            ObjectCal metadata = null;
+            var _ob = provider.Contents.FirstOrDefault(x => x.Headers.ContentDisposition.Name.Trim('\"') == "data");
+            if (_ob == null)
+            {
+                return Content(HttpStatusCode.NotFound, "Đối tượng rỗng !");
+            }
+            var json = await _ob.ReadAsStringAsync();
+            metadata = JsonConvert.DeserializeObject<ObjectCal>(json);
+
+
+            tblDieuPhoiVanChuyen _Chuyen = null;
+            _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == metadata.IDChuyen);
+            if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến !");
+            if (_Chuyen.FlagDaDieuPhoi != true || _Chuyen.IDLaiXe == null || _Chuyen.IDDMXeOto == null)
+            {
+                return Content(HttpStatusCode.NotFound, "Chuyến thiếu thông tin.Không thể thực hiện trên chuyến này !");
+            }
+            var UserLogin = context.tblSysUsers.FirstOrDefault(x => x.ID == metadata.IDUser);
+            if (_Chuyen.EnumTrangThaiDieuPhoi == null || _Chuyen.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.GuiLenh) // nhấn nút bắt đầu
+            {
+                _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoiVC.NhanLenh;
+                context.SaveChanges();
+            }    
+            else if (_Chuyen.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.NhanLenh)
+            {
+                var _TrangThaiHT = _Chuyen.ListTrangThaiVanChuyen.OrderByDescending(x => x.NgayGioThucHien).FirstOrDefault();
+                if(_TrangThaiHT == null) // nhấn nút đến điểm đóng hàng
+                {
+                    var _newTrangThai = NewTrangThaiVanChuyen(context, EnumTrangThaiVanChuyen.DenDiemDong, UserLogin, _Chuyen);
+                    _Chuyen.ListTrangThaiVanChuyen.Add(_newTrangThai);
+                    context.tblDieuPhoiTrangThaiVCs.Add(_newTrangThai);
+                    _Chuyen.SaveData(context, UserLogin);
+                }    
+                else
+                {
+                    if(_TrangThaiHT.tblDMTrangThaiVanChuyen != null )
+                    {
+                        if(_TrangThaiHT.tblDMTrangThaiVanChuyen.EnumStatus == (int)EnumTrangThaiVanChuyen.DenDiemDong)
+                        {
+                            var _newTrangThai = NewTrangThaiVanChuyen(context, EnumTrangThaiVanChuyen.DenDiemTra, UserLogin, _Chuyen);
+                            _Chuyen.ListTrangThaiVanChuyen.Add(_newTrangThai);
+                            context.tblDieuPhoiTrangThaiVCs.Add(_newTrangThai);
+                            _Chuyen.SaveData(context, UserLogin);
+                        }   
+                        else if (_TrangThaiHT.tblDMTrangThaiVanChuyen.EnumStatus == (int)EnumTrangThaiVanChuyen.DenDiemTra)
+                        {
+                            var _newTrangThai = NewTrangThaiVanChuyen(context, EnumTrangThaiVanChuyen.VoVe, UserLogin, _Chuyen);
+                            _Chuyen.SoVo = metadata.SoVo;
+                            _Chuyen.ListTrangThaiVanChuyen.Add(_newTrangThai);
+                            context.tblDieuPhoiTrangThaiVCs.Add(_newTrangThai);
+                            _Chuyen.SaveData(context, UserLogin);
+                        }
+                        else if (_TrangThaiHT.tblDMTrangThaiVanChuyen.EnumStatus == (int)EnumTrangThaiVanChuyen.VoVe)
+                        {
+                            _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoiVC.HoanThanh;
+                            var _newTrangThai = NewTrangThaiVanChuyen(context, EnumTrangThaiVanChuyen.KetThuc, UserLogin, _Chuyen);
+                            _Chuyen.ListTrangThaiVanChuyen.Add(_newTrangThai);
+                            context.tblDieuPhoiTrangThaiVCs.Add(_newTrangThai);
+                            _Chuyen.SaveData(context, UserLogin);
+                            // ảnh
+                            AppSettings.DatabaseServerName = "db.namanphu.vn";
+                            AppSettings.DatabaseName = "CMCBacNinhDB";
+                            AppSettings.DatabaseUserName = "cmc_user";
+
+                            AppSettings.DatabasePassword = "123456a$";
+
+                            AppSettings.ftpurl = "ftp://fs.namanphu.vn";
+                            AppSettings.ftpuser = "ftpuser";
+                            AppSettings.ftppass = "123456a$";
+
+                            var _doc = new tblJOBDocument
+                            {
+                                IDUserUpload = UserLogin.ID,
+                                tblSysUser = UserLogin,
+                                CreateDate = DateTime.Now,
+
+                                IDTheoDoiVanChuyen = _newTrangThai?.ID,
+                                tblDieuPhoiTrangThaiVC = _newTrangThai
+                            };
+                            _newTrangThai.ListDocument.Add(_doc);
+                            context.tblJOBDocuments.Add(_doc);
+
+
+                            // Lưu các file từ yêu cầu vào thư mục
+
+                            string _pathServer = "/db.namanphu.vn/CMCBacNinhDB/AppCMC" + $"/{AppSettings.DatabaseName}/DP{_Chuyen.ID}"; // sau này sẽ lấy theo DB chính
+
+                            _doc.Path = _pathServer;
+
+
+                            PublicCodeShare.ftpClientModel.createDirAndSub(_pathServer);
+
+                            foreach (var file in provider.FileData)
+                            {
+                                var originalFileName = file.Headers.ContentDisposition.FileName.Trim('\"') + "";
+
+                                string _fileNameNew = originalFileName;
+                                var _split = originalFileName.Split('.');
+                                if (_split.Count() > 2)
+                                {
+                                    _fileNameNew = "";
+                                    int _i = 1;
+                                    foreach (var _sp in _split)
+                                    {
+                                        if (_i == _split.Count())
+                                        {
+                                            _fileNameNew = _fileNameNew + "." + _sp;
+                                            break;
+                                        }
+                                        else
+                                            _fileNameNew = _fileNameNew + _sp;
+
+                                        _i++;
+                                    }
+                                    originalFileName = _fileNameNew;
+                                }
+
+                                var localFileName = file.LocalFileName;
+                                var filePath = Path.Combine(root, originalFileName);
+
+                                // Move the file to the new location
+                                if (File.Exists(filePath))
+                                {
+                                    File.Delete(filePath);
+                                }
+                                File.Move(localFileName, filePath);
+                                List<string> _lstFileName = new List<string>();
+
+
+
+                                _lstFileName.Add(filePath);
+
+
+                                string _fnOnly = Path.GetFileName(filePath);
+                                _doc.FileName = _fnOnly + ";" + _doc.FileName;
+
+
+                                if (!PublicCodeShare.ftpClientModel.uploads(_pathServer, _lstFileName))
+                                {
+                                    Content(HttpStatusCode.InternalServerError, "Chưa thể tải ảnh lên !");
+                                }
+                                File.Delete(filePath);
+                            }
+                            _Chuyen.SaveData(context);
+                        }
+                    }
+                    else
+                    {
+                        return Content(HttpStatusCode.NotFound, "Lỗi dữ liệu !");
+                    }
+                }    
+
+            }    
+
+           
+            var _newDt = NewSelectDieuPhoi(_Chuyen);
+            var res = new
+            {
+                result = "Cập nhật dữ liệu thành công !",
+                data = _newDt
+            };
+            return Ok(res);
+           
 
         }
 

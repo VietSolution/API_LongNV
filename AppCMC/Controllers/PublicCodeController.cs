@@ -46,6 +46,7 @@ namespace AppCMC.Controllers
     }
     public class tblSysUserDto
     {
+        public bool FlagHoanThanhDoDau { get; set; } = false;
         public bool FlagQuanLy { get; set; } 
         public string Username { get; set; }
         public string Pass { get; set; }
@@ -59,6 +60,7 @@ namespace AppCMC.Controllers
     }
     public class tblDieuPhoiVanChuyenDto
     {
+        public int STTChuyen { get; set; }
         public string RGB { get; set; }
         public string ProductKey { get; set; }
         public long IDChuyen { get; set; }
@@ -101,12 +103,33 @@ namespace AppCMC.Controllers
         public int? TrangThaiDieuPhoiIn { get; set; }
         public string TrangThaiDieuPhoiOut => (TrangThaiVanChuyen + "").Length > 0 ? TrangThaiVanChuyen : (this.TrangThaiDieuPhoiIn != null ? ((EnumTrangThaiDieuPhoiVC)TrangThaiDieuPhoiIn).GetDescription() : "");
         public DateTime? ThoiGianVeCal { get; set; }
+        public int? TrangThaiVanChuyenIn { get; set; }
         public string TrangThaiVanChuyen { get; set; }
         public string ThoiGianVe
         {
             get
             {
                 return ThoiGianVeCal?.ToString("HH:mm dd/MM/yyyy");
+            }
+            set { }
+        }
+        public string TenNutHienThi
+        {
+            get
+            {
+                if (this.TrangThaiDieuPhoiIn == null) return "Bắt đầu";
+                else if (this.TrangThaiDieuPhoiIn == (int)EnumTrangThaiDieuPhoiVC.NhanLenh)
+                {
+                    if(this.TrangThaiVanChuyenIn == null)
+                        return "Đến điểm đóng hàng";
+                    else
+                    {
+                        if(this.TrangThaiVanChuyenIn == (int)EnumTrangThaiVanChuyen.DenDiemDong) return "Đến điểm trả hàng";
+                        else if (this.TrangThaiVanChuyenIn == (int)EnumTrangThaiVanChuyen.DenDiemTra) return "Vỏ về";
+                        else if (this.TrangThaiVanChuyenIn == (int)EnumTrangThaiVanChuyen.VoVe) return "Hoàn thành";
+                    } 
+                } 
+                return "Bắt đầu";
             }
             set { }
         }
@@ -219,6 +242,7 @@ namespace AppCMC.Controllers
 
         public string GARAGE { get; set; }
         public string GhiChu { get; set; }
+        public string SoVo { get; set; }
 
     }
     public class PublicCodeController : ApiController
@@ -338,7 +362,7 @@ namespace AppCMC.Controllers
             {
                 db.SaveChanges();
             }
-            catch (DbUpdateConcurrencyException)
+            catch
             {
                 return Content(HttpStatusCode.InternalServerError, "Lưu dữ liệu bị lỗi");
             }
