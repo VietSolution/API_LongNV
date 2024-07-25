@@ -52,108 +52,219 @@ namespace AppCMC.Controllers
         #region Danh mục
         [HttpGet]
         [Route("api/GettblDMXeOto")]
-        public IHttpActionResult GettblDMXeOto(string ProductKey) 
+        public IHttpActionResult GettblDMXeOto(string ProductKey,string Search = "") 
         {
-            var LstAllXe = context.tblDMXeOtoes.Select(x=>new { ID = x.ID, BienSoXe = x.BienSoXE, LaiXe = x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "",LoaiXe = x.tblDMLoaiXe != null ? x.tblDMLoaiXe.NameVI : "" }).ToList();
-            var res = new
+            if((Search + "").Trim().Length > 0)
             {
-                result = "Lấy dữ liệu thành công !",
-                data = LstAllXe
-            };
-            return Ok(res);
+                var LstAllXe = context.tblDMXeOtoes.Where(x=>x.BienSoXE != null && x.BienSoXE.Contains(Search)).Select(x => new { ID = x.ID, BienSoXe = x.BienSoXE, LaiXe = x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "", LoaiXe = x.tblDMLoaiXe != null ? x.tblDMLoaiXe.NameVI : "" }).ToList();
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = LstAllXe
+                };
+                return Ok(res);
+            }
+            else
+            {
+                var LstAllXe = context.tblDMXeOtoes.Select(x => new { ID = x.ID, BienSoXe = x.BienSoXE, LaiXe = x.tblNhanSu != null ? x.tblNhanSu.HoTenVI : "", LoaiXe = x.tblDMLoaiXe != null ? x.tblDMLoaiXe.NameVI : "" }).ToList();
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = LstAllXe
+                };
+                return Ok(res);
+            }
+
+           
         }
 
         [HttpGet]
         [Route("api/GettblDMLoaiXe")]
-        public IHttpActionResult GettblDMLoaiXe(string ProductKey)
+        public IHttpActionResult GettblDMLoaiXe(string ProductKey, string Search = "")
         {
-           
-            var LstAllXe = context.tblDMLoaiXes.Select(x => new { ID = x.ID,Code = x.Code, Name = x.NameVI, TrongTai = x.TrongTai }).ToList();
-            var res = new
+            if ((Search + "").Trim().Length > 0)
             {
-                result = "Lấy dữ liệu thành công !",
-                data = LstAllXe
-            };
-            return Ok(res);
+                var LstAllXe = context.tblDMLoaiXes.Where(x=>x.NameVI != null && x.NameVI.Contains(Search)).Select(x => new { ID = x.ID, Code = x.Code, Name = x.NameVI, TrongTai = x.TrongTai }).ToList();
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = LstAllXe
+                };
+                return Ok(res);
+            }
+            else
+            {
+                var LstAllXe = context.tblDMLoaiXes.Select(x => new { ID = x.ID, Code = x.Code, Name = x.NameVI, TrongTai = x.TrongTai }).ToList();
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = LstAllXe
+                };
+                return Ok(res);
+            }
+            
         }
 
         [HttpGet]
         [Route("api/GettblNhanSu")]
-        public IHttpActionResult GettblNhanSu(string ProductKey)
+        public IHttpActionResult GettblNhanSu(string ProductKey , string Search = "")
         {
-            var LstAll = context.tblNhanSus.Select(x => new { ID = x.ID, HoTen = x.HoTenVI, MaNhanSu = x.MANHANSU}).ToList();
-            var res = new
+            if ((Search + "").Trim().Length > 0)
             {
-                result = "Lấy dữ liệu thành công !",
-                data = LstAll
-            };
-            return Ok(res);
+                var LstAll = context.tblNhanSus.Where(x=>(x.HoTenVI != null && x.HoTenVI.Contains(Search)) || (x.MANHANSU != null && x.MANHANSU.Contains(Search))).Select(x => new { ID = x.ID, HoTen = x.HoTenVI, MaNhanSu = x.MANHANSU }).ToList();
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = LstAll
+                };
+                return Ok(res);
+            }
+            else
+            {
+                var LstAll = context.tblNhanSus.Select(x => new { ID = x.ID, HoTen = x.HoTenVI, MaNhanSu = x.MANHANSU }).ToList();
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = LstAll
+                };
+                return Ok(res);
+            }
+            
         }
 
         [HttpGet]
         [Route("api/GettblDMDoor")]
-        public IHttpActionResult GettblDMDoor(string ProductKey)
+        public IHttpActionResult GettblDMDoor(string ProductKey, string Search = "")
         {
-            var LstAll = context.tblDMDoors.Select(x => new { ID = x.ID, Name = x.NameVI, Address = x.AddressVI }).ToList();
-
-            var res = new
+            if ((Search + "").Trim().Length > 0)
             {
-                result = "Lấy dữ liệu thành công !",
-                data = LstAll
-            };
-            return Ok(res);
+                var LstAll = context.tblDMDoors.Where(x=>x.NameVI != null && x.NameVI.Contains(Search)).Select(x => new { ID = x.ID, Name = x.NameVI, Address = x.AddressVI }).ToList();
+
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = LstAll
+                };
+                return Ok(res);
+            }
+            else
+            {
+                var LstAll = context.tblDMDoors.Select(x => new { ID = x.ID, Name = x.NameVI, Address = x.AddressVI }).ToList();
+
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = LstAll
+                };
+                return Ok(res);
+            }    
         }
 
         [HttpGet]
         [Route("api/GettblDMHangHoa")]
-        public IHttpActionResult GettblDMHangHoa(string ProductKey)
+        public IHttpActionResult GettblDMHangHoa(string ProductKey, string Search = "")
         {
-            var LstAll = context.tblDMHangHoas.Select(x => new { ID = x.ID , Code = x.Code, Name = x.NameVI }).ToList();
-            var res = new
+            if ((Search + "").Trim().Length > 0)
             {
-                result = "Lấy dữ liệu thành công !",
-                data = LstAll
-            };
-            return Ok(res);
+                var LstAll = context.tblDMHangHoas.Where(x=>x.NameVI != null && x.NameVI.Contains(Search)).Select(x => new { ID = x.ID, Code = x.Code, Name = x.NameVI }).ToList();
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = LstAll
+                };
+                return Ok(res);
+            }
+            else
+            {
+                var LstAll = context.tblDMHangHoas.Select(x => new { ID = x.ID, Code = x.Code, Name = x.NameVI }).ToList();
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = LstAll
+                };
+                return Ok(res);
+            }    
         }
 
         [HttpGet]
         [Route("api/GettblDMCustomer")]
-        public IHttpActionResult GettblDMCustomer(string ProductKey)
+        public IHttpActionResult GettblDMCustomer(string ProductKey, string Search = "")
         {
-            var LstAll = context.tblDMCustomers.Where(x=>x.FlagCustomer == true || (x.FlagCustomer != true && x.FlagLocalTrans != true || x.FlagNhaCC != true)).Select(x => new { ID = x.ID, Code = x.Code, Name = x.NameVI }).ToList();
-            var res = new
+            if ((Search + "").Trim().Length > 0)
             {
-                result = "Lấy dữ liệu thành công !",
-                data = LstAll
-            };
-            return Ok(res);
+                var LstAll = context.tblDMCustomers.Where(x => x.NameVI != null && x.NameVI.Contains(Search) && (x.FlagCustomer == true || (x.FlagCustomer != true && x.FlagLocalTrans != true && x.FlagNhaCC != true))).Select(x => new { ID = x.ID, Code = x.Code, Name = x.NameVI }).ToList();
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = LstAll
+                };
+                return Ok(res);
+            }    
+            else
+            {
+                var LstAll = context.tblDMCustomers.Where(x => x.FlagCustomer == true || (x.FlagCustomer != true && x.FlagLocalTrans != true || x.FlagNhaCC != true)).Select(x => new { ID = x.ID, Code = x.Code, Name = x.NameVI }).ToList();
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = LstAll
+                };
+                return Ok(res);
+            }    
+               
         }
 
         [HttpGet]
         [Route("api/GettblDMDonViVanTai")]
-        public IHttpActionResult GettblDMDonViVanTai(string ProductKey)
+        public IHttpActionResult GettblDMDonViVanTai(string ProductKey, string Search = "")
         {
-            var LstAll = context.tblDMCustomers.Where(x => x.FlagLocalTrans == true || (x.FlagCustomer != true && x.FlagLocalTrans != true || x.FlagNhaCC != true)).Select(x => new { ID = x.ID, Code = x.Code, Name = x.NameVI }).ToList();
-            var res = new
+            if ((Search + "").Trim().Length > 0)
             {
-                result = "Lấy dữ liệu thành công !",
-                data = LstAll
-            };
-            return Ok(res);
+                var LstAll = context.tblDMCustomers.Where(x =>x.NameVI != null && x.NameVI.Contains(Search) && (x.FlagLocalTrans == true || (x.FlagCustomer != true && x.FlagLocalTrans != true && x.FlagNhaCC != true))).Select(x => new { ID = x.ID, Code = x.Code, Name = x.NameVI }).ToList();
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = LstAll
+                };
+                return Ok(res);
+            }
+            else
+            {
+                var LstAll = context.tblDMCustomers.Where(x => x.FlagLocalTrans == true || (x.FlagCustomer != true && x.FlagLocalTrans != true && x.FlagNhaCC != true)).Select(x => new { ID = x.ID, Code = x.Code, Name = x.NameVI }).ToList();
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = LstAll
+                };
+                return Ok(res);
+            }
+           
         }
 
         [HttpGet]
         [Route("api/GettblDMTrangThaiVanChuyen")]
-        public IHttpActionResult GettblDMTrangThaiVanChuyen(string ProductKey)
+        public IHttpActionResult GettblDMTrangThaiVanChuyen(string ProductKey, string Search = "")
         {
-            var LstAll = context.tblDMTrangThaiVanChuyens.Where(x=>x.EnumStatus == null || x.EnumStatus >= 0).OrderBy(x=>x.STT).Select(x => new { ID = x.ID, RGB = x.RGB, Name = x.NameVI }).ToList();
-            var res = new
+            if ((Search + "").Trim().Length > 0)
             {
-                result = "Lấy dữ liệu thành công !",
-                data = LstAll
-            };
-            return Ok(res);
+                var LstAll = context.tblDMTrangThaiVanChuyens.Where(x => x.EnumStatus == null || x.EnumStatus >= 0).OrderBy(x => x.STT).Select(x => new { ID = x.ID, RGB = x.RGB, Name = x.NameVI }).ToList();
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = LstAll
+                };
+                return Ok(res);
+            }    
+            else
+            {
+                var LstAll = context.tblDMTrangThaiVanChuyens.Where(x => x.EnumStatus == null || x.EnumStatus >= 0).OrderBy(x => x.STT).Select(x => new { ID = x.ID, RGB = x.RGB, Name = x.NameVI }).ToList();
+                var res = new
+                {
+                    result = "Lấy dữ liệu thành công !",
+                    data = LstAll
+                };
+                return Ok(res);
+            }    
+                
         }
 
         #endregion
