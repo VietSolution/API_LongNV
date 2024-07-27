@@ -693,7 +693,7 @@ namespace AppCMC.Controllers
         // lấy ra ds xe ưu tiên
         [HttpGet]
         [Route("api/GetListXeOtoUuTien")]
-        public IHttpActionResult GetListXeOtoUuTien(string ProductKey, long IDChuyen)
+        public IHttpActionResult GetListXeOtoUuTien(string ProductKey, long IDChuyen, string Search = "")
         {
             try
             {
@@ -703,6 +703,10 @@ namespace AppCMC.Controllers
                 if(lst.Count() == 0)
                 {
                     return Content(HttpStatusCode.NotFound, "Không tìm thấy xe phù hợp !");
+                }    
+                if((Search + "").Length > 0)
+                {
+                    lst = lst.Where(x => x.BienSoXE != null && x.BienSoXE.Contains(Search)).ToList();
                 }    
                 var res = new
                 {
