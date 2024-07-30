@@ -415,7 +415,7 @@ namespace AppCMC.Controllers
                 GhiChu = x.GhiChu,
                 MaDieuVan = x.CodeDieuVan,
                 TrangThaiVanChuyenIn = x.tblDMTrangThaiVanChuyen != null ? x.tblDMTrangThaiVanChuyen.EnumStatus : null,
-                STTChuyen = x.STTDieuPhoiTrongNgay ?? 1 ,
+                STTChuyenCal = x.STTDieuPhoiTrongNgay ?? 1 ,
                 
             };
         }
@@ -597,7 +597,7 @@ namespace AppCMC.Controllers
                 LstChuyenDto = Lst.OrderBy(x => x.STT_SapXep).Skip((Page - 1) * Limit).Take(Limit).Select(x =>
           new tblDieuPhoiVanChuyenDto
           {
-              STTChuyen = x.STTDieuPhoiTrongNgay ?? 1,
+              STTChuyenCal = x.STTDieuPhoiTrongNgay ?? 1,
               IDChuyen = x.ID,
               TrangThaiDieuPhoiIn = x.EnumTrangThaiDieuPhoi,
               TrangThaiVanChuyen = x.tblDMTrangThaiVanChuyen != null ? x.tblDMTrangThaiVanChuyen.NameVI : "",

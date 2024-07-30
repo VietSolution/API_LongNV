@@ -60,7 +60,8 @@ namespace AppCMC.Controllers
     }
     public class tblDieuPhoiVanChuyenDto
     {
-        public int STTChuyen { get; set; }
+        public int STTChuyenCal { get; set; }
+        public string STTChuyen => $"Chuyến {STTChuyenCal}";
         public string RGB { get; set; }
         public string ProductKey { get; set; }
         public long IDChuyen { get; set; }
