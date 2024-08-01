@@ -46,7 +46,7 @@ namespace AppCMC.Controllers
     }
     public class tblSysUserDto
     {
-        public bool FlagHoanThanhDoDau { get; set; } = false;
+        public bool FlagHoanThanhDoDau { get; set; }
         public bool FlagQuanLy { get; set; } 
         public string Username { get; set; }
         public string Pass { get; set; }
@@ -127,7 +127,7 @@ namespace AppCMC.Controllers
                     {
                         if(this.TrangThaiVanChuyenIn == (int)EnumTrangThaiVanChuyen.DenDiemDong) return "Đến điểm trả hàng";
                         else if (this.TrangThaiVanChuyenIn == (int)EnumTrangThaiVanChuyen.DenDiemTra) return "Vỏ về";
-                        else if (this.TrangThaiVanChuyenIn == (int)EnumTrangThaiVanChuyen.VoVe) return "Hoàn thành";
+                        else if (this.TrangThaiVanChuyenIn == (int)EnumTrangThaiVanChuyen.VoVe) return "Chụp ảnh biên bản";
                     } 
                 } 
                 return "Bắt đầu";

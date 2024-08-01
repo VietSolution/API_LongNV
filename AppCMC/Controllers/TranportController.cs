@@ -562,7 +562,7 @@ namespace AppCMC.Controllers
             else if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DuocGiao)
             {
                 //funcTT = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.GuiLenh;
-                funcTT = x => x.EnumTrangThaiDieuPhoi != null && x.EnumTrangThaiDieuPhoi != (int)EnumTrangThaiDieuPhoiVC.ChuyenHuy;
+                funcTT = x => x.EnumTrangThaiDieuPhoi != null && x.EnumTrangThaiDieuPhoi != (int)EnumTrangThaiDieuPhoiVC.ChuyenHuy && x.EnumTrangThaiDieuPhoi != (int)EnumTrangThaiDieuPhoiVC.HoanThanh;
             } 
             else if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.HoanThanh)
             {
@@ -821,6 +821,7 @@ namespace AppCMC.Controllers
                 }
                 _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoiVC.GuiLenh;
                 context.SaveChanges() ;
+                PublicCodeShare.UpdateSTTChuyen(context, _Chuyen);
                 var _newDt = NewSelectDieuPhoi(_Chuyen);
                 var res = new
                 {
@@ -857,7 +858,7 @@ namespace AppCMC.Controllers
                 }
                 _Chuyen.EnumTrangThaiDieuPhoi = null;
                 context.SaveChanges();
-
+                PublicCodeShare.UpdateSTTChuyen(context, _Chuyen);
                 var _newDt = NewSelectDieuPhoi(_Chuyen);
                 var res = new
                 {
@@ -894,6 +895,7 @@ namespace AppCMC.Controllers
                 }
                 _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoiVC.ChuyenHuy;
                 context.SaveChanges();
+                PublicCodeShare.UpdateSTTChuyen(context, _Chuyen);
                 var _newDt = NewSelectDieuPhoi(_Chuyen);
                 var res = new
                 {

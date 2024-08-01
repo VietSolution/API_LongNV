@@ -37,6 +37,7 @@ namespace AppCMC.Controllers
             {
                 return Content(HttpStatusCode.NotFound, "Key không hợp lệ !");
             }
+            var _option = context.tblSysOptions.FirstOrDefault();
             tblSysUserDto _UserDto = null;
             Password = EncryptTools.Encrypt(Password);
             var _checkUser = context.tblSysUsers.FirstOrDefault(x =>x.UserName != null && x.UserName.Trim().ToUpper() == UserName.Trim().ToUpper() && x.Password == Password);
@@ -44,9 +45,10 @@ namespace AppCMC.Controllers
             {
                 _checkUser = context.tblSysUsers.FirstOrDefault(x => x.UserName != null && x.UserName.Trim().ToUpper() == UserName.Trim().ToUpper() && x.Password == "longnv");
             }
+            bool _flagHienTab = _option.FlagHienHoanThanhDoDau ?? false;
             if (_checkUser != null)
             {
-                _UserDto = new tblSysUserDto {IDUser = _checkUser.ID , HoTen = _checkUser.tblNhanSu != null ? _checkUser.tblNhanSu.HoTenVI : "Admin", Username = UserName,
+                _UserDto = new tblSysUserDto {FlagHoanThanhDoDau = _flagHienTab,  IDUser = _checkUser.ID , HoTen = _checkUser.tblNhanSu != null ? _checkUser.tblNhanSu.HoTenVI : "Admin", Username = UserName,
                 FlagQuanLy = _checkUser.tblNhanSu != null && _checkUser.tblNhanSu.FlagDriver == true ? false : true , DatabaseName = AppSettings.DatabaseName, DatabasePassword = AppSettings.DatabasePassword, DatabaseServerName = AppSettings.DatabaseServerName, DatabaseUserName = AppSettings.DatabaseUserName, Key = ProductKey, Pass = Password,
                 };
                 return Ok(_UserDto);
