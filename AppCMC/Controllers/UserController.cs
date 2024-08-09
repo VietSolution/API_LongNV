@@ -14,29 +14,29 @@ namespace AppCMC.Controllers
 {
     public class UserController : ApiController
     {
-        private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString("db.namanphu.vn", "CMCBacNinhDB", "cmc_user", "123456a$"));
+        private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString("103.150.125.133", "CMCBacNinhDB", "sa", "VSL@2024"));
         //private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString("dbdev.namanphu.vn", "Model_CMCBacNinh", "notification_user", "123456a$"));
         [HttpGet]
         [Route("api/GetUserLogin")]
         public IHttpActionResult GetUserLogin(string ProductKey, string UserName, string Password)
         {
-            if(ProductKey?.Length == 0)
-            {
-                return Content(HttpStatusCode.NotFound, "Nhập key để tiếp tục !");
-            }
-            LocyWS.LicenseKeyChecker20 lc = new LocyWS.LicenseKeyChecker20();
-            var response = lc.GetCustomerFromDatabaseName(ProductKey);
-            if (response.Status == (int)LocyWS.EnumTokenStatusCode.SUCCESS)
-            {
-                AppSettings.DatabaseServerName = response.obj.ServerIP;
-                AppSettings.DatabaseName = response.obj.DatabaseName;
-                AppSettings.DatabaseUserName = response.obj.Username;
-                AppSettings.DatabasePassword = response.obj.Password;
-            }
-            else
-            {
-                return Content(HttpStatusCode.NotFound, "Key không hợp lệ !");
-            }
+            //if(ProductKey?.Length == 0)
+            //{
+            //    return Content(HttpStatusCode.NotFound, "Nhập key để tiếp tục !");
+            //}
+            //LocyWS.LicenseKeyChecker20 lc = new LocyWS.LicenseKeyChecker20();
+            //var response = lc.GetCustomerFromDatabaseName(ProductKey);
+            //if (response.Status == (int)LocyWS.EnumTokenStatusCode.SUCCESS)
+            //{
+            //    AppSettings.DatabaseServerName = response.obj.ServerIP;
+            //    AppSettings.DatabaseName = response.obj.DatabaseName;
+            //    AppSettings.DatabaseUserName = response.obj.Username;
+            //    AppSettings.DatabasePassword = response.obj.Password;
+            //}
+            //else
+            //{
+            //    return Content(HttpStatusCode.NotFound, "Key không hợp lệ !");
+            //}
             var _option = context.tblSysOptions.FirstOrDefault();
             tblSysUserDto _UserDto = null;
             Password = EncryptTools.Encrypt(Password);

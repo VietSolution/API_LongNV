@@ -23,7 +23,7 @@ namespace AppCMC.Controllers
 {
     public class TranportController : ApiController
     {
-        private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString("db.namanphu.vn","CMCBacNinhDB","cmc_user","123456a$"));
+        private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString("103.150.125.133", "CMCBacNinhDB", "sa", "VSL@2024"));
         //private LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString("dbdev.namanphu.vn", "Model_CMCBacNinh", "notification_user", "123456a$"));
 
         #region Hàm dùng chung
@@ -1091,7 +1091,7 @@ namespace AppCMC.Controllers
         [Route("api/GetPathSFix")]
         public IHttpActionResult GetPathSFix(string ProductKey)
         {
-            string _r = @"D:\ftpuser\dbdev.namanphu.vn\Model_CMCBacNinh\Document Transport\DP1";
+            string _r = @"D:\ftpuser\103.150.125.133\CMCBacNinhDB\Document Transport\DP1";
             if (!Directory.Exists(_r))
             {
                 Directory.CreateDirectory(_r);
@@ -1140,17 +1140,16 @@ namespace AppCMC.Controllers
             //AppSettings.DatabaseName = "Model_CMCBacNinh";
             //AppSettings.DatabaseUserName = "notification_user";
 
-            AppSettings.DatabaseServerName = "db.namanphu.vn";
+
+            AppSettings.DatabaseServerName = "103.150.125.133";
+            AppSettings.DatabaseUserName = "sa";
             AppSettings.DatabaseName = "CMCBacNinhDB";
-            AppSettings.DatabaseUserName = "cmc_user";
+            AppSettings.DatabasePassword = "VSL@2024";
+            AppSettings.ftpurl = "ftp://103.150.125.133";
+            AppSettings.ftpuser = "locy";
+            AppSettings.ftppass = "VSL@2024";
 
-            AppSettings.DatabasePassword = "123456a$";
-
-                AppSettings.ftpurl = "ftp://fs.namanphu.vn";
-                AppSettings.ftpuser = "ftpuser";
-                AppSettings.ftppass = "123456a$";
-
-                var UserLogin = context.tblSysUsers.FirstOrDefault(x => x.ID == metadata.IDUser);
+            var UserLogin = context.tblSysUsers.FirstOrDefault(x => x.ID == metadata.IDUser);
 
                 var _newTrangThai = new tblDieuPhoiTrangThaiVC
                 {
@@ -1374,15 +1373,13 @@ namespace AppCMC.Controllers
                             context.tblDieuPhoiTrangThaiVCs.Add(_newTrangThai);
                             _Chuyen.SaveData(context, UserLogin);
                             // ảnh
-                            AppSettings.DatabaseServerName = "db.namanphu.vn";
+                            AppSettings.DatabaseServerName = "103.150.125.133";
+                            AppSettings.DatabaseUserName = "sa";
                             AppSettings.DatabaseName = "CMCBacNinhDB";
-                            AppSettings.DatabaseUserName = "cmc_user";
-
-                            AppSettings.DatabasePassword = "123456a$";
-
-                            AppSettings.ftpurl = "ftp://fs.namanphu.vn";
-                            AppSettings.ftpuser = "ftpuser";
-                            AppSettings.ftppass = "123456a$";
+                            AppSettings.DatabasePassword = "VSL@2024";
+                            AppSettings.ftpurl = "ftp://103.150.125.133";
+                            AppSettings.ftpuser = "locy";
+                            AppSettings.ftppass = "VSL@2024";
 
                             var _doc = new tblJOBDocument
                             {
