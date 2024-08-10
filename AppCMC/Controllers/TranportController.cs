@@ -1304,7 +1304,7 @@ namespace AppCMC.Controllers
         public async Task<IHttpActionResult> UpdateTrangThaiChuyen()
         {
 
-            string root = @"D:\Temp";  // đường dẫn lưu temp trên server
+            string root = @"C:\LOCY\Temp";  // đường dẫn lưu temp trên server
             if (!Directory.Exists(root))
             {
                 Directory.CreateDirectory(root);
@@ -1396,7 +1396,7 @@ namespace AppCMC.Controllers
 
                             // Lưu các file từ yêu cầu vào thư mục
 
-                            string _pathServer = "/db.namanphu.vn/CMCBacNinhDB/AppCMC" + $"/{AppSettings.DatabaseName}/DP{_Chuyen.ID}"; // sau này sẽ lấy theo DB chính
+                            string _pathServer = "/103.150.125.133/CMCBacNinhDB/AppCMC" + $"/{AppSettings.DatabaseName}/DP{_Chuyen.ID}"; // sau này sẽ lấy theo DB chính
 
                             _doc.Path = _pathServer;
 
