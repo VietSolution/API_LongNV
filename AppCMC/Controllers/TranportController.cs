@@ -1317,18 +1317,20 @@ namespace AppCMC.Controllers
             var _ob = provider.Contents.FirstOrDefault(x => x.Headers.ContentDisposition.Name.Trim('\"') == "data");
             if (_ob == null)
             {
-                return Content(HttpStatusCode.NotFound, "Đối tượng rỗng !");
+                return Ok(new { result  = "Lỗi dữ liệu truyền vào !"});
+                //return Content(HttpStatusCode.NotFound, "Đối tượng rỗng !");
             }
             var json = await _ob.ReadAsStringAsync();
             metadata = JsonConvert.DeserializeObject<ObjectCal>(json);
 
-
+            string _result = "Cập nhật dữ liệu thành công !";
             tblDieuPhoiVanChuyen _Chuyen = null;
             _Chuyen = context.tblDieuPhoiVanChuyens.FirstOrDefault(x => x.ID == metadata.IDChuyen);
             if (_Chuyen == null) return Content(HttpStatusCode.NotFound, "Không tìm thấy chuyến !");
-            if (_Chuyen.FlagDaDieuPhoi != true || _Chuyen.IDLaiXe == null || _Chuyen.IDDMXeOto == null)
+            if ( _Chuyen.IDLaiXe == null || _Chuyen.IDDMXeOto == null)
             {
-                return Content(HttpStatusCode.NotFound, "Chuyến thiếu thông tin.Không thể thực hiện trên chuyến này !");
+                return Ok(new { result = "Lỗi dữ liệu truyền vào.Thiếu thông tin chuyến. !" });
+                //return Content(HttpStatusCode.NotFound, "Chuyến thiếu thông tin.Không thể thực hiện trên chuyến này !");
             }
             var UserLogin = context.tblSysUsers.FirstOrDefault(x => x.ID == metadata.IDUser);
             if (_Chuyen.EnumTrangThaiDieuPhoi == null || _Chuyen.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.GuiLenh) // nhấn nút bắt đầu
@@ -1459,10 +1461,14 @@ namespace AppCMC.Controllers
                     }
                     else
                     {
-                        return Content(HttpStatusCode.NotFound, "Lỗi dữ liệu !");
+                        return Ok(new { result = "Lỗi trạng thái chuyến !" });
+                        //return Content(HttpStatusCode.NotFound, "Lỗi dữ liệu !");
                     }
                 }    
-
+            }    
+            else
+            {
+                return Ok(new { result = "Lỗi trạng thái chuyến !" });
             }    
 
            
