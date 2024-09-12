@@ -1438,14 +1438,13 @@ namespace AppCMC.Controllers
                                 {
                                     File.Delete(filePath);
                                 }
+
                                 File.Move(localFileName, filePath);
+
+                                //var newFileName = Path.ChangeExtension(filePath, ".jpg"); // Thay đổi phần mở rộng sang .jpg
                                 List<string> _lstFileName = new List<string>();
 
-
-
                                 _lstFileName.Add(filePath);
-
-
                                 string _fnOnly = Path.GetFileName(filePath);
                                 _doc.FileName = _fnOnly + ";" + _doc.FileName;
 

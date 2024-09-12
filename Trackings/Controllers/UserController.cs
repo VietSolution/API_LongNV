@@ -188,9 +188,14 @@ namespace Trackings.Controllers
 
             return token;
         }
-
         private bool GetLicenseKeyChecker(string ProductKey)
         {
+            AppSettings.DatabaseServerName = "103.150.125.133";
+            AppSettings.DatabaseName = "LocyDemo";
+            AppSettings.DatabaseUserName = "sa";
+            AppSettings.DatabasePassword = "VSL@2024";
+            return true;
+
             if (ProductKey?.Length == 0)
             {
                 return false;
@@ -213,6 +218,22 @@ namespace Trackings.Controllers
         private tblSysUser UserLogin { get; set; }
         private LGTICDBEntities GetLicenseKey(string ProductKey, long IDUser)
         {
+            AppSettings.DatabaseServerName = "103.150.125.133";
+            AppSettings.DatabaseName = "LocyDemo";
+            AppSettings.DatabaseUserName = "sa";
+            AppSettings.DatabasePassword = "VSL@2024";
+            LGTICDBEntities contextCal = new LGTICDBEntities(ConnectionTools.BuildConnectionString(AppSettings.DatabaseServerName, AppSettings.DatabaseName, AppSettings.DatabaseUserName, AppSettings.DatabasePassword));
+            UserLogin = contextCal.tblSysUsers.FirstOrDefault(x => x.ID == IDUser);
+            AppSettings.CurrentLoginUser = new LoginUserInfo
+            {
+                LoginUser = UserLogin,
+                IDLoginUser = UserLogin.ID,
+                IDLoginNhanSu = UserLogin.IDNhanVien,
+                LoginNhanSu = UserLogin.tblNhanSu
+            };
+            return contextCal;
+
+
             if (ProductKey?.Length == 0)
             {
                 return null;
@@ -277,22 +298,9 @@ namespace Trackings.Controllers
         [Route("api/GetUserLogin")]
         public  IHttpActionResult GetUserLogin([FromBody] ObjectCal _object )
         {
-            if(_object.ProductKey?.Length == 0)
+            if (GetLicenseKeyChecker(_object.ProductKey) != true)
             {
-                return Content(HttpStatusCode.NotFound, "Nhập key để tiếp tục !");
-            }
-            LocyWS.LicenseKeyChecker20 lc = new LocyWS.LicenseKeyChecker20();
-            var response = lc.GetCustomerFromDatabaseName(_object.ProductKey);
-            if (response.Status == (int)LocyWS.EnumTokenStatusCode.SUCCESS)
-            {
-                AppSettings.DatabaseServerName = response.obj.ServerIP;
-                AppSettings.DatabaseName = response.obj.DatabaseName;
-                AppSettings.DatabaseUserName = response.obj.Username;
-                AppSettings.DatabasePassword = response.obj.Password;
-            }
-            else
-            {
-                return Content(HttpStatusCode.NotFound, "Key không hợp lệ !");
+                return Content(HttpStatusCode.NotFound, "Lỗi key !");
             }
             LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString(AppSettings.DatabaseServerName, AppSettings.DatabaseName, AppSettings.DatabaseUserName, AppSettings.DatabasePassword));
 
@@ -332,27 +340,15 @@ namespace Trackings.Controllers
         [Route("api/GetJOBTracking")]
         public IHttpActionResult GetJOBTracking(string ProductKey, string CodeFind)
         {
-            if (ProductKey?.Length == 0)
+            if (GetLicenseKeyChecker(ProductKey))
             {
-                return Content(HttpStatusCode.NotFound, "Nhập key để tiếp tục !");
+                return Content(HttpStatusCode.NotFound, "Key không hợp lệ !");
             }
             if ((CodeFind + "").Trim()?.Length == 0)
             {
                 return Content(HttpStatusCode.NotFound, "Nhập MÃ cần tìm kiếm để tiếp tục !");
             }
-            LocyWS.LicenseKeyChecker20 lc = new LocyWS.LicenseKeyChecker20();
-            var response = lc.GetCustomerFromDatabaseName(ProductKey);
-            if (response.Status == (int)LocyWS.EnumTokenStatusCode.SUCCESS)
-            {
-                AppSettings.DatabaseServerName = response.obj.ServerIP;
-                AppSettings.DatabaseName = response.obj.DatabaseName;
-                AppSettings.DatabaseUserName = response.obj.Username;
-                AppSettings.DatabasePassword = response.obj.Password;
-            }
-            else
-            {
-                return Content(HttpStatusCode.NotFound, "Key không hợp lệ !");
-            }
+            
             CodeFind = CodeFind.Trim().ToUpper();
             LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString(AppSettings.DatabaseServerName, AppSettings.DatabaseName, AppSettings.DatabaseUserName, AppSettings.DatabasePassword));
 
