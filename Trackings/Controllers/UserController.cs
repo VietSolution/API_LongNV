@@ -12,6 +12,8 @@ using System.Text;
 using System.Web.Http;
 using System.Web.Http.Description;
 
+using VSL.CustomerDB;
+
 using VsLogistics.DataModel;
 using VsLogistics.DataModel.Common;
 using VsLogistics.DataModel.Properties;
@@ -190,40 +192,55 @@ namespace Trackings.Controllers
         }
         private bool GetLicenseKeyChecker(string ProductKey)
         {
-            AppSettings.DatabaseServerName = "103.150.125.133";
-            AppSettings.DatabaseName = "LocyDemo";
-            AppSettings.DatabaseUserName = "sa";
-            AppSettings.DatabasePassword = "VSL@2024";
-            return true;
+           
 
             if (ProductKey?.Length == 0)
             {
                 return false;
             }
-            LocyWS.LicenseKeyChecker20 lc = new LocyWS.LicenseKeyChecker20();
-            var response = lc.GetCustomerFromDatabaseName(ProductKey);
-            if (response.Status == (int)LocyWS.EnumTokenStatusCode.SUCCESS)
+
+            var response = PublicLicenseKey.GetDataServer(ProductKey);
+            if (response != null)
             {
-                AppSettings.DatabaseServerName = response.obj.ServerIP;
-                AppSettings.DatabaseName = response.obj.DatabaseName;
-                AppSettings.DatabaseUserName = response.obj.Username;
-                AppSettings.DatabasePassword = response.obj.Password;
+                AppSettings.DatabaseServerName = response.DatabaseServerName;
+                AppSettings.DatabaseName = response.DatabaseName;
+                AppSettings.DatabaseUserName = response.DatabaseUserName;
+                AppSettings.DatabasePassword = response.DatabasePassword;
             }
             else
             {
-                return false;
+                AppSettings.DatabaseServerName = "103.150.125.133";
+                AppSettings.DatabaseName = "LocyDemo";
+                AppSettings.DatabaseUserName = "sa";
+                AppSettings.DatabasePassword = "VSL@2024";
+                return true;
             }
             return true;
         }
         private tblSysUser UserLogin { get; set; }
         private LGTICDBEntities GetLicenseKey(string ProductKey, long IDUser)
         {
-            AppSettings.DatabaseServerName = "103.150.125.133";
-            AppSettings.DatabaseName = "LocyDemo";
-            AppSettings.DatabaseUserName = "sa";
-            AppSettings.DatabasePassword = "VSL@2024";
-            LGTICDBEntities contextCal = new LGTICDBEntities(ConnectionTools.BuildConnectionString(AppSettings.DatabaseServerName, AppSettings.DatabaseName, AppSettings.DatabaseUserName, AppSettings.DatabasePassword));
-            UserLogin = contextCal.tblSysUsers.FirstOrDefault(x => x.ID == IDUser);
+            if (ProductKey?.Length == 0)
+            {
+                return null;
+            }
+            var response = PublicLicenseKey.GetDataServer(ProductKey);
+            if (response != null)
+            {
+                AppSettings.DatabaseServerName = response.DatabaseServerName;
+                AppSettings.DatabaseName = response.DatabaseName;
+                AppSettings.DatabaseUserName = response.DatabaseUserName;
+                AppSettings.DatabasePassword = response.DatabasePassword;
+            }
+            else
+            {
+                AppSettings.DatabaseServerName = "103.150.125.133";
+                AppSettings.DatabaseName = "LocyDemo";
+                AppSettings.DatabaseUserName = "sa";
+                AppSettings.DatabasePassword = "VSL@2024";
+            }
+            LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString(AppSettings.DatabaseServerName, AppSettings.DatabaseName, AppSettings.DatabaseUserName, AppSettings.DatabasePassword));
+            UserLogin = context.tblSysUsers.FirstOrDefault(x => x.ID == IDUser);
             AppSettings.CurrentLoginUser = new LoginUserInfo
             {
                 LoginUser = UserLogin,
@@ -231,37 +248,8 @@ namespace Trackings.Controllers
                 IDLoginNhanSu = UserLogin.IDNhanVien,
                 LoginNhanSu = UserLogin.tblNhanSu
             };
-            return contextCal;
+            return context;
 
-
-            if (ProductKey?.Length == 0)
-            {
-                return null;
-            }
-            LocyWS.LicenseKeyChecker20 lc = new LocyWS.LicenseKeyChecker20();
-            var response = lc.GetCustomerFromDatabaseName(ProductKey);
-            if (response.Status == (int)LocyWS.EnumTokenStatusCode.SUCCESS)
-            {
-                AppSettings.DatabaseServerName = response.obj.ServerIP;
-                AppSettings.DatabaseName = response.obj.DatabaseName;
-                AppSettings.DatabaseUserName = response.obj.Username;
-                AppSettings.DatabasePassword = response.obj.Password;
-
-                LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString(AppSettings.DatabaseServerName, AppSettings.DatabaseName, AppSettings.DatabaseUserName, AppSettings.DatabasePassword));
-                UserLogin = context.tblSysUsers.FirstOrDefault(x => x.ID == IDUser);
-                AppSettings.CurrentLoginUser = new LoginUserInfo
-                {
-                    LoginUser = UserLogin,
-                    IDLoginUser = UserLogin.ID,
-                    IDLoginNhanSu = UserLogin.IDNhanVien,
-                    LoginNhanSu = UserLogin.tblNhanSu
-                };
-                return context;
-            }
-            else
-            {
-                return null;
-            }
         }
 
         [HttpGet]
@@ -274,7 +262,7 @@ namespace Trackings.Controllers
             var productKeyClaim = decodedToken.Claims.FirstOrDefault(c => c.Type == "ProductKey")?.Value;
             var idUserClaim = decodedToken.Claims.FirstOrDefault(c => c.Type == "IDUser")?.Value;
 
-            if (GetLicenseKeyChecker(productKeyClaim))
+            if (!GetLicenseKeyChecker(productKeyClaim))
             {
                 LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString(AppSettings.DatabaseServerName, AppSettings.DatabaseName, AppSettings.DatabaseUserName, AppSettings.DatabasePassword));
                 long _ID = long.Parse(idUserClaim);
@@ -340,7 +328,7 @@ namespace Trackings.Controllers
         [Route("api/GetJOBTracking")]
         public IHttpActionResult GetJOBTracking(string ProductKey, string CodeFind)
         {
-            if (GetLicenseKeyChecker(ProductKey))
+            if (!GetLicenseKeyChecker(ProductKey))
             {
                 return Content(HttpStatusCode.NotFound, "Key không hợp lệ !");
             }
