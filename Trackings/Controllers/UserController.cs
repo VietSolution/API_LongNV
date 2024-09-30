@@ -66,7 +66,9 @@ namespace Trackings.Controllers
         public string MBLNumber { get; set; }
         public string HBLNumber { get; set; }
         public string DonViVanChuyen { get; set; }
+        public string ThongTinChuyen { get; set; }
         public string ThongTinHangHoa { get; set; }
+        public string MoTaHangHoa { get; set; }
 
         public DateTime? NgayMoJOBCal { get; set; }
         public string NgayMoJOB
@@ -118,6 +120,9 @@ namespace Trackings.Controllers
     }
     public class ListChargeView
     {
+        public int? EnumDebitCreit { get;set; }
+        public string LoaiPhi => EnumDebitCreit != null ? ((EnumChargeDebitCreditJOB)EnumDebitCreit).GetDescription() : "";
+        public string DoiTuongTT { get; set; }
         public string TenChiPhi { get; set; }
         public string DonViTinh { get; set; }
         public double? SoLuongCal { get; set; }
@@ -361,14 +366,6 @@ namespace Trackings.Controllers
             LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString(AppSettings.DatabaseServerName, AppSettings.DatabaseName, AppSettings.DatabaseUserName, AppSettings.DatabasePassword));
 
             
-            var EntityJOB = context.View_tblJOB.FirstOrDefault(x => (x.CodeJOB != null && x.CodeJOB.Trim().ToUpper() == CodeFind) || (x.HBLNumber != null && x.HBLNumber.Trim().ToUpper() == CodeFind)|| (x.MBLNumber != null && x.MBLNumber.Trim().ToUpper() == CodeFind));
-            if (EntityJOB == null)
-            {
-                return Content(HttpStatusCode.NotFound, "Không tìm thấy thông tin đơn hàng phù hợp !");
-            }
-            //string ttChuyen = EntityJOB.FlagJobAir ? (EntityJOB.tblDMAirLine != null ? EntityJOB.tblDMAirLine.NameVI : "") + $" - {EntityJOB.FlightNumber} ": (EntityJOB.tblDMCarrier != null ? EntityJOB.tblDMCarrier.NameVI : "") + $" - {EntityJOB.DeptVesselVoyageNoText}" ;
-
-
             var LstJOB = context.View_tblJOB.Where(x => (x.CodeJOB != null && x.CodeJOB.Trim().ToUpper() == CodeFind) || (x.HBLNumber != null && x.HBLNumber.Trim().ToUpper() == CodeFind) || (x.MBLNumber != null && x.MBLNumber.Trim().ToUpper() == CodeFind)).Select(x => new ObjectCal
             {
                 ID = x.ID,
@@ -386,38 +383,23 @@ namespace Trackings.Controllers
                 HBLNumber = x.HBLNumber + "",
                 ThoiGianDenCal = x.ETAATA,
                 DonViVanChuyen = x.AirlineNameVI != null ? x.AirlineNameVI : (x.CarrierNameVI != null ? x.CarrierNameVI : (x.CustomerLocalTransNameVI != null ? x.CustomerLocalTransNameVI : "")) + "",
+                MoTaHangHoa = x.GoodsDescription,
                 ThongTinHangHoa = x.VolumeDescription + "",
                 NgayMoJOBCal = x.OpenDate,
                 NguoiTaoJOB = x.UserCreateText + "",
                 NhanVienKD = x.NhanVienSaleVI,
-                ListCharge = context.tblJOBChargeLists.Where(x1=>x1.IDJOB == x.ID && x1.FlagChargeBaoHangDen == true && x1.tblDMCharge != null && x1.tblDMSeaUnit != null).Select(x1 => new ListChargeView { TenChiPhi = x1.tblDMCharge.NameVI, DonViTinh = x1.tblDMSeaUnit.NameVI, SoLuongCal = x1.Quantity, DonGiaCal = x1.UnitPrice,LoaiTien = x1.tblDMCurrency != null ? x1.tblDMCurrency.KyHieu : "",TyGiaCal =  x1.TyGiaQuyDoi != null ? x1.TyGiaQuyDoi : (x1.tblJOBChargeRelationShip.TyGia != null ? x1.tblJOBChargeRelationShip.TyGia : 1), VAT = x1.VAT, ThanhTienCal = x1.AmountByExchange }).ToList()
+                ListCharge = context.tblJOBChargeLists.Where(x1=>x1.IDJOB == x.ID && x1.FlagChargeBaoHangDen == true && x1.tblDMCharge != null ).Select(x1 => new ListChargeView { TenChiPhi = x1.tblDMCharge.NameVI, DonViTinh = x1.tblDMSeaUnit != null ? x1.tblDMSeaUnit.NameVI : "", SoLuongCal = x1.Quantity, DonGiaCal = x1.UnitPrice,LoaiTien = x1.tblDMCurrency != null ? x1.tblDMCurrency.KyHieu : "",TyGiaCal =  x1.TyGiaQuyDoi != null ? x1.TyGiaQuyDoi : (x1.tblJOBChargeRelationShip.TyGia != null ? x1.tblJOBChargeRelationShip.TyGia : 1), VAT = x1.VAT, ThanhTienCal = x1.AmountByExchange }).ToList()
             }).ToList();
             return Ok(LstJOB);
 
-            var _Dto = new ObjectCal
-            {
-                 NghiepVu = EntityJOB.NghiepVuText
-                // KhachHang = EntityJOB.CustomerInfoText,
-                //NguoiGui = EntityJOB.ShipperText + "",
-                //NguoiNhan = EntityJOB.ConsigneeText + "",
-                //ThongTinChuyen = ttChuyen + "",
-                //HangHoa = EntityJOB.VolumeDescription + "",
-                //CangDi = EntityJOB.tblDMPort != null ? EntityJOB.tblDMPort.NameVI : "",
-                //CangDen = EntityJOB.tblDMPort1 != null ? EntityJOB.tblDMPort1.NameVI : "",
-                // NgayDi = EntityJOB.ETDATD?.ToString("HH:mm dd/MM/yyyy"),
-                // NgayDen = EntityJOB.ETAATA?.ToString("HH:mm dd/MM/yyyy"),
-                // NhanVienKD = EntityJOB.NhanVienSaleText,
-                //ListCharge = EntityJOB.tblJOBChargeLists.Where(x => x.FlagChargeBaoHangDen == true).Select(x => new { TenChiPhi = x.tblDMCharge?.NameVI, DonViTinh = x.tblDMSeaUnit?.NameVI,SoLuong = x.Quantity?.ToString("#,#.0##") , DonGia = x.DonGiaVN_Ex?.ToString("#,#"), VAT = x.VAT, ThanhTien = x.AmountByExchange?.ToString("#,#") }).ToList(),
-                //TongTien = EntityJOB.tblJOBChargeLists.Where(x => x.FlagChargeBaoHangDen == true).Sum(x=>x.AmountByExchange)?.ToString("#,#")
-            };
-            return Ok(_Dto);
+            
 
 
         }
 
         [HttpGet]
-        [Route("api/GetListJOB")]
-        public IHttpActionResult GetListJOB(string ProductKey, long IDUser , DateTime dtS , DateTime dtE , int EnumDate, int Page , int Limit)
+        [Route("api/GetListJOB1")]
+        public IHttpActionResult GetListJOB1(string ProductKey, long IDUser , DateTime dtS , DateTime dtE , int EnumDate, int Page , int Limit)
         {
             if(!GetLicenseKeyChecker(ProductKey))
                 return Content(HttpStatusCode.NotFound, "ProductKey không hợp lệ !");
@@ -479,8 +461,8 @@ namespace Trackings.Controllers
         }
 
         [HttpGet]
-        [Route("api/GetListTongHopJOB")]
-        public IHttpActionResult GetListTongHopJOB(string ProductKey, long IDUser, DateTime dtS, DateTime dtE, int EnumDate, int Page, int Limit)
+        [Route("api/GetListJOB")]
+        public IHttpActionResult GetListJOB(string ProductKey, long IDUser, DateTime dtS, DateTime dtE, int EnumDate, int Page, int Limit)
         {
             if (!GetLicenseKeyChecker(ProductKey))
                 return Content(HttpStatusCode.NotFound, "ProductKey không hợp lệ !");
@@ -524,8 +506,10 @@ namespace Trackings.Controllers
                 ThoiGianDenCal = x.ETAATA,
                 DonViVanChuyen = x.AirlineNameVI != null ? x.AirlineNameVI : (x.CarrierNameVI != null ? x.CarrierNameVI : (x.CustomerLocalTransNameVI != null ? x.CustomerLocalTransNameVI : "")) + "",
                 ThongTinHangHoa = x.VolumeDescription + "",
+                MoTaHangHoa = x.GoodsDescription + "",
                 DebitCal = context.tblJOBChargeLists.Where(x1=>x1.IDJOB == x.ID && x1.EnumChargeDebitCredit == (int)EnumChargeDebitCreditJOB.DEBIT).Sum(x1=>x1.AmountByExchange),
                 CreditCal = context.tblJOBChargeLists.Where(x1 => x1.IDJOB == x.ID && x1.EnumChargeDebitCredit == (int)EnumChargeDebitCreditJOB.CREDIT).Sum(x1 => x1.AmountByExchange),
+                NhanVienKD = x.NhanVienSaleVI,
                 NgayMoJOBCal = x.OpenDate,
                 NguoiTaoJOB = x.UserCreateText + "",
             }).ToList();
@@ -539,6 +523,50 @@ namespace Trackings.Controllers
                 ProductKey = ProductKey
             };
             return Ok(res);
+
+
+        }
+        [HttpGet]
+        [Route("api/GetJOBDetail")]
+        public IHttpActionResult GetJOBDetail(string ProductKey, long IDUser, long IDJOB)
+        {
+            if (!GetLicenseKeyChecker(ProductKey))
+            {
+                return Content(HttpStatusCode.NotFound, "Key không hợp lệ !");
+            }
+            if ((IDJOB + "").Trim()?.Length == 0)
+            {
+                return Content(HttpStatusCode.NotFound, "Nhập MÃ cần tìm kiếm để tiếp tục !");
+            }
+
+            LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString(AppSettings.DatabaseServerName, AppSettings.DatabaseName, AppSettings.DatabaseUserName, AppSettings.DatabasePassword));
+
+            var LstJOB = context.View_tblJOB.Where(x => x.ID == IDJOB).Select(x => new ObjectCal
+            {
+                ID = x.ID,
+                LoaiJOBCal = x.EnumShowJOB,
+                NghiepVu = x.NghiepVuNameVI + "",
+                LoaiHang = x.EnumLCLFCLText + "",
+                CodeJOB = x.CodeJOB + "",
+                KhachHang = x.CustomerInfoNameVI + "",
+                NguoiGui = x.ShipperNameVI + "",
+                NguoiNhan = x.ConsigneeNameVI + "",
+                CangDi = x.PortFromVI + "",
+                ThoiGianDiCal = x.ETDATD,
+                CangDen = x.PortToVI + "",
+                MBLNumber = x.MBLNumber + "",
+                HBLNumber = x.HBLNumber + "",
+                ThoiGianDenCal = x.ETAATA,
+                DonViVanChuyen = x.AirlineNameVI != null ? x.AirlineNameVI : (x.CarrierNameVI != null ? x.CarrierNameVI : (x.CustomerLocalTransNameVI != null ? x.CustomerLocalTransNameVI : "")) + "",
+                ThongTinHangHoa = x.VolumeDescription + "",
+                NgayMoJOBCal = x.OpenDate,
+                NguoiTaoJOB = x.UserCreateText + "",
+                NhanVienKD = x.NhanVienSaleVI,
+                ListCharge = context.tblJOBChargeLists.Where(x1 => x1.IDJOB == x.ID  && x1.tblDMCharge != null).Select(x1 => new ListChargeView { EnumDebitCreit = x1.EnumChargeDebitCredit, DoiTuongTT = x1.tblJOBChargeRelationShip.tblDMCustomer != null ? x1.tblJOBChargeRelationShip.tblDMCustomer.NameVI : (x1.tblJOBChargeRelationShip.tblNhanSu != null ? x1.tblJOBChargeRelationShip.tblNhanSu.HoTenVI : ""), TenChiPhi = x1.tblDMCharge.NameVI, DonViTinh = x1.tblDMSeaUnit != null ? x1.tblDMSeaUnit.NameVI : "", SoLuongCal = x1.Quantity, DonGiaCal = x1.UnitPrice, LoaiTien = x1.tblDMCurrency != null ? x1.tblDMCurrency.KyHieu : "", TyGiaCal = x1.TyGiaQuyDoi != null ? x1.TyGiaQuyDoi : (x1.tblJOBChargeRelationShip.TyGia != null ? x1.tblJOBChargeRelationShip.TyGia : 1), VAT = x1.VAT, ThanhTienCal = x1.AmountByExchange }).ToList()
+            }).ToList();
+            return Ok(LstJOB);
+
+           
 
 
         }
