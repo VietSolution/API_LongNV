@@ -116,6 +116,7 @@ namespace Trackings.Controllers
         public List <ListChargeView> ListCharge { get; set; }
         public double? TongTienCal => ListCharge != null ? ListCharge.Sum(x => x.ThanhTienCal) : 0;
         public string TongTien => TongTienCal?.ToString("#,#");
+        public string GhiChu { get; set; }
 
     }
     public class ListChargeView
@@ -484,6 +485,9 @@ namespace Trackings.Controllers
                 funUser = x => x.IDUserCreate == _user.ID;
             sourceJOB = sourceJOB.Where(func);
             if (funUser != null) sourceJOB = sourceJOB.Where(funUser);
+
+            int _count = sourceJOB.Count();
+
             if (EnumDate == (int)EnumFilterDateJOB.NgayETD) sourceJOB = sourceJOB.OrderByDescending(x => x.ETDATD).Skip((Page - 1) * Limit).Take(Limit);
             else if (EnumDate == (int)EnumFilterDateJOB.NgayETA) sourceJOB = sourceJOB.OrderByDescending(x => x.ETAATA).Skip((Page - 1) * Limit).Take(Limit);
             else sourceJOB = sourceJOB.OrderByDescending(x => x.OpenDate).Skip((Page - 1) * Limit).Take(Limit);
@@ -512,12 +516,13 @@ namespace Trackings.Controllers
                 NhanVienKD = x.NhanVienSaleVI,
                 NgayMoJOBCal = x.OpenDate,
                 NguoiTaoJOB = x.UserCreateText + "",
+                GhiChu = x.Note,
             }).ToList();
 
             var res = new
             {
                 data = LstJOB,
-                TotalCount = sourceJOB.Count(),
+                TotalCount = _count,
                 Page = Page,
                 Limit = Limit,
                 ProductKey = ProductKey
@@ -562,6 +567,7 @@ namespace Trackings.Controllers
                 NgayMoJOBCal = x.OpenDate,
                 NguoiTaoJOB = x.UserCreateText + "",
                 NhanVienKD = x.NhanVienSaleVI,
+                GhiChu = x.Note,
                 ListCharge = context.tblJOBChargeLists.Where(x1 => x1.IDJOB == x.ID  && x1.tblDMCharge != null).Select(x1 => new ListChargeView { EnumDebitCreit = x1.EnumChargeDebitCredit, DoiTuongTT = x1.tblJOBChargeRelationShip.tblDMCustomer != null ? x1.tblJOBChargeRelationShip.tblDMCustomer.NameVI : (x1.tblJOBChargeRelationShip.tblNhanSu != null ? x1.tblJOBChargeRelationShip.tblNhanSu.HoTenVI : ""), TenChiPhi = x1.tblDMCharge.NameVI, DonViTinh = x1.tblDMSeaUnit != null ? x1.tblDMSeaUnit.NameVI : "", SoLuongCal = x1.Quantity, DonGiaCal = x1.UnitPrice, LoaiTien = x1.tblDMCurrency != null ? x1.tblDMCurrency.KyHieu : "", TyGiaCal = x1.TyGiaQuyDoi != null ? x1.TyGiaQuyDoi : (x1.tblJOBChargeRelationShip.TyGia != null ? x1.tblJOBChargeRelationShip.TyGia : 1), VAT = x1.VAT, ThanhTienCal = x1.AmountByExchange }).ToList()
             }).ToList();
             return Ok(LstJOB);
