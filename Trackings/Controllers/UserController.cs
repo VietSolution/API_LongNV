@@ -568,6 +568,8 @@ namespace Trackings.Controllers
                 NguoiTaoJOB = x.UserCreateText + "",
                 NhanVienKD = x.NhanVienSaleVI,
                 GhiChu = x.Note,
+                DebitCal = context.tblJOBChargeLists.Where(x1 => x1.IDJOB == x.ID && x1.EnumChargeDebitCredit == (int)EnumChargeDebitCreditJOB.DEBIT).Sum(x1 => x1.AmountByExchange),
+                CreditCal = context.tblJOBChargeLists.Where(x1 => x1.IDJOB == x.ID && x1.EnumChargeDebitCredit == (int)EnumChargeDebitCreditJOB.CREDIT).Sum(x1 => x1.AmountByExchange),
                 ListCharge = context.tblJOBChargeLists.Where(x1 => x1.IDJOB == x.ID  && x1.tblDMCharge != null).Select(x1 => new ListChargeView { EnumDebitCreit = x1.EnumChargeDebitCredit, DoiTuongTT = x1.tblJOBChargeRelationShip.tblDMCustomer != null ? x1.tblJOBChargeRelationShip.tblDMCustomer.NameVI : (x1.tblJOBChargeRelationShip.tblNhanSu != null ? x1.tblJOBChargeRelationShip.tblNhanSu.HoTenVI : ""), TenChiPhi = x1.tblDMCharge.NameVI, DonViTinh = x1.tblDMSeaUnit != null ? x1.tblDMSeaUnit.NameVI : "", SoLuongCal = x1.Quantity, DonGiaCal = x1.UnitPrice, LoaiTien = x1.tblDMCurrency != null ? x1.tblDMCurrency.KyHieu : "", TyGiaCal = x1.TyGiaQuyDoi != null ? x1.TyGiaQuyDoi : (x1.tblJOBChargeRelationShip.TyGia != null ? x1.tblJOBChargeRelationShip.TyGia : 1), VAT = x1.VAT, ThanhTienCal = x1.AmountByExchange }).ToList()
             }).ToList();
             return Ok(LstJOB);
