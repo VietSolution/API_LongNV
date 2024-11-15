@@ -1369,7 +1369,7 @@ namespace AppCMC.Controllers
                         }
                         else if (_TrangThaiHT.tblDMTrangThaiVanChuyen.EnumStatus == (int)EnumTrangThaiVanChuyen.VoVe)
                         {
-                            _Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoiVC.HoanThanh;
+                            //_Chuyen.EnumTrangThaiDieuPhoi = (int)EnumTrangThaiDieuPhoiVC.HoanThanh;
                             var _newTrangThai = NewTrangThaiVanChuyen(context, EnumTrangThaiVanChuyen.KetThuc, UserLogin, _Chuyen);
                             _Chuyen.ListTrangThaiVanChuyen.Add(_newTrangThai);
                             context.tblDieuPhoiTrangThaiVCs.Add(_newTrangThai);
