@@ -554,10 +554,9 @@ namespace AppCMC.Controllers
             Expression<Func<tblDieuPhoiVanChuyen, bool>> funcTT = null;
            
            
-            if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DaNhan)
+            if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DaNhan) // tab thực hiện
             {
-                //funcTT = x => x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.NhanLenh;
-                funcTT = x =>  x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.GuiLenh || x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.NhanLenh;
+                funcTT = x =>  (x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.GuiLenh || x.EnumTrangThaiDieuPhoi == (int)EnumTrangThaiDieuPhoiVC.NhanLenh) && (x.tblDMTrangThaiVanChuyen == null || (x.tblDMTrangThaiVanChuyen != null && x.tblDMTrangThaiVanChuyen.EnumStatus != (int)EnumTrangThaiVanChuyen.KetThuc));
             } 
             else if (TrangThai == (int)EnumTrangThaiDieuPhoiFilterApp.DuocGiao)
             {

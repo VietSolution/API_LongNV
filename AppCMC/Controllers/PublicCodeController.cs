@@ -128,6 +128,7 @@ namespace AppCMC.Controllers
                         if(this.TrangThaiVanChuyenIn == (int)EnumTrangThaiVanChuyen.DenDiemDong) return "Đến điểm trả hàng";
                         else if (this.TrangThaiVanChuyenIn == (int)EnumTrangThaiVanChuyen.DenDiemTra) return "Vỏ về";
                         else if (this.TrangThaiVanChuyenIn == (int)EnumTrangThaiVanChuyen.VoVe) return "Chụp ảnh biên bản";
+                        else if (this.TrangThaiVanChuyenIn == (int)EnumTrangThaiVanChuyen.KetThuc) return "Hoàn thành";
                     } 
                 } 
                 return "Bắt đầu";
